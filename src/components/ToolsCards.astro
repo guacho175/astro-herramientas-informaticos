@@ -1,0 +1,49 @@
+---
+const tools = [
+  {
+    title: "Notion",
+    description: "Organizá tus apuntes, tareas y proyectos con esta app todo-en-uno.",
+    link: "https://www.notion.so/",
+    emoji: "🗂️",
+  },
+  {
+    title: "ChatGPT",
+    description: "Tu asistente para programar, estudiar o resolver dudas rápidas.",
+    link: "https://chat.openai.com/",
+    emoji: "🤖",
+  },
+  {
+    title: "Visual Studio Code",
+    description: "Editor de código ligero y potente, ideal para programar en cualquier lenguaje.",
+    link: "https://code.visualstudio.com/",
+    emoji: "💻",
+  },
+  {
+  title: "Figma",
+  description: "Herramienta de diseño UI/UX colaborativo.",
+  link: "https://www.figma.com/",
+  emoji: "🎨",
+},
+{
+  title: "GitHub",
+  description: "Hospedá y versioná tu código con repositorios Git.",
+  link: "https://github.com/",
+  emoji: "🐙",
+},
+{
+  title: "Stack Overflow",
+  description: "Plataforma de preguntas y respuestas para desarrolladores.",
+  link: "https://stackoverflow.com/",
+  emoji: "🧠",
+},
+];
+---
+<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  {tools.map(tool => (
+    <div class="bg-gray-800 rounded-lg p-5 shadow hover:shadow-lg transition">
+      <h3 class="text-xl font-semibold mb-2">{tool.emoji} {tool.title}</h3>
+      <p class="text-gray-300 mb-3">{tool.description}</p>
+      <a href={tool.link} target="_blank" class="text-blue-400 hover:underline">Ver herramienta</a>
+    </div>
+  ))}
+</div>
