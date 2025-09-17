@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/Layout.astro';
+---
+
+<BaseLayout title="Contacto" description="Formulario para contactarte conmigo.">
+  <h1 class="text-3xl font-bold mb-4 text-center text-blue-400">📬 Contáctame</h1>
+  <form class="space-y-6 bg-gray-800 p-6 rounded-lg shadow" netlify>
+    <div>
+      <label class="block text-sm font-medium">Nombre</label>
+      <input type="text" name="nombre" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Correo</label>
+      <input type="email" name="correo" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required />
+    </div>
+    <div>
+      <label class="block text-sm font-medium">Mensaje</label>
+      <textarea name="mensaje" rows="4" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required></textarea>
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Enviar</button>
+  </form>
+</BaseLayout>

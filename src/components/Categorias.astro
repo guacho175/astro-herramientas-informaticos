@@ -1,15 +1,21 @@
 ---
-// Categorías sin cards ni fondos oscuros
----
+const pathname = Astro.url.pathname;
 
-<nav class="flex flex-col space-y-3">
-  <a href="/blog/apps" class="text-lg text-gray-800 hover:text-blue-500 font-medium transition">
-    📱 Aplicaciones recomendadas
-  </a>
-  <a href="/blog/guias" class="text-lg text-gray-800 hover:text-blue-500 font-medium transition">
-    📘 Guías y tutoriales
-  </a>
-  <a href="/blog/calculadoras" class="text-lg text-gray-800 hover:text-blue-500 font-medium transition">
-    📊 Calculadoras online
-  </a>
+const categorias = [
+  { id: "apps", titulo: "📱 Aplicaciones recomendadas", link: "/blog/apps" },
+  { id: "guias", titulo: "📘 Guías y tutoriales", link: "/blog/guias" },
+  { id: "calculadoras", titulo: "📊 Calculadoras online", link: "/blog/calculadoras" },
+];
+---
+<nav class="hidden md:flex flex-col space-y-3">
+  {categorias.map(cat => (
+    <a
+      href={cat.link}
+      class={`text-lg font-medium transition hover:text-blue-500 text-gray-800 ${
+        pathname === cat.link ? 'text-blue-500 font-bold' : ''
+      }`}
+    >
+      {cat.titulo}
+    </a>
+  ))}
 </nav>

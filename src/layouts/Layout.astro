@@ -19,8 +19,8 @@ import Footer from '../components/Footer.astro';
   <body class="bg-gray-950 text-white">
     <Header />
 
-    <main class={Astro.url.pathname === '/' ? 'w-full px-4' : 'p-4 max-w-5xl mx-auto'}>
-      <slot /> <!-- Aquí se renderiza el contenido de index.astro -->
+    <main class="w-full px-4">
+      <slot />
     </main>
 
     <Footer />

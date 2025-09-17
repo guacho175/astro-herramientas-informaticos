@@ -1,0 +1,27 @@
+---
+const pathname = Astro.url.pathname;
+
+const categorias = [
+  { id: "apps", titulo: "📱 Aplicaciones recomendadas", link: "/blog/apps" },
+  { id: "guias", titulo: "📘 Guías y tutoriales", link: "/blog/guias" },
+  { id: "calculadoras", titulo: "📊 Calculadoras online", link: "/blog/calculadoras" },
+];
+---
+
+<div class="md:hidden mt-8 px-4">
+  <details class="bg-gray-100 rounded shadow p-4 w-fit">
+    <summary class="cursor-pointer font-semibold text-blue-500">☰ Categorías</summary>
+    <div class="mt-4 space-y-2">
+      {categorias.map(cat => (
+        <a
+          href={cat.link}
+          class={`block transition hover:text-blue-600 ${
+            pathname === cat.link ? 'text-blue-500 font-bold' : 'text-gray-800'
+          }`}
+        >
+          {cat.titulo}
+        </a>
+      ))}
+    </div>
+  </details>
+</div>
