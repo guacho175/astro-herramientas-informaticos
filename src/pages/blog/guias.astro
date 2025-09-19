@@ -1,0 +1,40 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Categorias from '../../components/Categorias.astro';
+import MenuHamburguesa from '../../components/MenuHamburguesa.astro';
+import TutorialList from "../../components/TutorialList.astro";
+import { getCollection } from "astro:content";
+
+const tutorials = await getCollection("tutorials");
+
+const title = "Guías y Tutoriales | Herramientas para Informáticos";
+const description = "Paso a paso para dominar herramientas y conceptos clave en informática.";
+const keywords = "guías, tutoriales, informática, aprender, herramientas";
+---
+
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="py-10 w-full" data-aos="fade-up">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full mb-6">
+
+      <!-- Columna 1 -->
+      <div class="space-y-6 col-span-1">
+        <h3 class="text-2xl font-bold text-blue-400">🛠 Herramientas destacadas</h3>
+        <Categorias active="guias" />
+      </div>
+
+      <!-- Columna 2-5 -->
+      <div class="col-span-1 lg:col-span-4">
+        <h2 class="text-2xl font-bold text-blue-500 mb-6">📘 Guías y Tutoriales</h2>
+        <p class="text-xs opacity-70">Total tutoriales: {tutorials.length}</p>
+
+        <p class="mb-8 text-gray-700 dark:text-gray-300">
+          Aquí encontrarás guías paso a paso, tutoriales prácticos y explicaciones claras.
+        </p>
+
+        <TutorialList tutorials={tutorials} />
+      </div>
+    </div>
+
+    <MenuHamburguesa />
+  </section>
+</Layout>
