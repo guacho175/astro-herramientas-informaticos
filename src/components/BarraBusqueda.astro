@@ -1,0 +1,30 @@
+---
+const { placeholder = "Buscar...", targetSelector = ".card" } = Astro.props;
+---
+
+<div class="mb-6 w-full max-w-2xl">
+  <input
+    type="text"
+    placeholder={placeholder}
+    class="w-full px-4 py-2 border rounded-xl shadow focus:ring-2 focus:ring-blue-400 text-black dark:bg-gray-800 dark:text-white"
+    id="barra-busqueda-input"
+    data-target={targetSelector}
+  />
+
+  <script is:inline>
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('barra-busqueda-input');
+      const selector = input.dataset.target;
+      const cards = document.querySelectorAll(selector);
+
+      input.addEventListener('input', (e) => {
+        const value = e.target.value.toLowerCase();
+
+        cards.forEach(card => {
+          const content = card.dataset.search?.toLowerCase() || "";
+          card.style.display = content.includes(value) ? "block" : "none";
+        });
+      });
+    });
+  </script>
+</div>
