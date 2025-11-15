@@ -1,46 +1,108 @@
 ---
-const { title, description, keywords } = Astro.props;
+import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
----
+import Analytics from '../components/Analytics.astro';
+import { siteConfig } from '../config/site';
 
-<html lang="es">
+interface Props {
+  title?: string;
+  description?: string;
+  keywords?: string | string[];
+  image?: string;
+  noIndex?: boolean;
+}
+
+const { title, description, keywords, image, noIndex }: Props = Astro.props;
+
+const pageTitle = title ?? `${siteConfig.title}`;
+const pageDescription = description ?? siteConfig.description;
+const keywordList = Array.isArray(keywords) ? keywords : keywords?.split(',') ?? siteConfig.keywords;
+const ogImage = image ?? siteConfig.seo.openGraphImage;
+const canonicalUrl = siteConfig.site ? new URL(Astro.url.pathname, siteConfig.site).toString() : Astro.url.href;
+
+const productSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Product',
+  name: siteConfig.monetization.premiumProduct,
+  description: siteConfig.monetization.promise,
+  brand: {
+    '@type': 'Brand',
+    name: siteConfig.name,
+  },
+  offers: {
+    '@type': 'AggregateOffer',
+    priceCurrency: 'USD',
+    lowPrice: '0',
+    highPrice: '59',
+    offerCount: 3,
+    availability: 'https://schema.org/InStock',
+    url: canonicalUrl,
+  },
+  isFamilyFriendly: true,
+};
+---
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
-    <meta name="keywords" content={keywords} />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <meta name="keywords" content={keywordList.join(', ')} />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="canonical" href={canonicalUrl} />
+    {noIndex && <meta name="robots" content="noindex,nofollow" />}
 
-    <!-- ✅ AOS CSS en el lugar correcto -->
-    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteConfig.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:url" content={canonicalUrl} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:site" content={siteConfig.seo.twitter} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="application/ld+json" is:inline>{JSON.stringify(productSchema)}</script>
+    <slot name="head" />
   </head>
-
-  <body class="bg-gray-950 text-white">
+  <body class="bg-slate-950 text-slate-100 font-['Inter',_sans-serif] antialiased">
+    <a href="#contenido" class="skip-link">Saltar al contenido</a>
     <Header />
-
-    <main class="w-full px-4">
+    <main id="contenido" class="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 pb-20 pt-10 md:px-6 lg:px-8">
       <slot />
     </main>
-
     <Footer />
-
-    <!-- ✅ AOS JS correctamente cargado y seguro -->
-    <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script is:inline>
-      window.addEventListener('DOMContentLoaded', () => {
-        if (typeof AOS !== 'undefined') {
-          AOS.init();
-        }
-      });
-    </script>
+    <Analytics />
   </body>
 </html>
 
-<style>
-  html, body {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+<style is:global>
+  .skip-link {
+    position: absolute;
+    top: -100px;
+    left: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #2563eb;
+    color: #f8fafc;
+    border-radius: 9999px;
+    font-weight: 600;
+    transition: top 0.2s ease;
+    z-index: 50;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
   }
 </style>

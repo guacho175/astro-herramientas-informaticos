@@ -1,0 +1,11 @@
+---
+import { siteConfig } from '../config/site';
+const analytics = siteConfig.analytics;
+---
+{analytics?.provider === 'plausible' && (
+  <script
+    defer
+    data-domain={analytics.domain}
+    src="https://plausible.io/js/script.js"
+  ></script>
+)}

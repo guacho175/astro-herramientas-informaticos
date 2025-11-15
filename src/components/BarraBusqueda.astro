@@ -1,12 +1,12 @@
 ---
-const { placeholder = "Buscar...", targetSelector = ".card" } = Astro.props;
+const { placeholder = 'Buscar...', targetSelector = '.card' } = Astro.props;
 ---
-
-<div class="mb-6 w-full max-w-2xl">
+<div class="w-full max-w-2xl">
+  <label class="sr-only" for="barra-busqueda-input">{placeholder}</label>
   <input
     type="text"
     placeholder={placeholder}
-    class="w-full px-4 py-2 border rounded-xl shadow focus:ring-2 focus:ring-blue-400 text-black dark:bg-gray-800 dark:text-white"
+    class="w-full rounded-full border border-slate-700 bg-slate-950/60 px-5 py-3 text-sm text-slate-100 shadow focus:border-blue-400 focus:outline-none"
     id="barra-busqueda-input"
     data-target={targetSelector}
   />
@@ -14,15 +14,17 @@ const { placeholder = "Buscar...", targetSelector = ".card" } = Astro.props;
   <script is:inline>
     document.addEventListener('DOMContentLoaded', () => {
       const input = document.getElementById('barra-busqueda-input');
+      if (!input) return;
       const selector = input.dataset.target;
       const cards = document.querySelectorAll(selector);
 
-      input.addEventListener('input', (e) => {
-        const value = e.target.value.toLowerCase();
-
+      input.addEventListener('input', event => {
+        const value = event.target.value.toLowerCase();
         cards.forEach(card => {
-          const content = card.dataset.search?.toLowerCase() || "";
-          card.style.display = content.includes(value) ? "block" : "none";
+          const content = (card.dataset.search || '').toLowerCase();
+          const shouldShow = content.includes(value);
+          card.setAttribute('aria-hidden', (!shouldShow).toString());
+          card.classList.toggle('hidden', !shouldShow);
         });
       });
     });

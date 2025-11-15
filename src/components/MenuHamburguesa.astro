@@ -1,27 +1,36 @@
 ---
+interface Category {
+  id: string;
+  titulo: string;
+  link: string;
+}
+
+const { active }: { active?: string } = Astro.props;
 const pathname = Astro.url.pathname;
 
-const categorias = [
-  { id: "apps", titulo: "📱 Apps recomendadas", link: "/blog/apps" },
-  { id: "guias", titulo: "📘 Guías y tutoriales", link: "/blog/guias" },
-  { id: "calculadoras", titulo: "📊 Calculadoras online", link: "/blog/calculadoras" },
+const categorias: Category[] = [
+  { id: 'apps', titulo: '📱 Apps recomendadas', link: '/blog/apps' },
+  { id: 'guias', titulo: '📘 Guías y tutoriales', link: '/blog/guias' },
+  { id: 'calculadoras', titulo: '📊 Calculadoras online', link: '/blog/calculadoras' },
 ];
 ---
-
-<div class="md:hidden mt-8 px-4">
-  <details class="bg-gray-100 rounded shadow p-4 w-fit">
-    <summary class="cursor-pointer font-semibold text-blue-500">☰ Categorías</summary>
-    <div class="mt-4 space-y-2">
-      {categorias.map(cat => (
-        <a
-          href={cat.link}
-          class={`block transition hover:text-blue-600 ${
-            pathname === cat.link ? 'text-blue-500 font-bold' : 'text-gray-800'
-          }`}
-        >
-          {cat.titulo}
-        </a>
-      ))}
+<div class="md:hidden">
+  <details class="rounded-2xl border border-slate-800 bg-slate-900/70 p-4 shadow shadow-blue-500/10">
+    <summary class="cursor-pointer text-sm font-semibold text-blue-300">☰ Categorías</summary>
+    <div class="mt-4 flex flex-col gap-2 text-sm text-slate-200">
+      {categorias.map(cat => {
+        const isActive = active ? active === cat.id : pathname === cat.link;
+        return (
+          <a
+            href={cat.link}
+            class={`rounded-xl px-3 py-2 transition ${
+              isActive ? 'bg-blue-500/20 text-blue-200' : 'hover:bg-slate-800/80'
+            }`}
+          >
+            {cat.titulo}
+          </a>
+        );
+      })}
     </div>
   </details>
 </div>

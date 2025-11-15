@@ -1,0 +1,26 @@
+---
+import { featureHighlights } from '../data/features';
+---
+<section class="space-y-6">
+  <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <div>
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-400">Valor diferencial</p>
+      <h2 class="text-3xl font-semibold text-white">Todo lo que necesitas para lanzar y escalar</h2>
+    </div>
+    <p class="max-w-2xl text-sm text-slate-400">
+      Combina automatizaciones, contenido premium y analíticas sin mantener múltiples suscripciones. Diseñado para equipos de tecnología en constante crecimiento.
+    </p>
+  </div>
+
+  <div class="grid gap-6 sm:grid-cols-2">
+    {featureHighlights.map(feature => (
+      <article class="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow shadow-blue-500/10 transition hover:-translate-y-1 hover:border-blue-500/30 hover:shadow-blue-500/20">
+        <div class="mb-4 flex items-center gap-3">
+          <span class="text-3xl">{feature.icon}</span>
+          <h3 class="text-xl font-semibold text-white">{feature.title}</h3>
+        </div>
+        <p class="text-sm text-slate-300">{feature.description}</p>
+      </article>
+    ))}
+  </div>
+</section>

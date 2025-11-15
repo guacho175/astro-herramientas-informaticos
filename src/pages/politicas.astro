@@ -1,33 +1,41 @@
 ---
 import Layout from '../layouts/Layout.astro';
+
+const title = 'Política de Privacidad | Herramientas para Informáticos';
+const description = 'Conoce cómo recopilamos, usamos y protegemos los datos dentro de nuestra plataforma y contenidos digitales.';
+const keywords = [
+  'política de privacidad',
+  'protección de datos',
+  'cookies',
+];
 ---
-
-<Layout>
-  <section class="max-w-4xl mx-auto py-10 px-4 space-y-6">
-    <h1 class="text-3xl font-bold text-blue-500 mb-4">📝 Política de Privacidad</h1>
-
-    <p class="text-gray-800">
-      Esta política describe cómo recopilamos, usamos y protegemos tu información personal cuando visitas nuestro sitio.
+<Layout title={title} description={description} keywords={keywords}>
+  <article class="prose prose-invert max-w-none prose-headings:text-white prose-p:text-slate-300">
+    <h1>Política de Privacidad</h1>
+    <p>
+      Esta política describe cómo recopilamos, usamos y protegemos tu información personal cuando visitas nuestro sitio o utilizas la plataforma Herramientas para Informáticos.
     </p>
-
-    <p class="text-gray-800">
-      Podemos recopilar tu nombre, correo electrónico y otros datos si completas formularios o te registras.
+    <h2>Información que recopilamos</h2>
+    <ul>
+      <li>Datos de contacto enviados mediante formularios (nombre, correo, empresa).</li>
+      <li>Eventos de uso anonimizados para mejorar la experiencia y medir conversiones.</li>
+      <li>Cookies y tecnologías similares para recordar preferencias y mostrar contenido relevante.</li>
+    </ul>
+    <h2>Uso de la información</h2>
+    <p>
+      Utilizamos tus datos para personalizar la plataforma, responder consultas, enviar contenido educativo y, con tu consentimiento, compartir novedades comerciales.
     </p>
-
-    <p class="text-gray-800">
-      Usamos tus datos para mejorar la experiencia del sitio, responder consultas y enviar información relevante.
+    <h2>Publicidad y analíticas</h2>
+    <p>
+      Colaboramos con terceros (por ejemplo, Google Analytics, plataformas de publicidad) para comprender el rendimiento del sitio y optimizar campañas. Estos proveedores pueden utilizar cookies propias y de terceros.
     </p>
-
-    <p class="text-gray-800">
-      Este sitio utiliza cookies para mejorar la experiencia del usuario y mostrar anuncios personalizados.
+    <h2>Derechos de los usuarios</h2>
+    <p>
+      Puedes solicitar acceso, actualización o eliminación de tus datos personales escribiendo a <a href="mailto:hola@herramientasinformaticos.dev">hola@herramientasinformaticos.dev</a>. Respondemos en un plazo máximo de 72 horas.
     </p>
-
-    <p class="text-gray-800">
-      Este sitio puede mostrar anuncios de terceros (como Google AdSense) que pueden usar cookies para mostrar contenido personalizado.
+    <h2>Actualizaciones</h2>
+    <p>
+      Esta política puede actualizarse periódicamente. Publicaremos la fecha de la última modificación y notificaremos cambios relevantes a través del boletín.
     </p>
-
-    <p class="text-gray-800">
-      Si tienes preguntas sobre nuestra política, escríbenos desde la <a href="/contacto" class="text-blue-500 underline">página de contacto</a>.
-    </p>
-  </section>
+  </article>
 </Layout>

@@ -1,31 +1,35 @@
 ---
-// guías.astro
 import Layout from '../../layouts/Layout.astro';
 import HerramientasDestacadas from '../../components/HerramientasDestacadas.astro';
-import TutorialList from "../../components/TutorialList.astro";
-import BarraBusqueda from "../../components/BarraBusqueda.astro";
-import { getCollection } from "astro:content";
+import TutorialList from '../../components/TutorialList.astro';
+import BarraBusqueda from '../../components/BarraBusqueda.astro';
+import { getCollection } from 'astro:content';
 
-const tutorials = await getCollection("tutorials");
+const tutorials = await getCollection('tutorials');
 
-const title = "Guías y Tutoriales | Herramientas para Informáticos";
-const description = "Paso a paso para dominar herramientas y conceptos clave en informática.";
-const keywords = "guías, tutoriales, informática, aprender, herramientas";
+const title = 'Guías y Tutoriales | Herramientas para Informáticos';
+const description = 'Documentación accionable y plantillas para desplegar infraestructura, automatizar procesos y vender servicios.';
+const keywords = [
+  'guías de informática',
+  'tutoriales paso a paso',
+  'deploy astro vercel',
+];
 ---
-
 <Layout title={title} description={description} keywords={keywords}>
-  <HerramientasDestacadas active="guias">
-    <h2 class="text-2xl font-bold text-blue-500 mb-6">📘 Guías y Tutoriales</h2>
-    <p class="text-xs opacity-70">Total tutoriales: {tutorials.length}</p>
-
-    <p class="mb-8 text-gray-700 dark:text-gray-300">
-      Aquí encontrarás guías paso a paso, tutoriales prácticos y explicaciones claras.
-    </p>
-
-    <!-- Barra de búsqueda -->
-    <BarraBusqueda placeholder="Buscar tutorial..." targetSelector=".tutorial-item" />
-
-    <!-- Lista de tutoriales -->
-    <TutorialList tutorials={tutorials} />
+  <HerramientasDestacadas
+    active="guias"
+    title="Guías y tutoriales"
+    description="Aprende implementaciones reales listas para adaptar a tus clientes o clases."
+  >
+    <div class="space-y-6">
+      <div class="space-y-3">
+        <h2 class="text-2xl font-semibold text-white">{tutorials.length} guías para impulsar tu negocio digital</h2>
+        <p class="text-sm text-slate-300">
+          Encuentra recursos listos para descargar, ejemplos de código y checklists descargables para tus proyectos.
+        </p>
+      </div>
+      <BarraBusqueda placeholder="Buscar tutorial..." targetSelector=".tutorial-item" />
+      <TutorialList tutorials={tutorials} />
+    </div>
   </HerramientasDestacadas>
 </Layout>

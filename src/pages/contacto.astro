@@ -1,22 +1,99 @@
 ---
-import BaseLayout from '../layouts/Layout.astro';
----
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../config/site';
 
-<BaseLayout title="Contacto" description="Formulario para contactarte conmigo.">
-  <h1 class="text-3xl font-bold mb-4 text-center text-blue-400">📬 Contáctame</h1>
-  <form class="space-y-6 bg-gray-800 p-6 rounded-lg shadow" netlify>
-    <div>
-      <label class="block text-sm font-medium">Nombre</label>
-      <input type="text" name="nombre" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required />
+const title = 'Contacto | Herramientas para Informáticos';
+const description = 'Reserva una consultoría o solicita acceso personalizado a la versión premium con marca blanca.';
+const keywords = [
+  'contacto herramientas informáticos',
+  'consultoría tecnológica',
+  'demo plataforma TI',
+];
+---
+<Layout title={title} description={description} keywords={keywords}>
+  <section class="grid gap-10 lg:grid-cols-[minmax(0,1fr),360px]">
+    <div class="space-y-6">
+      <div class="space-y-3">
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-400">Hablemos</p>
+        <h1 class="text-3xl font-bold text-white">Diseñemos tu estrategia de monetización digital</h1>
+        <p class="text-sm text-slate-300">
+          Cuéntanos sobre tu proyecto, tipo de audiencia y objetivos de negocio. En menos de 24 horas recibirás una propuesta con los recursos y automatizaciones recomendadas.
+        </p>
+      </div>
+      <form class="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/70 p-6 shadow shadow-blue-500/10" name="contacto" method="post" data-netlify="true">
+        <input type="hidden" name="form-name" value="contacto" />
+        <div class="grid gap-4 md:grid-cols-2">
+          <label class="space-y-1 text-sm text-slate-200">
+            Nombre completo
+            <input
+              type="text"
+              name="nombre"
+              required
+              class="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 focus:border-blue-400 focus:outline-none"
+            />
+          </label>
+          <label class="space-y-1 text-sm text-slate-200">
+            Correo profesional
+            <input
+              type="email"
+              name="correo"
+              required
+              class="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 focus:border-blue-400 focus:outline-none"
+            />
+          </label>
+        </div>
+        <label class="space-y-1 text-sm text-slate-200">
+          Tipo de proyecto
+          <select
+            name="proyecto"
+            class="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 focus:border-blue-400 focus:outline-none"
+            required
+          >
+            <option value="consultoria">Consultoría / Freelance</option>
+            <option value="academia">Academia / Bootcamp</option>
+            <option value="startup">Startup tecnológica</option>
+            <option value="empresa">Empresa en transformación digital</option>
+          </select>
+        </label>
+        <label class="space-y-1 text-sm text-slate-200">
+          Objetivo principal
+          <textarea
+            name="objetivo"
+            rows="4"
+            class="w-full rounded-xl border border-slate-700 bg-slate-950/60 px-4 py-3 text-sm text-slate-100 focus:border-blue-400 focus:outline-none"
+            required
+          ></textarea>
+        </label>
+        <button
+          type="submit"
+          class="inline-flex w-full items-center justify-center rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white shadow shadow-blue-500/30 transition hover:bg-blue-400"
+        >
+          Solicitar consultoría
+        </button>
+        <p class="text-xs text-slate-500">Firmamos NDA bajo solicitud. Respondemos en menos de un día hábil.</p>
+      </form>
     </div>
-    <div>
-      <label class="block text-sm font-medium">Correo</label>
-      <input type="email" name="correo" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required />
-    </div>
-    <div>
-      <label class="block text-sm font-medium">Mensaje</label>
-      <textarea name="mensaje" rows="4" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required></textarea>
-    </div>
-    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Enviar</button>
-  </form>
-</BaseLayout>
+
+    <aside class="space-y-4 rounded-3xl border border-slate-800 bg-slate-900/40 p-6 text-sm text-slate-300">
+      <h2 class="text-lg font-semibold text-white">Paquetes más solicitados</h2>
+      <ul class="space-y-3">
+        <li>
+          <p class="font-semibold text-blue-200">Implementación express</p>
+          <p class="text-xs text-slate-400">Configuramos tu cuenta PRO, migramos contenidos y lanzamos una landing optimizada para campañas.</p>
+        </li>
+        <li>
+          <p class="font-semibold text-blue-200">Monetización recurrente</p>
+          <p class="text-xs text-slate-400">Definimos planes de suscripción, integraciones de pago y embudos automatizados.</p>
+        </li>
+        <li>
+          <p class="font-semibold text-blue-200">Programa para academias</p>
+          <p class="text-xs text-slate-400">Plantillas de cursos, reportes de estudiantes y marca blanca para tus cohortes.</p>
+        </li>
+      </ul>
+      <div class="rounded-2xl border border-blue-500/30 bg-blue-500/10 p-4 text-xs text-blue-100">
+        <p class="font-semibold">¿Prefieres escribirnos directamente?</p>
+        <p>Escríbenos a <a href={`mailto:${siteConfig.contactEmail}`} class="underline">{siteConfig.contactEmail}</a>.</p>
+      </div>
+    </aside>
+  </section>
+</Layout>

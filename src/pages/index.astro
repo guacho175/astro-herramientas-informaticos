@@ -1,13 +1,48 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import HerramientasDestacadas from '../components/HerramientasDestacadas.astro';
-import Categorias from '../components/Categorias.astro';
+import Hero from '../components/Hero.astro';
+import FeatureHighlights from '../components/FeatureHighlights.astro';
+import ToolsCards from '../components/ToolsCards.astro';
+import PremiumShowcase from '../components/PremiumShowcase.astro';
+import PricingPlans from '../components/PricingPlans.astro';
+import Testimonials from '../components/Testimonials.astro';
+import FAQSection from '../components/FAQSection.astro';
+import NewsletterBanner from '../components/NewsletterBanner.astro';
+import ContentPreview from '../components/ContentPreview.astro';
+import { siteConfig } from '../config/site';
 
-
-const title = "Inicio | Herramientas para Informáticos";
-const description = "recursos y utilidades para estudiantes y profesionales de la informática.";
-const keywords = "informática, herramientas, apps, estudiantes, utilidades";
+const title = `${siteConfig.title} | Plataforma para monetizar conocimientos de TI`;
+const description =
+  'Automatiza flujos, accede a guías premium y ofrece experiencias de valor a tus clientes con nuestra suite para informáticos.';
+const keywords = [
+  'plataforma para informáticos',
+  'monetizar habilidades tecnológicas',
+  'herramientas para desarrolladores',
+  'recursos para consultores TI',
+];
 ---
 <Layout title={title} description={description} keywords={keywords}>
-  <HerramientasDestacadas />
+  <Hero />
+  <FeatureHighlights />
+  <section class="space-y-6">
+    <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+      <div>
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-400">Stack curado</p>
+        <h2 class="text-3xl font-semibold text-white">Herramientas recomendadas para resultados inmediatos</h2>
+      </div>
+      <p class="max-w-2xl text-sm text-slate-400">
+        Combina aplicaciones gratuitas y premium para optimizar tu operación, documentar procesos y medir resultados sin sobrecargar tu presupuesto.
+      </p>
+    </div>
+    <ToolsCards limit={6} />
+    <div class="flex justify-end">
+      <a href="/blog/apps" class="text-sm font-semibold text-blue-300 transition hover:text-blue-200">Ver todas las herramientas →</a>
+    </div>
+  </section>
+  <PremiumShowcase />
+  <PricingPlans />
+  <Testimonials />
+  <FAQSection />
+  <NewsletterBanner />
+  <ContentPreview />
 </Layout>

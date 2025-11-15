@@ -1,16 +1,156 @@
 ---
-// No necesita props por ahora
+import { siteConfig } from '../config/site';
+const currentPath = Astro.url.pathname;
+const navLinks = siteConfig.navigation;
+const { primaryAction, secondaryAction } = siteConfig.hero;
 ---
-<header class="relative bg-gray-900 text-white py-4 shadow-md">
-  <!-- LOGO a la izquierda -->
-  <a href="/" class="absolute left-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
-    <img src="/logo-tec.png" alt="Logo tecnología" class="h-10 w-10 object-contain" />
-    <span class="text-sm text-white"></span>
-  </a>
+<header class="sticky top-0 z-40 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+  <div class="mx-auto flex w-full max-w-6xl items-center justify-between gap-4 px-4 py-4 md:px-6 lg:px-8">
+    <a href="/" class="flex items-center gap-3 text-slate-100 transition hover:opacity-90">
+      <img src="/logo-tec.png" alt="Logo Herramientas para Informáticos" class="h-10 w-10 rounded-lg border border-slate-800" />
+      <div class="flex flex-col leading-tight">
+        <span class="text-xs uppercase tracking-[0.35em] text-blue-400">{siteConfig.hero.eyebrow}</span>
+        <span class="text-lg font-semibold">{siteConfig.name}</span>
+      </div>
+    </a>
 
-  <!-- TÍTULO centrado -->
-  <div class="text-center max-w-full">
-    <h1 class="text-2xl font-bold">Herramientas para Informáticos</h1>
-    <p class="text-gray-400 text-sm">Apps, recursos y utilidades para estudiantes y profesionales</p>
+    <nav class="hidden items-center gap-6 text-sm font-medium text-slate-200 lg:flex">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class={`rounded-full px-3 py-2 transition ${
+            currentPath === link.href ? 'bg-blue-500/20 text-blue-200' : 'hover:text-blue-300'
+          }`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="hidden items-center gap-3 lg:flex">
+      <a
+        href={secondaryAction.href}
+        class="rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-blue-400 hover:text-blue-300"
+      >
+        {secondaryAction.label}
+      </a>
+      <a
+        href={primaryAction.href}
+        class="rounded-full bg-blue-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:bg-blue-400"
+      >
+        {primaryAction.label}
+      </a>
+    </div>
+
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-full border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-blue-400 lg:hidden"
+      data-mobile-toggle
+      aria-expanded="false"
+      aria-controls="mobile-menu"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" class="h-5 w-5">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+      Menú
+    </button>
   </div>
+
+  <div id="mobile-menu" class="hidden border-t border-slate-800 bg-slate-950/95 px-4 pb-6 pt-2 text-sm text-slate-200 lg:hidden">
+    <nav class="flex flex-col gap-2">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class={`rounded-xl px-3 py-2 transition ${
+            currentPath === link.href ? 'bg-blue-500/20 text-blue-200' : 'hover:bg-slate-800/60'
+          }`}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+    <div class="mt-4 flex flex-col gap-2">
+      <a
+        href={primaryAction.href}
+        class="rounded-xl bg-blue-500 px-4 py-2 text-center font-semibold text-white transition hover:bg-blue-400"
+      >
+        {primaryAction.label}
+      </a>
+      <a
+        href={secondaryAction.href}
+        class="rounded-xl border border-slate-700 px-4 py-2 text-center font-semibold text-slate-200 transition hover:border-blue-400 hover:text-blue-300"
+      >
+        {secondaryAction.label}
+      </a>
+    </div>
+  </div>
+
+  <script is:inline>
+    const toggleButton = document.querySelector('[data-mobile-toggle]');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    if (toggleButton && mobileMenu) {
+      const hideMenu = () => {
+        mobileMenu.classList.remove('animate-fade-in');
+        mobileMenu.classList.add('animate-fade-out');
+        toggleButton.setAttribute('aria-expanded', 'false');
+        mobileMenu.addEventListener(
+          'animationend',
+          () => {
+            mobileMenu.classList.add('hidden');
+            mobileMenu.classList.remove('animate-fade-out');
+          },
+          { once: true }
+        );
+      };
+
+      const showMenu = () => {
+        mobileMenu.classList.remove('hidden');
+        mobileMenu.classList.remove('animate-fade-out');
+        mobileMenu.classList.add('animate-fade-in');
+        toggleButton.setAttribute('aria-expanded', 'true');
+      };
+
+      toggleButton.addEventListener('click', () => {
+        const isHidden = mobileMenu.classList.contains('hidden');
+        if (isHidden) {
+          showMenu();
+        } else {
+          hideMenu();
+        }
+      });
+    }
+  </script>
 </header>
+
+<style is:global>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.25s ease forwards;
+  }
+
+  .animate-fade-out {
+    animation: fadeOut 0.2s ease forwards;
+  }
+</style>

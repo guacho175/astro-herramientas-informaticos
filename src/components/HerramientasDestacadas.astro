@@ -1,25 +1,30 @@
 ---
-// src/components/HerramientasDestacadas.astro
 import Categorias from './Categorias.astro';
 import MenuHamburguesa from './MenuHamburguesa.astro';
 
-const { active } = Astro.props;
+interface Props {
+  active?: string;
+  title?: string;
+  description?: string;
+}
+
+const { active = 'apps', title, description }: Props = Astro.props;
 ---
-
-<section class="py-10 w-full" data-aos="fade-up">
-  <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full mb-6">
-    
-    <!-- Columna 1: Categorías -->
-    <div class="space-y-6 col-span-1">
-      <h3 class="text-2xl font-bold text-blue-400">🛠 Herramientas destacadas</h3>
+<section class="w-full space-y-10">
+  <div class="grid gap-10 lg:grid-cols-[280px,1fr]">
+    <aside class="space-y-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg shadow-blue-500/5">
+      <div class="space-y-3">
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-400">Explora categorías</p>
+        <h3 class="text-2xl font-semibold text-white">{title ?? 'Herramientas destacadas'}</h3>
+        {description && <p class="text-sm text-slate-400">{description}</p>}
+      </div>
       <Categorias active={active} />
-    </div>
+    </aside>
 
-    <!-- Columna 2-5: Contenido dinámico -->
-    <div class="col-span-1 lg:col-span-4">
+    <div class="space-y-6">
       <slot />
     </div>
   </div>
 
-  <MenuHamburguesa />
+  <MenuHamburguesa active={active} />
 </section>

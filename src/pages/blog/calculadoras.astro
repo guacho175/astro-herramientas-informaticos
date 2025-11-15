@@ -2,18 +2,46 @@
 import Layout from '../../layouts/Layout.astro';
 import HerramientasDestacadas from '../../components/HerramientasDestacadas.astro';
 
-const title = "Calculadoras Online | Herramientas para Informáticos";
-const description = "Utilidades prácticas para cálculos comunes en informática, desarrollo y tecnología.";
-const keywords = "calculadoras, online, informática, herramientas, desarrollo";
+const title = 'Calculadoras Online | Herramientas para Informáticos';
+const description = 'Utilidades inteligentes para presupuestar proyectos, estimar horas, costos cloud y márgenes de servicio.';
+const keywords = [
+  'calculadoras para programadores',
+  'presupuestos tecnología',
+  'costos cloud',
+];
 ---
-
 <Layout title={title} description={description} keywords={keywords}>
-  <HerramientasDestacadas active="calculadoras">
-    <h2 class="text-2xl font-bold text-blue-500 mb-6">📊 Calculadoras Online</h2>
-    <p class="text-lg text-gray-700">
-      Explora calculadoras útiles para desarrolladores, estudiantes y profesionales de informática. Ahorra tiempo y mejora tu precisión.
-    </p>
-
-    <!-- Aquí puedes luego insertar <CalculadorasCards /> si lo deseas -->
+  <HerramientasDestacadas
+    active="calculadoras"
+    title="Calculadoras estratégicas"
+    description="Próximamente: librería completa de calculadoras interactivas conectadas con tus métricas en tiempo real."
+  >
+    <div class="space-y-6 rounded-2xl border border-dashed border-blue-500/30 bg-blue-500/5 p-8 text-blue-100">
+      <h2 class="text-2xl font-semibold text-white">Estamos construyendo la siguiente generación de calculadoras</h2>
+      <p class="text-sm">
+        Tendrás conversores de tarifas, estimadores de AWS/Azure, simuladores de ROI y tableros comparativos. Suscríbete para recibir acceso anticipado.
+      </p>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
+          <p class="text-sm font-semibold">Calculadora de propuestas</p>
+          <p class="mt-2 text-xs text-blue-100/80">Genera presupuestos profesionales con plantillas exportables.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
+          <p class="text-sm font-semibold">Estimador de costos cloud</p>
+          <p class="mt-2 text-xs text-blue-100/80">Compara escenarios multicloud y márgenes para tus clientes.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
+          <p class="text-sm font-semibold">Simulador de membresías</p>
+          <p class="mt-2 text-xs text-blue-100/80">Define precios recurrentes y proyecta crecimiento de ingresos.</p>
+        </div>
+        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
+          <p class="text-sm font-semibold">Planificador de cargas</p>
+          <p class="mt-2 text-xs text-blue-100/80">Optimiza uso de recursos y horas de tu equipo.</p>
+        </div>
+      </div>
+      <a href="#planes" class="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-blue-100 transition hover:bg-white/20">
+        Ver planes para acceso anticipado →
+      </a>
+    </div>
   </HerramientasDestacadas>
 </Layout>

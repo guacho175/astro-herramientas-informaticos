@@ -1,21 +1,41 @@
 ---
+interface Category {
+  id: string;
+  titulo: string;
+  link: string;
+}
+
+const { active }: { active?: string } = Astro.props;
 const pathname = Astro.url.pathname;
 
-const categorias = [
-  { id: "apps", titulo: "📱 Apps recomendadas", link: "/blog/apps" },
-  { id: "guias", titulo: "📘 Guías y tutoriales", link: "/blog/guias" },
-  { id: "calculadoras", titulo: "📊 Calculadoras online", link: "/blog/calculadoras" },
+const categorias: Category[] = [
+  { id: 'apps', titulo: '📱 Apps recomendadas', link: '/blog/apps' },
+  { id: 'guias', titulo: '📘 Guías y tutoriales', link: '/blog/guias' },
+  { id: 'calculadoras', titulo: '📊 Calculadoras online', link: '/blog/calculadoras' },
 ];
 ---
-<nav class="hidden md:flex flex-col space-y-3">
-  {categorias.map(cat => (
-    <a
-      href={cat.link}
-      class={`text-lg font-medium transition hover:text-blue-500 text-gray-800 ${
-        pathname === cat.link ? 'text-blue-500 font-bold' : ''
-      }`}
-    >
-      {cat.titulo}
-    </a>
-  ))}
+<nav class="hidden flex-col gap-2 text-sm text-slate-300 md:flex">
+  {categorias.map(cat => {
+    const isActive = active ? active === cat.id : pathname === cat.link;
+    return (
+      <a
+        href={cat.link}
+        class={`group flex items-center justify-between rounded-xl border border-transparent px-4 py-3 transition ${
+          isActive ? 'border-blue-500/40 bg-blue-500/10 text-blue-200' : 'hover:border-blue-500/20 hover:bg-slate-800/60'
+        }`}
+      >
+        <span>{cat.titulo}</span>
+        <svg
+          class={`h-4 w-4 transition ${isActive ? 'translate-x-0 text-blue-300' : 'translate-x-1 text-slate-500 group-hover:text-blue-200'}`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.8"
+          stroke="currentColor"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </a>
+    );
+  })}
 </nav>

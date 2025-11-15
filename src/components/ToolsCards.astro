@@ -1,14 +1,62 @@
 ---
-// src/components/ToolsCards.astro
-import { tools } from "../data/tools";
----
+import type { Tool } from '../data/tools';
+import { tools } from '../data/tools';
 
-<div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-  {tools.map(tool => (
-    <div class="tool-card bg-gray-800 rounded-lg p-5 shadow hover:shadow-lg transition" data-search={`${tool.title} ${tool.description}`}>
-      <h3 class="text-xl font-semibold mb-2">{tool.emoji} {tool.title}</h3>
-      <p class="text-gray-300 mb-3">{tool.description}</p>
-      <a href={tool.link} target="_blank" class="text-blue-400 hover:underline">Ver herramienta</a>
-    </div>
+interface Props {
+  limit?: number;
+  filterCategory?: Tool['category'];
+  showPremiumBadge?: boolean;
+}
+
+const { limit, filterCategory, showPremiumBadge = true }: Props = Astro.props;
+
+const filteredTools = filterCategory
+  ? tools.filter(tool => tool.category === filterCategory)
+  : tools;
+const list = typeof limit === 'number' ? filteredTools.slice(0, limit) : filteredTools;
+---
+<div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+  {list.map(tool => (
+    <article
+      class="tool-card group flex flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow shadow-blue-500/10 transition hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/20"
+      data-search={`${tool.title} ${tool.description} ${tool.tags.join(' ')}`}
+    >
+      <header class="mb-4 flex items-start justify-between gap-3">
+        <div>
+          <p class="text-3xl">{tool.emoji}</p>
+          <h3 class="text-xl font-semibold text-white">{tool.title}</h3>
+        </div>
+        {tool.premium && showPremiumBadge && (
+          <span class="rounded-full border border-amber-400/40 bg-amber-400/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-200">
+            Premium
+          </span>
+        )}
+      </header>
+
+      <p class="mb-4 text-sm text-slate-300">{tool.description}</p>
+
+      <div class="mt-auto flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
+        <span class="inline-flex items-center gap-2 rounded-full border border-slate-700/60 px-3 py-1 text-slate-300">
+          {tool.categoryLabel}
+        </span>
+        <div class="flex flex-wrap gap-2">
+          {tool.tags.slice(0, 3).map(tag => (
+            <span class="rounded-full bg-slate-800/80 px-2 py-1 text-[0.7rem] uppercase tracking-wide text-slate-400">#{tag}</span>
+          ))}
+        </div>
+      </div>
+
+      <a
+        href={tool.link}
+        target="_blank"
+        rel="noreferrer"
+        class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-blue-300 transition hover:text-blue-200"
+      >
+        Explorar herramienta
+        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6" />
+        </svg>
+      </a>
+    </article>
   ))}
 </div>

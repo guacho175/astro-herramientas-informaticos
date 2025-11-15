@@ -1,0 +1,68 @@
+---
+import { siteConfig } from '../config/site';
+import { metrics } from '../data/metrics';
+const { hero, tagline } = siteConfig;
+---
+<section class="grid gap-12 lg:grid-cols-[minmax(0,1fr),380px]">
+  <div class="space-y-6">
+    <p class="inline-flex items-center gap-2 rounded-full border border-blue-500/40 bg-blue-500/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-blue-200">
+      {hero.eyebrow}
+    </p>
+    <h1 class="text-4xl font-bold leading-tight text-white md:text-5xl">{hero.title}</h1>
+    <p class="text-lg text-slate-300 md:text-xl">{hero.subtitle}</p>
+    <p class="text-sm text-slate-400">{tagline}</p>
+
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <a
+        href={hero.primaryAction.href}
+        class="inline-flex items-center justify-center rounded-full bg-blue-500 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:bg-blue-400"
+      >
+        {hero.primaryAction.label}
+      </a>
+      <a
+        href={hero.secondaryAction.href}
+        class="inline-flex items-center justify-center rounded-full border border-slate-700 px-6 py-3 text-sm font-semibold text-slate-200 transition hover:border-blue-400 hover:text-blue-200"
+      >
+        {hero.secondaryAction.label}
+      </a>
+    </div>
+
+    <div class="grid gap-6 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow shadow-blue-500/10 sm:grid-cols-3">
+      {metrics.map(metric => (
+        <div class="space-y-1">
+          <p class="text-3xl font-semibold text-white">{metric.value}</p>
+          <p class="text-sm text-slate-300">{metric.label}</p>
+          <p class="text-xs text-slate-500">{metric.detail}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="relative rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-900/40 p-8 shadow-xl shadow-blue-500/20">
+    <div class="space-y-4">
+      <p class="text-sm font-semibold uppercase tracking-[0.35em] text-blue-300">Panel de analíticas</p>
+      <h2 class="text-2xl font-bold text-white">Visualiza oportunidades de monetización</h2>
+      <p class="text-sm text-slate-300">
+        Dashboards en tiempo real muestran qué herramientas generan más engagement, qué contenidos convierten y qué clientes están listos para un upgrade.
+      </p>
+      <ul class="space-y-2 text-sm text-slate-300">
+        <li class="flex items-start gap-2">
+          <span class="mt-1 text-blue-300">✔</span>
+          Eventos automáticos: descargas, clics, conversiones.
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="mt-1 text-blue-300">✔</span>
+          Segmentación por cliente, curso o cohorte.
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="mt-1 text-blue-300">✔</span>
+          Exportación a CSV y conexión con CRM.
+        </li>
+      </ul>
+      <div class="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 text-xs text-blue-100">
+        <p class="font-semibold">Nuevo en versión PRO</p>
+        <p>Mapas de calor y embudos personalizables integrados con Google Analytics 4.</p>
+      </div>
+    </div>
+  </div>
+</section>
