@@ -1,47 +1,54 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import HerramientasDestacadas from '../../components/HerramientasDestacadas.astro';
+import AdSlot from '../../components/AdSlot.astro';
+import { siteConfig } from '../../config/site';
 
-const title = 'Calculadoras Online | Herramientas para Informáticos';
-const description = 'Utilidades inteligentes para presupuestar proyectos, estimar horas, costos cloud y márgenes de servicio.';
+const title = 'Laboratorio de Recursos | Herramientas para Informáticos';
+const description = 'Prototipos, calculadoras y widgets interactivos para complementar tus artículos y mejorar el tiempo en página.';
 const keywords = [
   'calculadoras para programadores',
-  'presupuestos tecnología',
-  'costos cloud',
+  'widgets interactivos',
+  'recursos para blogs de tecnología',
 ];
+
+const inFeedSlot = siteConfig.adsense?.slots.inFeed;
 ---
 <Layout title={title} description={description} keywords={keywords}>
   <HerramientasDestacadas
     active="calculadoras"
-    title="Calculadoras estratégicas"
-    description="Próximamente: librería completa de calculadoras interactivas conectadas con tus métricas en tiempo real."
+    title="Laboratorio creativo"
+    description="Experimenta con utilidades que mantienen a tu audiencia participando y aumentan los ingresos por anuncios."
   >
-    <div class="space-y-6 rounded-2xl border border-dashed border-blue-500/30 bg-blue-500/5 p-8 text-blue-100">
-      <h2 class="text-2xl font-semibold text-white">Estamos construyendo la siguiente generación de calculadoras</h2>
-      <p class="text-sm">
-        Tendrás conversores de tarifas, estimadores de AWS/Azure, simuladores de ROI y tableros comparativos. Suscríbete para recibir acceso anticipado.
-      </p>
-      <div class="grid gap-3 sm:grid-cols-2">
-        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
-          <p class="text-sm font-semibold">Calculadora de propuestas</p>
-          <p class="mt-2 text-xs text-blue-100/80">Genera presupuestos profesionales con plantillas exportables.</p>
-        </div>
-        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
-          <p class="text-sm font-semibold">Estimador de costos cloud</p>
-          <p class="mt-2 text-xs text-blue-100/80">Compara escenarios multicloud y márgenes para tus clientes.</p>
-        </div>
-        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
-          <p class="text-sm font-semibold">Simulador de membresías</p>
-          <p class="mt-2 text-xs text-blue-100/80">Define precios recurrentes y proyecta crecimiento de ingresos.</p>
-        </div>
-        <div class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4">
-          <p class="text-sm font-semibold">Planificador de cargas</p>
-          <p class="mt-2 text-xs text-blue-100/80">Optimiza uso de recursos y horas de tu equipo.</p>
-        </div>
+    <div class="space-y-6">
+      <div class="space-y-4 rounded-2xl border border-blue-500/30 bg-blue-500/5 p-8 text-blue-50/90">
+        <h2 class="text-2xl font-semibold text-white">Estamos construyendo la siguiente generación de recursos interactivos</h2>
+        <p class="text-sm">
+          Próximamente encontrarás estimadores de costos cloud, calculadoras de tarifas freelance, simuladores de crecimiento y widgets listos para embeber en tus artículos.
+        </p>
+        <ul class="grid gap-3 sm:grid-cols-2">
+          <li class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4 text-sm">
+            <p class="font-semibold">Calculadora de propuestas</p>
+            <p class="mt-2 text-xs text-blue-100/80">Genera presupuestos profesionales descargables en PDF.</p>
+          </li>
+          <li class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4 text-sm">
+            <p class="font-semibold">Estimador de costos cloud</p>
+            <p class="mt-2 text-xs text-blue-100/80">Compara escenarios multicloud y planifica márgenes.</p>
+          </li>
+          <li class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4 text-sm">
+            <p class="font-semibold">Simulador de ingresos ads</p>
+            <p class="mt-2 text-xs text-blue-100/80">Proyecta RPM, CTR y escenarios de posicionamiento SEO.</p>
+          </li>
+          <li class="rounded-2xl border border-blue-400/30 bg-slate-950/40 p-4 text-sm">
+            <p class="font-semibold">Planificador de contenidos</p>
+            <p class="mt-2 text-xs text-blue-100/80">Organiza campañas, formatos y objetivos por semana.</p>
+          </li>
+        </ul>
+        <p class="text-xs text-blue-100/70">
+          ¿Quieres acceso anticipado? Suscríbete a la newsletter y te avisaremos en cuanto estén disponibles.
+        </p>
       </div>
-      <a href="#planes" class="inline-flex w-fit items-center gap-2 rounded-full bg-white/10 px-5 py-2 text-sm font-semibold text-blue-100 transition hover:bg-white/20">
-        Ver planes para acceso anticipado →
-      </a>
+      <AdSlot slot={inFeedSlot} label="Anuncio en laboratorio" layout="in-feed" />
     </div>
   </HerramientasDestacadas>
 </Layout>

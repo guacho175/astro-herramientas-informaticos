@@ -3,28 +3,28 @@ export const siteConfig = {
   name: 'Herramientas para Informáticos',
   title: 'Herramientas para Informáticos',
   description:
-    'Suite integral de recursos digitales para estudiantes, desarrolladores y profesionales de TI que buscan optimizar su trabajo diario.',
+    'Blog especializado en guías, tutoriales y tendencias tecnológicas para estudiantes, desarrolladores y consultores TI.',
   keywords: [
-    'herramientas informáticos',
-    'productividad para desarrolladores',
-    'recursos para estudiantes de informática',
-    'software recomendado',
-    'calculadoras tecnológicas',
+    'blog de informática',
+    'tutoriales de tecnología',
+    'novedades digitales',
+    'herramientas para desarrolladores',
+    'guías para consultores TI',
   ],
-  tagline: 'Automatiza, aprende y escala tus proyectos tecnológicos desde un mismo lugar.',
+  tagline: 'Descubre recursos confiables para aprender, experimentar y monetizar con anuncios.',
   hero: {
-    eyebrow: 'Plataforma todo-en-uno para profesionales de TI',
-    title: 'Centraliza tus herramientas digitales y crea nuevos ingresos con productos premium.',
+    eyebrow: 'Guías y novedades para profesionales TI',
+    title: 'Explora tutoriales listos para implementar y descubre lo último en herramientas digitales',
     subtitle:
-      'Accede a guías accionables, plantillas listas para usar, calculadoras inteligentes y analíticas para monetizar tus servicios.',
-    primaryAction: { label: 'Probar gratis por 7 días', href: '#planes' },
-    secondaryAction: { label: 'Ver demo interactiva', href: '#demo' },
+      'Actualizamos cada semana con flujos paso a paso, reseñas y tendencias de Internet para que crees proyectos memorables y escales con publicidad.',
+    primaryAction: { label: 'Ver últimas guías', href: '/blog/guias' },
+    secondaryAction: { label: 'Explorar herramientas', href: '/blog/apps' },
   },
   navigation: [
     { label: 'Inicio', href: '/' },
-    { label: 'Recursos', href: '/blog/apps' },
     { label: 'Guías', href: '/blog/guias' },
-    { label: 'Calculadoras', href: '/blog/calculadoras' },
+    { label: 'Herramientas', href: '/blog/apps' },
+    { label: 'Laboratorio', href: '/blog/calculadoras' },
     { label: 'Contacto', href: '/contacto' },
   ],
   analytics: {
@@ -37,22 +37,42 @@ export const siteConfig = {
     { label: 'Newsletter', href: 'https://herramientasinformaticos.dev/newsletter' },
   ],
   contactEmail: 'hola@herramientasinformaticos.dev',
-  monetization: {
-    premiumProduct: 'Herramientas para Informáticos PRO',
-    promise:
-      'Multiplica tu productividad con librerías privadas, automatizaciones exclusivas y soporte experto.',
-    premiumFeatures: [
-      'Acceso ilimitado a todas las herramientas y calculadoras avanzadas',
-      'Biblioteca de plantillas editables para consultoría y freelancing',
-      'Panel de métricas con analíticas en tiempo real de uso y conversión',
-      'Capacitaciones mensuales en vivo y comunidad privada',
-      'Marca blanca para revender la suite a tus propios clientes',
+  editorial: {
+    intro:
+      'Series especializadas para profundizar en automatización, contenido educativo y hallazgos semanales de la web.',
+    pillars: [
+      {
+        title: 'Guías paso a paso',
+        description: 'Implementaciones reales de infraestructura, automatización y buenas prácticas listas para ejecutar.',
+        href: '/blog/guias',
+      },
+      {
+        title: 'Radar de herramientas',
+        description: 'Nuevas apps, extensiones y workflows para impulsar tu productividad y la de tus clientes.',
+        href: '/blog/apps',
+      },
+      {
+        title: 'Laboratorio creativo',
+        description: 'Ideas experimentales, recursos descargables y tendencias emergentes de Internet.',
+        href: '/blog/calculadoras',
+      },
     ],
-    freePlanBenefits: [
-      'Catálogo curado de herramientas gratuitas',
-      'Boletín semanal con novedades del sector',
-      'Calculadoras esenciales para presupuestos y estimaciones rápidas',
-    ],
+    highlight: {
+      label: 'Reporte destacado',
+      title: 'Cómo optimizar ingresos con anuncios sin descuidar la experiencia',
+      description:
+        'Checklist práctico para configurar Google AdSense, analizar rendimiento y planificar colocación responsable de anuncios.',
+      href: '/blog/guias',
+      linkLabel: 'Leer el reporte',
+    },
+  },
+  adsense: {
+    client: 'ca-pub-0000000000000000',
+    slots: {
+      hero: '0000000001',
+      inFeed: '0000000002',
+      sidebar: '0000000003',
+    },
   },
   seo: {
     twitter: '@herramientasit',

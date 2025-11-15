@@ -1,0 +1,42 @@
+---
+import { siteConfig } from '../config/site';
+
+interface Props {
+  slot?: string;
+  label?: string;
+  layout?: 'in-article' | 'in-feed' | 'display';
+  className?: string;
+}
+
+const { slot, label = 'Publicidad', layout = 'display', className = '' }: Props = Astro.props;
+const client = siteConfig.adsense?.client;
+const adSlot = slot ?? '';
+const isConfigured = Boolean(client && adSlot);
+---
+<div class={`rounded-3xl border border-slate-800 bg-slate-900/60 p-6 text-center text-sm text-slate-300 ${className}`}>
+  <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-300">{label}</p>
+  {isConfigured ? (
+    <>
+      <ins
+        class="adsbygoogle block"
+        style="display:block"
+        data-ad-client={client}
+        data-ad-slot={adSlot}
+        data-ad-format={layout === 'display' ? 'auto' : undefined}
+        data-ad-layout={layout === 'in-feed' ? 'in-feed' : undefined}
+        data-full-width-responsive="true"
+      ></ins>
+      <script is:inline>
+        (window.adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </>
+  ) : (
+    <div class="mt-4 space-y-2 rounded-2xl border border-dashed border-blue-500/30 bg-blue-500/5 p-4 text-xs text-blue-100">
+      <p class="font-semibold">Configura tu ID de AdSense</p>
+      <p>
+        Actualiza <code>siteConfig.adsense</code> con el identificador real de cliente y slot para comenzar a monetizar con
+        anuncios.
+      </p>
+    </div>
+  )}
+</div>

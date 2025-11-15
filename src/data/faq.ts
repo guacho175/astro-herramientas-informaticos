@@ -5,23 +5,23 @@ export interface FAQItem {
 
 export const faqs: FAQItem[] = [
   {
-    question: '¿Puedo usar la plataforma sin conocimientos avanzados de programación?',
+    question: '¿Cómo integro Google AdSense en mi blog?',
     answer:
-      'Sí. Diseñamos cada flujo con instrucciones guiadas y plantillas editables. Además, en el plan PRO tienes soporte prioritario para acompañarte en la implementación.',
+      'Configura tu cuenta de AdSense, crea bloques de anuncio y reemplaza los IDs de ejemplo en siteConfig.adsense. El componente AdSlot se encargará de mostrarlos de forma responsive.',
   },
   {
-    question: '¿Cómo funcionan las analíticas incluidas?',
+    question: '¿Cada cuánto publican nuevos tutoriales?',
     answer:
-      'Recopilamos eventos de uso anonimizados (clicks, descargas, conversiones) para mostrarte qué recursos generan más valor y en qué etapa pierdes usuarios.',
+      'Publicamos al menos una guía extensa y dos cápsulas breves por semana, priorizando temas sugeridos por la comunidad.',
   },
   {
-    question: '¿Ofrecen precios especiales para instituciones educativas?',
+    question: '¿Puedo proponer una herramienta o recurso?',
     answer:
-      'Sí. El plan Escala incluye licencias multiusuario, marca blanca y workshops mensuales para docentes. Escríbenos para una propuesta personalizada.',
+      'Sí. Escríbenos mediante el formulario de contacto con el caso de uso y añadiremos tu sugerencia a la agenda editorial.',
   },
   {
-    question: '¿Puedo revender la plataforma con mi marca?',
+    question: '¿Ofrecen colaboraciones patrocinadas?',
     answer:
-      'Con el plan Escala obtienes acceso a marca blanca, dominios personalizados y automatizaciones para cobrar desde tu propio sitio.',
+      'Aceptamos reseñas y campañas siempre que aporten valor educativo. Contáctanos para revisar formatos y disponibilidad.',
   },
 ];

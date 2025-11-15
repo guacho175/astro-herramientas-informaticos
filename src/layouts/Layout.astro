@@ -21,25 +21,17 @@ const keywordList = Array.isArray(keywords) ? keywords : keywords?.split(',') ??
 const ogImage = image ?? siteConfig.seo.openGraphImage;
 const canonicalUrl = siteConfig.site ? new URL(Astro.url.pathname, siteConfig.site).toString() : Astro.url.href;
 
-const productSchema = {
+const blogSchema = {
   '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: siteConfig.monetization.premiumProduct,
-  description: siteConfig.monetization.promise,
-  brand: {
-    '@type': 'Brand',
+  '@type': 'Blog',
+  name: siteConfig.title,
+  description: pageDescription,
+  inLanguage: 'es',
+  url: canonicalUrl,
+  publisher: {
+    '@type': 'Organization',
     name: siteConfig.name,
   },
-  offers: {
-    '@type': 'AggregateOffer',
-    priceCurrency: 'USD',
-    lowPrice: '0',
-    highPrice: '59',
-    offerCount: 3,
-    availability: 'https://schema.org/InStock',
-    url: canonicalUrl,
-  },
-  isFamilyFriendly: true,
 };
 ---
 <!DOCTYPE html>
@@ -74,7 +66,14 @@ const productSchema = {
       rel="stylesheet"
     />
 
-    <script type="application/ld+json" is:inline>{JSON.stringify(productSchema)}</script>
+    <script type="application/ld+json" is:inline>{JSON.stringify(blogSchema)}</script>
+    {siteConfig.adsense?.client && (
+      <script
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${siteConfig.adsense.client}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
     <slot name="head" />
   </head>
   <body class="bg-slate-950 text-slate-100 font-['Inter',_sans-serif] antialiased">

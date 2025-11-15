@@ -4,26 +4,62 @@ import Hero from '../components/Hero.astro';
 import FeatureHighlights from '../components/FeatureHighlights.astro';
 import ToolsCards from '../components/ToolsCards.astro';
 import PremiumShowcase from '../components/PremiumShowcase.astro';
-import PricingPlans from '../components/PricingPlans.astro';
-import Testimonials from '../components/Testimonials.astro';
 import FAQSection from '../components/FAQSection.astro';
 import NewsletterBanner from '../components/NewsletterBanner.astro';
 import ContentPreview from '../components/ContentPreview.astro';
+import AdSlot from '../components/AdSlot.astro';
 import { siteConfig } from '../config/site';
+import { getCollection } from 'astro:content';
 
-const title = `${siteConfig.title} | Plataforma para monetizar conocimientos de TI`;
+const title = `${siteConfig.title} | Blog de guías, tutoriales y novedades digitales`;
 const description =
-  'Automatiza flujos, accede a guías premium y ofrece experiencias de valor a tus clientes con nuestra suite para informáticos.';
+  'Descubre guías prácticas, reseñas de herramientas y tendencias para monetizar con anuncios tu proyecto tecnológico.';
 const keywords = [
-  'plataforma para informáticos',
-  'monetizar habilidades tecnológicas',
-  'herramientas para desarrolladores',
-  'recursos para consultores TI',
+  'blog tecnología',
+  'guías de informática',
+  'novedades herramientas digitales',
+  'google adsense para blogs',
 ];
+
+const tutorials = await getCollection('tutorials');
+const latestTutorials = tutorials.slice(0, 3);
+const sidebarSlot = siteConfig.adsense?.slots.sidebar;
+const inFeedSlot = siteConfig.adsense?.slots.inFeed;
 ---
 <Layout title={title} description={description} keywords={keywords}>
   <Hero />
   <FeatureHighlights />
+
+  <section class="grid gap-8 lg:grid-cols-[minmax(0,1fr),320px]">
+    <div class="space-y-6">
+      <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-400">Últimas guías</p>
+          <h2 class="text-3xl font-semibold text-white">Novedades recién salidas del horno</h2>
+        </div>
+        <a href="/blog/guias" class="text-sm font-semibold text-blue-300 transition hover:text-blue-200">Ver todas →</a>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {latestTutorials.map(item => (
+          <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-800 bg-slate-900/60 p-6 shadow shadow-blue-500/10 transition hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-blue-500/20">
+            <div class="space-y-3">
+              <p class="text-xs uppercase tracking-[0.3em] text-blue-300">{item.data.updated}</p>
+              <h3 class="text-xl font-semibold text-white">{item.data.title}</h3>
+              <p class="text-sm text-slate-300">{item.data.description}</p>
+            </div>
+            <a href={`/blog/guias/${item.slug}`} class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-300 hover:text-blue-200">
+              Leer tutorial
+              <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6l6 6-6 6" />
+              </svg>
+            </a>
+          </article>
+        ))}
+      </div>
+    </div>
+    <AdSlot slot={sidebarSlot} label="Publicidad destacada" className="self-start" />
+  </section>
+
   <section class="space-y-6">
     <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
       <div>
@@ -31,7 +67,7 @@ const keywords = [
         <h2 class="text-3xl font-semibold text-white">Herramientas recomendadas para resultados inmediatos</h2>
       </div>
       <p class="max-w-2xl text-sm text-slate-400">
-        Combina aplicaciones gratuitas y premium para optimizar tu operación, documentar procesos y medir resultados sin sobrecargar tu presupuesto.
+        Combina aplicaciones gratuitas y de pago para optimizar tu operación, documentar procesos y mejorar métricas clave antes de integrar anuncios.
       </p>
     </div>
     <ToolsCards limit={6} />
@@ -39,9 +75,10 @@ const keywords = [
       <a href="/blog/apps" class="text-sm font-semibold text-blue-300 transition hover:text-blue-200">Ver todas las herramientas →</a>
     </div>
   </section>
+
+  <AdSlot slot={inFeedSlot} label="Publicidad entre secciones" layout="in-feed" />
+
   <PremiumShowcase />
-  <PricingPlans />
-  <Testimonials />
   <FAQSection />
   <NewsletterBanner />
   <ContentPreview />

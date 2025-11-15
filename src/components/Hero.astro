@@ -1,7 +1,10 @@
 ---
 import { siteConfig } from '../config/site';
 import { metrics } from '../data/metrics';
-const { hero, tagline } = siteConfig;
+import AdSlot from './AdSlot.astro';
+
+const { hero, tagline, editorial, adsense } = siteConfig;
+const heroAdSlot = adsense?.slots.hero;
 ---
 <section class="grid gap-12 lg:grid-cols-[minmax(0,1fr),380px]">
   <div class="space-y-6">
@@ -38,31 +41,18 @@ const { hero, tagline } = siteConfig;
     </div>
   </div>
 
-  <div class="relative rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-900/40 p-8 shadow-xl shadow-blue-500/20">
-    <div class="space-y-4">
-      <p class="text-sm font-semibold uppercase tracking-[0.35em] text-blue-300">Panel de analíticas</p>
-      <h2 class="text-2xl font-bold text-white">Visualiza oportunidades de monetización</h2>
-      <p class="text-sm text-slate-300">
-        Dashboards en tiempo real muestran qué herramientas generan más engagement, qué contenidos convierten y qué clientes están listos para un upgrade.
-      </p>
-      <ul class="space-y-2 text-sm text-slate-300">
-        <li class="flex items-start gap-2">
-          <span class="mt-1 text-blue-300">✔</span>
-          Eventos automáticos: descargas, clics, conversiones.
-        </li>
-        <li class="flex items-start gap-2">
-          <span class="mt-1 text-blue-300">✔</span>
-          Segmentación por cliente, curso o cohorte.
-        </li>
-        <li class="flex items-start gap-2">
-          <span class="mt-1 text-blue-300">✔</span>
-          Exportación a CSV y conexión con CRM.
-        </li>
-      </ul>
-      <div class="rounded-2xl border border-blue-500/40 bg-blue-500/10 p-4 text-xs text-blue-100">
-        <p class="font-semibold">Nuevo en versión PRO</p>
-        <p>Mapas de calor y embudos personalizables integrados con Google Analytics 4.</p>
-      </div>
-    </div>
+  <div class="space-y-6">
+    <article class="space-y-4 rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-950 via-slate-950 to-blue-950/40 p-8 shadow-xl shadow-blue-500/20">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-blue-300">{editorial.highlight.label}</p>
+      <h2 class="text-2xl font-bold text-white">{editorial.highlight.title}</h2>
+      <p class="text-sm text-slate-300">{editorial.highlight.description}</p>
+      <a
+        href={editorial.highlight.href}
+        class="inline-flex items-center gap-2 text-sm font-semibold text-blue-200 transition hover:text-blue-100"
+      >
+        {editorial.highlight.linkLabel} →
+      </a>
+    </article>
+    <AdSlot slot={heroAdSlot} label="Anuncio recomendado" className="h-full" />
   </div>
 </section>

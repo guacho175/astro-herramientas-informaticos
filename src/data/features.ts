@@ -2,36 +2,36 @@ export interface Feature {
   title: string;
   description: string;
   icon: string;
-  category: 'automatizacion' | 'aprendizaje' | 'monetizacion' | 'colaboracion';
+  category: 'contenido' | 'herramientas' | 'tendencias' | 'comunidad';
 }
 
 export const featureHighlights: Feature[] = [
   {
-    title: 'Panel unificado de herramientas',
+    title: 'Tutoriales accionables',
     description:
-      'Agrupa aplicaciones, workflows y accesos críticos en dashboards personalizables para cada proyecto o cliente.',
-    icon: '🗂️',
-    category: 'automatizacion',
+      'Cada guía incluye pasos claros, snippets de código y recursos descargables para que ejecutes sin adivinar.',
+    icon: '🛠️',
+    category: 'contenido',
   },
   {
-    title: 'Calculadoras inteligentes',
+    title: 'Selección semanal de herramientas',
     description:
-      'Realiza estimaciones de horas, costos de infraestructura y márgenes de servicio en segundos.',
-    icon: '🧮',
-    category: 'monetizacion',
+      'Probamos apps, extensiones y flujos de trabajo para recomendar solo lo que aporta valor real a tus proyectos.',
+    icon: '🧭',
+    category: 'herramientas',
   },
   {
-    title: 'Biblioteca de guías técnicas',
+    title: 'Cobertura de tendencias',
     description:
-      'Accede a tutoriales paso a paso con casos reales para desplegar infraestructura, automatizar procesos y resolver incidencias.',
-    icon: '📚',
-    category: 'aprendizaje',
+      'Detectamos oportunidades virales, lanzamientos y cambios de plataformas para que llegues primero.',
+    icon: '🌐',
+    category: 'tendencias',
   },
   {
-    title: 'Workflows colaborativos',
+    title: 'Guías para monetizar con anuncios',
     description:
-      'Comparte plantillas, solicita aprobaciones y documenta decisiones clave con trazabilidad completa.',
-    icon: '🤝',
-    category: 'colaboracion',
+      'Buenas prácticas para colocar publicidad, medirla con analíticas y mantener una experiencia positiva.',
+    icon: '💡',
+    category: 'comunidad',
   },
 ];

@@ -6,18 +6,18 @@ export interface Metric {
 
 export const metrics: Metric[] = [
   {
-    value: '12K+',
-    label: 'Profesionales activos',
-    detail: 'Consultores, docentes y equipos de IT que optimizan su operación.',
+    value: '60+',
+    label: 'Guías y tutoriales activos',
+    detail: 'Contenido práctico para implementar soluciones tecnológicas sin perder tiempo.',
   },
   {
-    value: '38%',
-    label: 'Ahorro promedio de tiempo',
-    detail: 'Comparado con la gestión manual de recursos y documentación.',
+    value: '15',
+    label: 'Colecciones temáticas',
+    detail: 'Series sobre automatización, productividad, marketing técnico y más.',
   },
   {
-    value: '4.9/5',
-    label: 'Valoración global',
-    detail: 'Feedback consolidado de usuarios en Latinoamérica y España.',
+    value: '8K+',
+    label: 'Lectores mensuales',
+    detail: 'Profesionales que descubren herramientas y tendencias para sus proyectos.',
   },
 ];
