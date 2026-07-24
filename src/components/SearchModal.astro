@@ -13,42 +13,42 @@ const searchItems = [
 ];
 ---
 
-<div id="search-modal" class="fixed inset-0 z-50 hidden bg-orbynex-deepSpace/80 backdrop-blur-md p-4 sm:p-6 md:p-20 overflow-y-auto">
-  <div class="max-w-2xl mx-auto rounded-2xl bg-orbynex-surfaceDark border border-orbynex-lineDark shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+<div id="search-modal" class="fixed inset-0 z-50 hidden bg-slate-900/70 dark:bg-orbynex-deepSpace/80 backdrop-blur-md p-4 sm:p-6 md:p-20 overflow-y-auto">
+  <div class="max-w-2xl mx-auto rounded-2xl bg-white dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
     
     <!-- Header Modal -->
-    <div class="p-4 border-b border-orbynex-lineDark flex items-center gap-3">
-      <span class="text-gray-400">🔍</span>
+    <div class="p-4 border-b border-slate-200 dark:border-orbynex-lineDark flex items-center gap-3">
+      <span class="text-slate-400">🔍</span>
       <input
         type="text"
         id="modal-search-input"
         placeholder="Buscar apps, guías o calculadoras en el portal..."
-        class="w-full bg-transparent text-white text-sm placeholder-gray-500 focus:outline-none font-sans"
+        class="w-full bg-transparent text-slate-900 dark:text-white text-sm placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none font-sans"
       />
-      <button id="close-search-modal" type="button" class="text-xs font-mono px-2 py-1 rounded bg-orbynex-deepSpace border border-orbynex-lineDark text-gray-400 hover:text-white">
+      <button id="close-search-modal" type="button" class="text-xs font-mono px-2 py-1 rounded bg-slate-100 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-500 dark:text-gray-400 hover:text-slate-900 dark:hover:text-white">
         ESC
       </button>
     </div>
 
     <!-- Resultados -->
-    <div id="modal-search-results" class="max-h-96 overflow-y-auto p-2 divide-y divide-orbynex-lineDark/40">
+    <div id="modal-search-results" class="max-h-96 overflow-y-auto p-2 divide-y divide-slate-100 dark:divide-orbynex-lineDark/40">
       {searchItems.map((item) => (
         <a
           href={item.url}
           target={item.isExternal ? '_blank' : '_self'}
           rel={item.isExternal ? 'noopener noreferrer' : ''}
-          class="search-result-item block p-3 rounded-xl hover:bg-orbynex-surfaceStrong transition-colors group"
+          class="search-result-item block p-3 rounded-xl hover:bg-slate-50 dark:hover:bg-orbynex-surfaceStrong transition-colors group"
           data-search={`${item.title} ${item.desc} ${item.type}`.toLowerCase()}
         >
           <div class="flex items-center justify-between">
-            <span class="font-display font-bold text-sm text-white group-hover:text-orbynex-cyan transition-colors">
+            <span class="font-display font-bold text-sm text-slate-900 dark:text-white group-hover:text-orbynex-cyan transition-colors">
               {item.title}
             </span>
-            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-orbynex-deepSpace text-orbynex-cyan border border-orbynex-lineDark">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-100 dark:bg-orbynex-deepSpace text-orbynex-cyan border border-slate-200 dark:border-orbynex-lineDark">
               {item.type}
             </span>
           </div>
-          <p class="text-xs text-gray-400 mt-1 line-clamp-1">
+          <p class="text-xs text-slate-500 dark:text-gray-400 mt-1 line-clamp-1">
             {item.desc}
           </p>
         </a>
@@ -59,47 +59,52 @@ const searchItems = [
 </div>
 
 <script is:inline>
-  const searchModal = document.getElementById('search-modal');
-  const modalInput = document.getElementById('modal-search-input');
-  const closeModalBtn = document.getElementById('close-search-modal');
-  const globalSearchBtn = document.getElementById('global-search-btn');
-  const resultItems = document.querySelectorAll('.search-result-item');
+  function initSearchModal() {
+    const searchModal = document.getElementById('search-modal');
+    const modalInput = document.getElementById('modal-search-input');
+    const closeModalBtn = document.getElementById('close-search-modal');
+    const globalSearchBtn = document.getElementById('global-search-btn');
+    const resultItems = document.querySelectorAll('.search-result-item');
 
-  function openModal() {
-    searchModal?.classList.remove('hidden');
-    modalInput?.focus();
-  }
+    function openModal() {
+      searchModal?.classList.remove('hidden');
+      modalInput?.focus();
+    }
 
-  function closeModal() {
-    searchModal?.classList.add('hidden');
-  }
+    function closeModal() {
+      searchModal?.classList.add('hidden');
+    }
 
-  globalSearchBtn?.addEventListener('click', openModal);
-  closeModalBtn?.addEventListener('click', closeModal);
+    globalSearchBtn?.addEventListener('click', openModal);
+    closeModalBtn?.addEventListener('click', closeModal);
 
-  window.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-      e.preventDefault();
-      if (searchModal?.classList.contains('hidden')) {
-        openModal();
-      } else {
+    window.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault();
+        if (searchModal?.classList.contains('hidden')) {
+          openModal();
+        } else {
+          closeModal();
+        }
+      }
+      if (e.key === 'Escape') {
         closeModal();
       }
-    }
-    if (e.key === 'Escape') {
-      closeModal();
-    }
-  });
-
-  modalInput?.addEventListener('input', (e) => {
-    const query = e.target.value.toLowerCase().trim();
-    resultItems.forEach((item) => {
-      const data = item.getAttribute('data-search') || '';
-      if (data.includes(query)) {
-        item.classList.remove('hidden');
-      } else {
-        item.classList.add('hidden');
-      }
     });
-  });
+
+    modalInput?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      resultItems.forEach((item) => {
+        const data = item.getAttribute('data-search') || '';
+        if (data.includes(query)) {
+          item.classList.remove('hidden');
+        } else {
+          item.classList.add('hidden');
+        }
+      });
+    });
+  }
+
+  initSearchModal();
+  document.addEventListener('astro:page-load', initSearchModal);
 </script>

@@ -4,13 +4,14 @@
 <button
   id="theme-toggle"
   type="button"
-  aria-label="Cambiar Tema"
-  class="relative p-2 rounded-xl border border-orbynex-lineDark bg-orbynex-surfaceDark/80 hover:bg-orbynex-surfaceStrong text-orbynex-cyan hover:text-white transition-all duration-300 shadow-sm flex items-center justify-center group"
+  aria-label="Cambiar Tema Claro/Oscuro"
+  title="Cambiar Tema"
+  class="relative p-2 rounded-xl border border-orbynex-lineDark dark:border-orbynex-lineDark bg-white dark:bg-orbynex-surfaceDark text-orbynex-cyan hover:text-orbynex-blue transition-all duration-200 shadow-sm flex items-center justify-center group"
 >
-  <!-- Sol (Modo Claro) -->
+  <!-- Sol (Modo Claro Activo -> Muestra icono de Luna para cambiar a oscuro) -->
   <svg
     id="theme-toggle-light-icon"
-    class="w-5 h-5 hidden group-hover:rotate-45 transition-transform duration-300"
+    class="w-5 h-5 hidden text-amber-500 group-hover:rotate-45 transition-transform duration-300"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -20,10 +21,10 @@
     <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path>
   </svg>
 
-  <!-- Luna (Modo Oscuro) -->
+  <!-- Luna (Modo Oscuro Activo -> Muestra icono de Sol para cambiar a claro) -->
   <svg
     id="theme-toggle-dark-icon"
-    class="w-5 h-5 hidden group-hover:-rotate-12 transition-transform duration-300"
+    class="w-5 h-5 hidden text-orbynex-cyan group-hover:-rotate-12 transition-transform duration-300"
     fill="none"
     viewBox="0 0 24 24"
     stroke="currentColor"
@@ -32,35 +33,3 @@
     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
   </svg>
 </button>
-
-<script is:inline>
-  const themeToggleBtn = document.getElementById('theme-toggle');
-  const lightIcon = document.getElementById('theme-toggle-light-icon');
-  const darkIcon = document.getElementById('theme-toggle-dark-icon');
-
-  function updateThemeUI(theme) {
-    if (theme === 'dark') {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      document.documentElement.classList.add('dark');
-      lightIcon?.classList.remove('hidden');
-      darkIcon?.classList.add('hidden');
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      document.documentElement.classList.remove('dark');
-      darkIcon?.classList.remove('hidden');
-      lightIcon?.classList.add('hidden');
-    }
-  }
-
-  // Detect initial theme
-  const savedTheme = localStorage.getItem('orbynex-theme') || 
-    (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
-  
-  updateThemeUI(savedTheme);
-
-  themeToggleBtn?.addEventListener('click', () => {
-    const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('orbynex-theme', currentTheme);
-    updateThemeUI(currentTheme);
-  });
-</script>

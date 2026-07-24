@@ -25,39 +25,39 @@ const { Content } = await tutorial.render();
     <!-- Botón Volver -->
     <a
       href="/blog/guias"
-      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-xs font-bold text-orbynex-cyan hover:border-orbynex-cyan transition-all shadow-sm"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark text-xs font-bold text-orbynex-cyan hover:border-orbynex-cyan transition-all shadow-sm"
     >
       ← Volver al catálogo de guías
     </a>
 
     <!-- Header del Artículo -->
-    <header class="space-y-4 border-b border-orbynex-lineDark pb-8">
+    <header class="space-y-4 border-b border-slate-200 dark:border-orbynex-lineDark pb-8">
       <div class="flex items-center gap-3 text-xs font-mono text-orbynex-cyan">
-        <span class="px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark font-semibold">
+        <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark font-semibold">
           Guía Técnica
         </span>
         <span>•</span>
         <span>Actualizado: {tutorial.data.updated}</span>
       </div>
 
-      <h1 class="text-3xl sm:text-5xl font-display font-black text-white leading-tight">
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-slate-900 dark:text-white leading-tight">
         {tutorial.data.title}
       </h1>
 
-      <p class="text-base sm:text-lg text-gray-300 leading-relaxed">
+      <p class="text-base sm:text-lg text-slate-600 dark:text-gray-300 leading-relaxed">
         {tutorial.data.description}
       </p>
 
       <!-- Ficha de Autor -->
       <div class="flex items-center gap-3 pt-4">
         <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orbynex-cyan to-orbynex-magenta p-[2px]">
-          <div class="w-full h-full bg-orbynex-deepSpace rounded-full flex items-center justify-center font-display font-bold text-white text-xs">
+          <div class="w-full h-full bg-slate-900 dark:bg-orbynex-deepSpace rounded-full flex items-center justify-center font-display font-bold text-white text-xs">
             CG
           </div>
         </div>
         <div>
-          <span class="block text-xs font-bold text-white">Christian Galindez</span>
-          <span class="block text-[10px] text-gray-400 font-mono">Backend, APIs & Cloud Architect</span>
+          <span class="block text-xs font-bold text-slate-900 dark:text-white">Christian Galindez</span>
+          <span class="block text-[10px] text-slate-500 dark:text-gray-400 font-mono">Backend, APIs & Cloud Architect</span>
         </div>
       </div>
     </header>
@@ -68,13 +68,13 @@ const { Content } = await tutorial.render();
     </div>
 
     <!-- Call to action al pie de la guía -->
-    <footer class="pt-8 border-t border-orbynex-lineDark flex flex-col sm:flex-row items-center justify-between gap-4">
-      <div class="text-xs text-gray-400">
+    <footer class="pt-8 border-t border-slate-200 dark:border-orbynex-lineDark flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-slate-500 dark:text-gray-400">
         ¿Te sirvió esta guía? Compártela o explora más contenido técnico en <a href="https://noticias.orbynexdigital.cl" target="_blank" class="text-orbynex-cyan hover:underline font-bold">Noticias Orbynex</a>.
       </div>
       <a
         href="/blog/guias"
-        class="px-5 py-2.5 rounded-xl text-xs font-bold bg-orbynex-surfaceDark border border-orbynex-lineDark text-white hover:border-orbynex-cyan transition-all"
+        class="px-5 py-2.5 rounded-xl text-xs font-bold bg-white dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white hover:border-orbynex-cyan transition-all shadow-sm"
       >
         Ver más guías →
       </a>

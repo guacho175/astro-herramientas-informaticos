@@ -4,11 +4,11 @@ import Logo from './Logo.astro';
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="relative z-20 w-full border-t border-orbynex-cyan/30 bg-[#040919] text-gray-300 mt-12 shadow-2xl overflow-hidden">
+<footer class="relative z-20 w-full border-t border-slate-200 dark:border-orbynex-cyan/30 bg-white dark:bg-[#040919] text-slate-700 dark:text-gray-300 mt-12 shadow-2xl overflow-hidden transition-colors duration-300">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
     
     <!-- Fila Principal Compacta: Logo + Links Ecosistema -->
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-orbynex-lineDark/60 pb-6">
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-200 dark:border-orbynex-lineDark/60 pb-6">
       
       <!-- Brand Logo -->
       <a href="/" class="inline-block" aria-label="Ir al inicio">
@@ -21,7 +21,7 @@ const currentYear = new Date().getFullYear();
           href="https://noticias.orbynexdigital.cl"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark text-slate-800 dark:text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
         >
           <span class="w-1.5 h-1.5 rounded-full bg-orbynex-cyan animate-pulse"></span>
           Noticias Orbynex
@@ -31,7 +31,7 @@ const currentYear = new Date().getFullYear();
           href="https://quesaldra.orbynexdigital.cl"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-magenta hover:border-orbynex-magenta/40 transition-all duration-200"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark text-slate-800 dark:text-gray-300 hover:text-orbynex-magenta hover:border-orbynex-magenta/40 transition-all duration-200"
         >
           <span class="w-1.5 h-1.5 rounded-full bg-orbynex-magenta animate-pulse"></span>
           ¿Qué Saldrá?
@@ -41,7 +41,7 @@ const currentYear = new Date().getFullYear();
           href="https://orbynexdigital.cl"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark text-slate-800 dark:text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
         >
           <span class="w-1.5 h-1.5 rounded-full bg-orbynex-blue animate-pulse"></span>
           Orbynex.cl
@@ -50,7 +50,7 @@ const currentYear = new Date().getFullYear();
     </div>
 
     <!-- Enlaces Secundarios Limpios + Referencia Discreta v2.2 -->
-    <div class="flex flex-wrap items-center justify-between gap-4 text-xs font-medium text-gray-400">
+    <div class="flex flex-wrap items-center justify-between gap-4 text-xs font-medium text-slate-500 dark:text-gray-400">
       <div class="flex flex-wrap items-center gap-4 sm:gap-6">
         <a href="/blog/apps" class="hover:text-orbynex-cyan transition-colors">Apps & Insumos</a>
         <a href="/blog/calculadoras" class="hover:text-orbynex-cyan transition-colors">Calculadoras</a>
@@ -61,9 +61,9 @@ const currentYear = new Date().getFullYear();
       </div>
 
       <!-- Copyright Limpio con versión v2.2 -->
-      <div class="text-[11px] font-mono text-gray-400 flex items-center gap-2">
+      <div class="text-[11px] font-mono text-slate-500 dark:text-gray-400 flex items-center gap-2">
         <span>© {currentYear} HerramientasTIC • <span class="text-orbynex-cyan font-bold">Orbynex Digital</span></span>
-        <span class="text-[10px] text-gray-500 border border-gray-700/60 px-1.5 py-0.5 rounded font-mono">v2.2</span>
+        <span class="text-[10px] text-slate-500 dark:text-gray-500 border border-slate-300 dark:border-gray-700/60 px-1.5 py-0.5 rounded font-mono">v2.2</span>
       </div>
     </div>
 

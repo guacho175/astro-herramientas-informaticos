@@ -50,20 +50,77 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
 
-    <!-- Theme Initial Script -->
+    <!-- Theme & Global App Controller -->
     <script is:inline>
-      function applyTheme() {
-        const savedTheme = localStorage.getItem('orbynex-theme') || 
+      function getSavedTheme() {
+        return localStorage.getItem('orbynex-theme') || 
           (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        if (savedTheme === 'dark') {
+      }
+
+      function syncThemeUI(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        if (theme === 'dark') {
           document.documentElement.classList.add('dark');
         } else {
           document.documentElement.classList.remove('dark');
         }
+
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+
+        if (theme === 'dark') {
+          lightIcon?.classList.add('hidden');
+          darkIcon?.classList.remove('hidden');
+        } else {
+          darkIcon?.classList.add('hidden');
+          lightIcon?.classList.remove('hidden');
+        }
       }
-      applyTheme();
-      document.addEventListener('astro:after-swap', applyTheme);
+
+      function initAppController() {
+        const theme = getSavedTheme();
+        syncThemeUI(theme);
+      }
+
+      // Delegación de Eventos Global (Infalible en todas las páginas)
+      if (!window.__orbynex_controller_initialized) {
+        window.__orbynex_controller_initialized = true;
+
+        document.addEventListener('click', (e) => {
+          // 1. Toggle Tema
+          const themeBtn = e.target.closest('#theme-toggle');
+          if (themeBtn) {
+            const currentTheme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('orbynex-theme', currentTheme);
+            syncThemeUI(currentTheme);
+            return;
+          }
+
+          // 2. Toggle Category Drawer
+          const categoryBtn = e.target.closest('#toggle-category-drawer, #toggle-category-drawer-mobile');
+          if (categoryBtn) {
+            const categoryDrawer = document.getElementById('category-drawer');
+            const categoryDrawerOverlay = document.getElementById('category-drawer-overlay');
+            categoryDrawer?.classList.remove('translate-x-full');
+            categoryDrawerOverlay?.classList.remove('hidden');
+            return;
+          }
+
+          // 3. Close Category Drawer
+          const categoryCloseBtn = e.target.closest('#close-category-drawer, #category-drawer-overlay');
+          if (categoryCloseBtn) {
+            const categoryDrawer = document.getElementById('category-drawer');
+            const categoryDrawerOverlay = document.getElementById('category-drawer-overlay');
+            categoryDrawer?.classList.add('translate-x-full');
+            categoryDrawerOverlay?.classList.add('hidden');
+            return;
+          }
+        });
+      }
+
+      initAppController();
+      document.addEventListener('astro:after-swap', initAppController);
+      document.addEventListener('astro:page-load', initAppController);
     </script>
   </head>
 
@@ -87,31 +144,23 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     <!-- Footer Persistente -->
     <Footer transition:persist />
 
-    <!-- Mouse Tracking Script for Orbe Glow Effect -->
+    <!-- Mouse Tracking Script Eficiente (Sin loops infinitos) -->
     <script is:inline>
-      let mouseX = window.innerWidth / 2;
-      let mouseY = window.innerHeight / 3;
-      let orbX = mouseX;
-      let orbY = mouseY;
+      if (!window.__orbynex_mouse_initialized) {
+        window.__orbynex_mouse_initialized = true;
+        let ticking = false;
 
-      function initOrbTracking() {
         window.addEventListener('mousemove', (e) => {
-          mouseX = e.clientX;
-          mouseY = e.clientY;
-        });
-
-        function animateOrb() {
-          orbX += (mouseX - orbX) * 0.05;
-          orbY += (mouseY - orbY) * 0.05;
-          document.documentElement.style.setProperty('--glow-x', `${orbX}px`);
-          document.documentElement.style.setProperty('--glow-y', `${orbY}px`);
-          requestAnimationFrame(animateOrb);
-        }
-        animateOrb();
+          if (!ticking) {
+            window.requestAnimationFrame(() => {
+              document.documentElement.style.setProperty('--glow-x', `${e.clientX}px`);
+              document.documentElement.style.setProperty('--glow-y', `${e.clientY}px`);
+              ticking = false;
+            });
+            ticking = true;
+          }
+        }, { passive: true });
       }
-
-      initOrbTracking();
-      document.addEventListener('astro:page-load', initOrbTracking);
     </script>
   </body>
 </html>

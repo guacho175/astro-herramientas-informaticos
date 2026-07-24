@@ -81,36 +81,8 @@ body {
   transform: translate(-50%, -50%);
   background: radial-gradient(circle, rgba(0, 212, 255, 0.07) 0%, rgba(20, 99, 255, 0.05) 40%, rgba(217, 70, 239, 0.02) 70%, transparent 100%);
   border-radius: 50%;
-  transition: transform 0.15s ease-out;
   filter: blur(40px);
-}
-
-/* Modo Claro Adaptaciones Generales */
-[data-theme="light"] .bg-orbynex-surfaceDark {
-  background-color: #ffffff !important;
-  border-color: #cbd5e1 !important;
-  color: #0f172a !important;
-}
-
-[data-theme="light"] .bg-orbynex-deepSpace {
-  background-color: #f8fafc !important;
-}
-
-[data-theme="light"] .text-gray-100,
-[data-theme="light"] .text-gray-200,
-[data-theme="light"] .text-gray-300,
-[data-theme="light"] .text-white {
-  color: #0f172a !important;
-}
-
-[data-theme="light"] .text-gray-400,
-[data-theme="light"] .text-gray-500 {
-  color: #475569 !important;
-}
-
-[data-theme="light"] .glass-panel {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-color: rgba(203, 213, 225, 0.8) !important;
+  will-change: transform;
 }
 
 /* Reglas de Markdown Adaptativas (.prose-custom) */
