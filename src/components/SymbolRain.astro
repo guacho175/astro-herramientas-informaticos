@@ -1,0 +1,61 @@
+---
+interface Props {
+  density?: number;
+  opacity?: number;
+}
+
+const { density = 12, opacity = 0.15 } = Astro.props;
+
+const symbols = [
+  '{ }', '</>', '=>', '0101', 'const', 'git', 'docker', 'fn()', 'SQL', 'API', 'Astro', ';', '::', 'npm', 'SSH', 'JSON', 'CSS', 'Linux'
+];
+---
+
+<div class="symbol-rain-container absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" style={`opacity: ${opacity};`}>
+  {Array.from({ length: density }).map((_, index) => {
+    const symbol = symbols[index % symbols.length];
+    const left = (index * (100 / density)) + (Math.random() * 5 - 2.5);
+    const duration = 6 + (index % 5) * 2;
+    const delay = (index % 4) * 1.5;
+    const fontSize = 11 + (index % 4) * 3;
+
+    return (
+      <span
+        class="symbol-floater absolute font-mono font-bold text-orbynex-cyan whitespace-nowrap animate-symbol-float"
+        style={`
+          left: ${left}%;
+          font-size: ${fontSize}px;
+          animation-duration: ${duration}s;
+          animation-delay: ${delay}s;
+        `}
+      >
+        {symbol}
+      </span>
+    );
+  })}
+</div>
+
+<style>
+  @keyframes symbolFloat {
+    0% {
+      transform: translateY(-20px) rotate(0deg);
+      opacity: 0;
+    }
+    20% {
+      opacity: 0.8;
+    }
+    80% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(120px) rotate(15deg);
+      opacity: 0;
+    }
+  }
+
+  .animate-symbol-float {
+    animation-name: symbolFloat;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+  }
+</style>

@@ -1,86 +1,113 @@
 ---
-title: "Docker & Docker Compose: Guía Práctica de Contenedores"
-description: "Aprende a empaquetar tus aplicaciones web, bases de datos y microservicios en contenedores aislados y portables."
+title: "Docker & Docker Compose: Guía de Contenedores y Entornos de Desarrollo"
+description: "Aprende desde cero a empaquetar aplicaciones web, microservicios y bases de datos PostgreSQL con Docker y Docker Compose."
 slug: "docker-contenedores-desarrollo"
 image: "https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png"
 updated: "Jul 2026"
 ---
 
-## ¿Por qué utilizar Docker en Desarrollo?
+## Conceptos Clave de Docker
 
-**Docker** elimina el clásico problema de *"en mi máquina sí funciona"*, empaquetando el código, las dependencias y el runtime en un contenedor liviano e independiente.
+**Docker** permite aislar aplicaciones dentro de contenedores ligeros que incluyen todo lo necesario para su ejecución (código, runtime, bibliotecas y herramientas del sistema).
+
+![Arquitectura de Docker Container](https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png)
+
+### Diferencia entre Imagen y Contenedor
+- **Imagen:** Plantilla de solo lectura que contiene las instrucciones para construir el entorno.
+- **Contenedor:** Instancia ejecutable e independiente creada a partir de una imagen.
 
 ---
 
-## 1. Creación de un `Dockerfile` Optimizado
+## Creación de un `Dockerfile` Multi-Stage de Producción
 
-Para un proyecto Node.js/Astro, se recomienda una compilación multi-stage para minimizar el tamaño de la imagen final:
+El patrón *Multi-Stage Build* permite separar la etapa de compilación de la imagen final de ejecución, reduciendo el tamaño de la imagen hasta en un 80%:
 
 ```dockerfile
-# Build Stage
+# ── Stage 1: Build & Dependencies ──
 FROM node:20-alpine AS builder
 WORKDIR /app
+
+# Copiar archivos de dependencias e instalar
 COPY package*.json ./
 RUN npm ci
+
+# Copiar código fuente y compilar sitio estático
 COPY . .
 RUN npm run build
 
-# Production Stage
+# ── Stage 2: Production Server ──
 FROM nginx:alpine AS runner
-COPY --from=builder /app/dist /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+
+# Copiar solo el resultado compilado del Stage 1
+COPY --from=builder /app/dist .
+
+# Exponer puerto 80
 EXPOSE 80
+
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
 ---
 
-## 2. Orquestación con `docker-compose.yml`
+## Orquestación con `docker-compose.yml`
 
-Para levantar tu aplicación junto a una base de datos PostgreSQL:
+Para desarrollar aplicaciones complejas que requieren bases de datos y servicios en segundo plano, **Docker Compose** permite coordinar múltiples contenedores con una sola configuración:
 
 ```yaml
 version: '3.8'
 
 services:
-  app:
-    build: .
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8080:80"
     environment:
-      - DATABASE_URL=postgres://user:pass@db:5432/mydb
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://orbynex_user:secretpass@db:5432/orbynex_db
     depends_on:
       - db
+    restart: always
 
   db:
     image: postgres:16-alpine
+    container_name: orbynex_postgres
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
-      POSTGRES_DB: mydb
+      POSTGRES_USER: orbynex_user
+      POSTGRES_PASSWORD: secretpass
+      POSTGRES_DB: orbynex_db
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
 
 volumes:
-  pgdata:
+  postgres_data:
 ```
 
 ---
 
-## Comandos Esenciales
+## Comandos Frecuentes en el Día a Día
 
-- **Construir y levantar servicios:**
-  ```bash
-  docker compose up -d --build
-  ```
-- **Ver logs en tiempo real:**
-  ```bash
-  docker compose logs -f app
-  ```
+```bash
+# Construir y levantar todos los servicios en segundo plano
+docker compose up -d --build
+
+# Ver el estado de los contenedores
+docker compose ps
+
+# Inspeccionar los logs de un servicio específico
+docker compose logs -f web
+
+# Detener y eliminar contenedores y redes
+docker compose down -v
+```
 
 ---
 
-## Conclusión
+## Resumen
 
-El uso de Docker estandariza los entornos de desarrollo y staging, facilitando los despliegues continuos en cualquier proveedor cloud.
+Con Docker y Compose garantizas que tu aplicación se comporte exactamente igual en tu máquina de desarrollo, en servidores de prueba y en clústeres de producción en la nube.
