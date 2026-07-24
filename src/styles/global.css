@@ -109,8 +109,94 @@ body {
 }
 
 [data-theme="light"] .glass-panel {
-  background: rgba(255, 255, 255, 0.9) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   border-color: rgba(203, 213, 225, 0.8) !important;
+}
+
+/* Reglas de Markdown Adaptativas (.prose-custom) */
+.prose-custom {
+  color: var(--text);
+  line-height: 1.75;
+}
+
+.prose-custom h1,
+.prose-custom h2,
+.prose-custom h3,
+.prose-custom h4 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  line-height: 1.25;
+  margin-top: 1.75em;
+  margin-bottom: 0.6em;
+}
+
+/* Colores de Encabezados */
+[data-theme="dark"] .prose-custom h1,
+[data-theme="dark"] .prose-custom h2,
+[data-theme="dark"] .prose-custom h3,
+[data-theme="dark"] .prose-custom h4 {
+  color: #ffffff !important;
+}
+
+[data-theme="light"] .prose-custom h1,
+[data-theme="light"] .prose-custom h2,
+[data-theme="light"] .prose-custom h3,
+[data-theme="light"] .prose-custom h4 {
+  color: #0f172a !important;
+}
+
+/* Colores de Párrafos y Listas */
+[data-theme="dark"] .prose-custom p,
+[data-theme="dark"] .prose-custom li,
+[data-theme="dark"] .prose-custom strong {
+  color: #cbd5e1 !important;
+}
+
+[data-theme="light"] .prose-custom p,
+[data-theme="light"] .prose-custom li,
+[data-theme="light"] .prose-custom strong {
+  color: #334155 !important;
+}
+
+/* Bloques de Código PRE */
+.prose-custom pre {
+  padding: 1.25rem;
+  border-radius: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  overflow-x: auto;
+  margin-top: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+[data-theme="dark"] .prose-custom pre {
+  background-color: #0c1b3a !important;
+  border: 1px solid rgba(100, 150, 255, 0.2) !important;
+  color: #e2e8f0 !important;
+}
+
+[data-theme="light"] .prose-custom pre {
+  background-color: #f1f5f9 !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* Código Inline `code` */
+.prose-custom code:not(pre code) {
+  padding: 0.2em 0.4em;
+  border-radius: 0.375rem;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+[data-theme="dark"] .prose-custom code:not(pre code) {
+  background-color: rgba(0, 212, 255, 0.15);
+  color: #00d4ff;
+}
+
+[data-theme="light"] .prose-custom code:not(pre code) {
+  background-color: rgba(20, 99, 255, 0.1);
+  color: #1463ff;
 }
 
 /* Gradient Text Effect */

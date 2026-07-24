@@ -25,7 +25,7 @@ const { Content } = await tutorial.render();
     <!-- Botón Volver -->
     <a
       href="/blog/guias"
-      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-xs font-bold text-orbynex-cyan hover:text-white hover:border-orbynex-cyan transition-all"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-xs font-bold text-orbynex-cyan hover:border-orbynex-cyan transition-all shadow-sm"
     >
       ← Volver al catálogo de guías
     </a>
@@ -33,7 +33,7 @@ const { Content } = await tutorial.render();
     <!-- Header del Artículo -->
     <header class="space-y-4 border-b border-orbynex-lineDark pb-8">
       <div class="flex items-center gap-3 text-xs font-mono text-orbynex-cyan">
-        <span class="px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
+        <span class="px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark font-semibold">
           Guía Técnica
         </span>
         <span>•</span>
@@ -62,15 +62,15 @@ const { Content } = await tutorial.render();
       </div>
     </header>
 
-    <!-- Contenido del Artículo en Markdown -->
-    <div class="prose prose-invert prose-cyan max-w-none prose-headings:font-display prose-headings:font-bold prose-code:font-mono prose-code:text-orbynex-cyan prose-pre:bg-orbynex-surfaceDark prose-pre:border prose-pre:border-orbynex-lineDark">
+    <!-- Contenido del Artículo en Markdown Adaptativo -->
+    <div class="prose-custom max-w-none">
       <Content />
     </div>
 
     <!-- Call to action al pie de la guía -->
     <footer class="pt-8 border-t border-orbynex-lineDark flex flex-col sm:flex-row items-center justify-between gap-4">
       <div class="text-xs text-gray-400">
-        ¿Te sirvió esta guía? Compártela o explora más contenido técnico en <a href="https://noticias.orbynexdigital.cl" target="_blank" class="text-orbynex-cyan hover:underline">Noticias Orbynex</a>.
+        ¿Te sirvió esta guía? Compártela o explora más contenido técnico en <a href="https://noticias.orbynexdigital.cl" target="_blank" class="text-orbynex-cyan hover:underline font-bold">Noticias Orbynex</a>.
       </div>
       <a
         href="/blog/guias"
@@ -83,14 +83,19 @@ const { Content } = await tutorial.render();
   </article>
 
   <script is:inline>
-    window.addEventListener('scroll', () => {
-      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-      const scrolled = (winScroll / height) * 100;
-      const progressBar = document.getElementById('read-progress');
-      if (progressBar) {
-        progressBar.style.width = scrolled + '%';
-      }
-    });
+    function initProgress() {
+      window.addEventListener('scroll', () => {
+        const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        const scrolled = (winScroll / height) * 100;
+        const progressBar = document.getElementById('read-progress');
+        if (progressBar) {
+          progressBar.style.width = scrolled + '%';
+        }
+      });
+    }
+
+    initProgress();
+    document.addEventListener('astro:page-load', initProgress);
   </script>
 </Layout>
