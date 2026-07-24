@@ -1,0 +1,53 @@
+---
+---
+<div class="space-y-4">
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">Tamaño archivo (GB):</label>
+      <input type="number" id="file-gb" value="10" min="0.1" step="0.1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white font-mono text-sm" />
+    </div>
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">Velocidad (Mbps):</label>
+      <input type="number" id="speed-mbps" value="100" min="1" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-orbynex-cyan font-mono text-sm" />
+    </div>
+  </div>
+
+  <div class="p-6 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-magenta/40 text-center space-y-1">
+    <span class="block text-xs font-mono text-slate-500 dark:text-gray-400">Tiempo de Descarga Estimado:</span>
+    <span id="download-time-out" class="text-2xl font-mono font-bold text-orbynex-magenta">13 min 40 seg</span>
+  </div>
+</div>
+
+<script>
+  function initBandwidth() {
+    const fileGb = document.getElementById('file-gb') as HTMLInputElement;
+    const speedMbps = document.getElementById('speed-mbps') as HTMLInputElement;
+    const dlOut = document.getElementById('download-time-out');
+
+    if (!fileGb || !speedMbps || !dlOut) return;
+
+    function calcDownload() {
+      const gb = parseFloat(fileGb.value) || 0;
+      const mbps = parseFloat(speedMbps.value) || 1;
+      const totalBits = gb * 1024 * 1024 * 1024 * 8;
+      const seconds = totalBits / (mbps * 1000 * 1000);
+      
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+
+      let str = '';
+      if (hrs > 0) str += `${hrs}h `;
+      if (mins > 0 || hrs > 0) str += `${mins}m `;
+      str += `${secs}s`;
+
+      dlOut!.textContent = str;
+    }
+
+    fileGb.addEventListener('input', calcDownload);
+    speedMbps.addEventListener('input', calcDownload);
+    calcDownload();
+  }
+
+  document.addEventListener('astro:page-load', initBandwidth);
+</script>

@@ -3,6 +3,7 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SearchModal from '../components/SearchModal.astro';
+import SymbolRain from '../components/SymbolRain.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -54,7 +55,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     <script is:inline>
       function getSavedTheme() {
         return localStorage.getItem('orbynex-theme') || 
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'dark');
+          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
       }
 
       function syncThemeUI(theme) {
@@ -101,7 +102,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
           if (categoryBtn) {
             const categoryDrawer = document.getElementById('category-drawer');
             const categoryDrawerOverlay = document.getElementById('category-drawer-overlay');
-            categoryDrawer?.classList.remove('translate-x-full');
+            categoryDrawer?.classList.remove('-translate-x-full');
             categoryDrawerOverlay?.classList.remove('hidden');
             return;
           }
@@ -111,7 +112,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
           if (categoryCloseBtn) {
             const categoryDrawer = document.getElementById('category-drawer');
             const categoryDrawerOverlay = document.getElementById('category-drawer-overlay');
-            categoryDrawer?.classList.add('translate-x-full');
+            categoryDrawer?.classList.add('-translate-x-full');
             categoryDrawerOverlay?.classList.add('hidden');
             return;
           }
@@ -129,6 +130,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     <!-- Background Grid Pattern & Reactive Glow Orb -->
     <div class="bg-grid" aria-hidden="true"></div>
     <div class="glow-orb" id="glow-orb" aria-hidden="true"></div>
+    <SymbolRain mode="page" />
 
     <!-- Header Navigation Persistente -->
     <Header transition:persist />

@@ -1,0 +1,68 @@
+---
+---
+<div class="space-y-4">
+  <div class="grid grid-cols-3 gap-3">
+    <div class="col-span-2">
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">Dirección IPv4:</label>
+      <input type="text" id="ip-val" value="192.168.1.1" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white font-mono text-sm" />
+    </div>
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">CIDR (/):</label>
+      <input type="number" id="cidr-val" value="24" min="1" max="32" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-orbynex-cyan font-mono text-sm" />
+    </div>
+  </div>
+
+  <div class="p-5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark space-y-2 text-xs font-mono">
+    <div class="flex justify-between py-1 border-b border-slate-200 dark:border-orbynex-lineDark/40">
+      <span class="text-gray-400">Máscara de Subred:</span>
+      <span id="ip-mask-out" class="text-orbynex-cyan font-bold">255.255.255.0</span>
+    </div>
+    <div class="flex justify-between py-1 border-b border-slate-200 dark:border-orbynex-lineDark/40">
+      <span class="text-gray-400">Dirección de Red:</span>
+      <span id="ip-net-out" class="text-slate-900 dark:text-white font-bold">192.168.1.0</span>
+    </div>
+    <div class="flex justify-between py-1 border-b border-slate-200 dark:border-orbynex-lineDark/40">
+      <span class="text-gray-400">Dirección Broadcast:</span>
+      <span id="ip-bcast-out" class="text-orbynex-magenta font-bold">192.168.1.255</span>
+    </div>
+    <div class="flex justify-between py-1">
+      <span class="text-gray-400">Total Hosts Útiles:</span>
+      <span id="ip-hosts-out" class="text-gray-200 font-bold">254</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  function initSubnet() {
+    const ipIn = document.getElementById('ip-val') as HTMLInputElement;
+    const cidrIn = document.getElementById('cidr-val') as HTMLInputElement;
+    const maskOut = document.getElementById('ip-mask-out');
+    const netOut = document.getElementById('ip-net-out');
+    const bcastOut = document.getElementById('ip-bcast-out');
+    const hostsOut = document.getElementById('ip-hosts-out');
+
+    if (!ipIn || !cidrIn || !maskOut || !netOut || !bcastOut || !hostsOut) return;
+
+    function calcSubnet() {
+      const cidr = parseInt(cidrIn.value) || 24;
+      const maskInt = (0xFFFFFFFF << (32 - cidr)) >>> 0;
+      maskOut!.textContent = [(maskInt >>> 24) & 255, (maskInt >>> 16) & 255, (maskInt >>> 8) & 255, maskInt & 255].join('.');
+
+      const parts = ipIn.value.split('.').map(Number);
+      if (parts.length === 4 && parts.every(n => !isNaN(n) && n >= 0 && n <= 255)) {
+        const ipInt = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+        const netInt = (ipInt & maskInt) >>> 0;
+        const bcastInt = (netInt | (~maskInt >>> 0)) >>> 0;
+
+        netOut!.textContent = [(netInt >>> 24) & 255, (netInt >>> 16) & 255, (netInt >>> 8) & 255, netInt & 255].join('.');
+        bcastOut!.textContent = [(bcastInt >>> 24) & 255, (bcastInt >>> 16) & 255, (bcastInt >>> 8) & 255, bcastInt & 255].join('.');
+        hostsOut!.textContent = Math.max(0, Math.pow(2, 32 - cidr) - 2).toLocaleString();
+      }
+    }
+    ipIn.addEventListener('input', calcSubnet);
+    cidrIn.addEventListener('input', calcSubnet);
+    calcSubnet();
+  }
+
+  document.addEventListener('astro:page-load', initSubnet);
+</script>

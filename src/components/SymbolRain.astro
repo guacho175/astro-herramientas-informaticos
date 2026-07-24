@@ -1,61 +1,66 @@
 ---
 interface Props {
-  density?: number;
-  opacity?: number;
+  mode?: 'page' | 'footer' | 'hero';
 }
 
-const { density = 12, opacity = 0.15 } = Astro.props;
+const { mode = 'page' } = Astro.props;
 
-const symbols = [
-  '{ }', '</>', '=>', '0101', 'const', 'git', 'docker', 'fn()', 'SQL', 'API', 'Astro', ';', '::', 'npm', 'SSH', 'JSON', 'CSS', 'Linux'
+const techIcons = [
+  { d: 'M18 16l4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16', c: '#00d4ff', label: '</>' },
+  { d: 'M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z', c: '#a78bfa', label: '⚡' },
+  { d: 'M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zM2 12h20', c: '#34d399', label: '🌐' },
+  { d: 'M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6zm4 2v4h8V8H8z', c: '#fb923c', label: '💾' },
+  { d: 'M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z', c: '#f472b6', label: '🛠️' },
+  { d: 'M4 17l6-6-6-6M12 19h8', c: '#fbbf24', label: 'Terminal' },
+  { d: 'M2 6a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6zm0 8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4z', c: '#38bdf8', label: 'Server' },
 ];
+
+const sideSpots = [
+  { x: '2%', y: '14%', size: 28, dur: '7s', delay: '0s', icon: techIcons[0] },
+  { x: '95%', y: '20%', size: 32, dur: '8.5s', delay: '0.8s', icon: techIcons[1] },
+  { x: '3%', y: '38%', size: 26, dur: '6.5s', delay: '1.5s', icon: techIcons[2] },
+  { x: '96%', y: '46%', size: 30, dur: '9s', delay: '0.3s', icon: techIcons[3] },
+  { x: '2%', y: '64%', size: 34, dur: '7.8s', delay: '2s', icon: techIcons[4] },
+  { x: '95%', y: '72%', size: 28, dur: '6s', delay: '1.2s', icon: techIcons[5] },
+  { x: '4%', y: '88%', size: 30, dur: '8s', delay: '0.5s', icon: techIcons[6] },
+  { x: '96%', y: '92%', size: 26, dur: '7.2s', delay: '1.8s', icon: techIcons[0] },
+];
+
+const footerDrops = Array.from({ length: 14 }).map((_, i) => ({
+  left: `${((i + 0.5) * 7.1).toFixed(1)}%`,
+  size: 18 + (i % 4) * 6,
+  dur: `${(4.5 + (i % 5) * 1.2).toFixed(1)}s`,
+  delay: `${(i * 0.45).toFixed(1)}s`,
+  icon: techIcons[i % techIcons.length],
+}));
 ---
 
-<div class="symbol-rain-container absolute inset-0 pointer-events-none overflow-hidden z-0 select-none" style={`opacity: ${opacity};`}>
-  {Array.from({ length: density }).map((_, index) => {
-    const symbol = symbols[index % symbols.length];
-    const left = (index * (100 / density)) + (Math.random() * 5 - 2.5);
-    const duration = 6 + (index % 5) * 2;
-    const delay = (index % 4) * 1.5;
-    const fontSize = 11 + (index % 4) * 3;
-
-    return (
-      <span
-        class="symbol-floater absolute font-mono font-bold text-orbynex-cyan whitespace-nowrap animate-symbol-float"
-        style={`
-          left: ${left}%;
-          font-size: ${fontSize}px;
-          animation-duration: ${duration}s;
-          animation-delay: ${delay}s;
-        `}
+{mode === 'page' && (
+  <div class="fixed inset-0 pointer-events-none z-10 overflow-hidden hidden xl:block select-none" aria-hidden="true">
+    {sideSpots.map((s) => (
+      <div
+        class="absolute animate-float-drift"
+        style={`left: ${s.x}; top: ${s.y}; animation-duration: ${s.dur}; animation-delay: ${s.delay};`}
       >
-        {symbol}
-      </span>
-    );
-  })}
-</div>
+        <svg width={s.size} height={s.size} viewBox="0 0 24 24" fill="none" stroke={s.icon.c} stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" class="filter drop-shadow-[0_0_10px_rgba(0,212,255,0.4)]">
+          <path d={s.icon.d} />
+        </svg>
+      </div>
+    ))}
+  </div>
+)}
 
-<style>
-  @keyframes symbolFloat {
-    0% {
-      transform: translateY(-20px) rotate(0deg);
-      opacity: 0;
-    }
-    20% {
-      opacity: 0.8;
-    }
-    80% {
-      opacity: 0.8;
-    }
-    100% {
-      transform: translateY(120px) rotate(15deg);
-      opacity: 0;
-    }
-  }
-
-  .animate-symbol-float {
-    animation-name: symbolFloat;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-  }
-</style>
+{mode === 'footer' && (
+  <div class="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none opacity-40" aria-hidden="true">
+    {footerDrops.map((d) => (
+      <div
+        class="absolute top-0 animate-rain-drop"
+        style={`left: ${d.left}; animation-duration: ${d.dur}; animation-delay: ${d.delay};`}
+      >
+        <svg width={d.size} height={d.size} viewBox="0 0 24 24" fill="none" stroke={d.icon.c} stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d={d.icon.d} />
+        </svg>
+      </div>
+    ))}
+  </div>
+)}

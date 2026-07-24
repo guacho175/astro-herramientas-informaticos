@@ -1,21 +1,29 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { tutorialService } from "../../../lib/application/services/TutorialService";
+import { marked } from "marked";
 
-export async function getStaticPaths() {
-  const tutorials = await getCollection("tutorials");
-  return tutorials.map((tut: CollectionEntry<"tutorials">) => ({
-    params: { slug: tut.slug },
-    props: { tutorial: tut as CollectionEntry<"tutorials"> },
-  }));
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/404');
 }
 
-const { tutorial } = Astro.props as { tutorial: CollectionEntry<"tutorials"> };
-const { Content } = await tutorial.render();
+// Obtener tutorial de Supabase
+const tutorial = await tutorialService.getTutorialContent(slug);
+
+if (!tutorial) {
+  return Astro.redirect('/404');
+}
+
+// Configurar caché en el Edge (CDN) para ahorrar peticiones a Supabase
+Astro.response.headers.set('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+
+// Parsear el Markdown a HTML
+const contentHtml = marked.parse(tutorial.content_markdown || '');
 ---
 
-<Layout title={`${tutorial.data.title} | Guías HerramientasTIC`} description={tutorial.data.description}>
+<Layout title={`${tutorial.title} | Guías HerramientasTIC`} description={tutorial.description}>
   
   <!-- Reading Progress Bar -->
   <div id="read-progress" class="fixed top-20 left-0 h-1 bg-gradient-to-r from-orbynex-cyan via-orbynex-blue to-orbynex-magenta z-50 w-0 transition-all duration-150"></div>
@@ -34,18 +42,18 @@ const { Content } = await tutorial.render();
     <header class="space-y-4 border-b border-slate-200 dark:border-orbynex-lineDark pb-8">
       <div class="flex items-center gap-3 text-xs font-mono text-orbynex-cyan">
         <span class="px-3 py-1 rounded-full bg-slate-100 dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark font-semibold">
-          Guía Técnica
+          {tutorial.category || 'Guía Técnica'}
         </span>
         <span>•</span>
-        <span>Actualizado: {tutorial.data.updated}</span>
+        <span>Vistas: {tutorial.views}</span>
       </div>
 
       <h1 class="text-3xl sm:text-5xl font-display font-black text-slate-900 dark:text-white leading-tight">
-        {tutorial.data.title}
+        {tutorial.title}
       </h1>
 
       <p class="text-base sm:text-lg text-slate-600 dark:text-gray-300 leading-relaxed">
-        {tutorial.data.description}
+        {tutorial.description}
       </p>
 
       <!-- Ficha de Autor -->
@@ -62,10 +70,8 @@ const { Content } = await tutorial.render();
       </div>
     </header>
 
-    <!-- Contenido del Artículo en Markdown Adaptativo -->
-    <div class="prose-custom max-w-none">
-      <Content />
-    </div>
+    <!-- Contenido del Artículo parseado con marked -->
+    <div class="prose-custom max-w-none" set:html={contentHtml} />
 
     <!-- Call to action al pie de la guía -->
     <footer class="pt-8 border-t border-slate-200 dark:border-orbynex-lineDark flex flex-col sm:flex-row items-center justify-between gap-4">

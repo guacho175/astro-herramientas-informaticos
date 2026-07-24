@@ -11,13 +11,13 @@ import { calculators } from '../../data/calculators.js';
     
     <!-- Encabezado de la Sección -->
     <div class="text-center max-w-3xl mx-auto space-y-3">
-      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-magenta px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-magenta px-3 py-1 rounded-full bg-white dark:bg-orbynex-surfaceDark border border-slate-200 dark:border-orbynex-lineDark">
         Módulo de Cómputo & Redes
       </span>
-      <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-slate-900 dark:text-white">
         Calculadoras <span class="text-gradient">Técnicas Dedicadas</span>
       </h1>
-      <p class="text-sm sm:text-base text-gray-300">
+      <p class="text-sm sm:text-base text-slate-600 dark:text-gray-300">
         Selecciona una herramienta interactiva especializada para realizar cálculos en tiempo real. Cada utilidad cuenta con su propia vista independiente.
       </p>
     </div>
@@ -27,14 +27,14 @@ import { calculators } from '../../data/calculators.js';
       {calculators.map((calc) => (
         <a
           href={`/blog/calculadoras/${calc.slug}`}
-          class="group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-magenta/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 shadow-cardDark flex flex-col justify-between hover:-translate-y-1.5"
+          class="group relative p-6 rounded-2xl bg-white dark:bg-[#0c1b3a] border border-slate-200 dark:border-orbynex-lineDark hover:border-orbynex-magenta/60 hover:-translate-y-1.5 transition-all duration-300 shadow-cardLight dark:shadow-cardDark flex flex-col justify-between cursor-pointer"
         >
           <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-4xl p-2.5 rounded-2xl bg-orbynex-deepSpace border border-orbynex-lineDark">
+              <span class="text-4xl p-2.5 rounded-2xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark">
                 {calc.icon}
               </span>
-              <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border border-orbynex-magenta/30 bg-orbynex-deepSpace text-orbynex-magenta">
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border border-orbynex-magenta/30 bg-slate-100 dark:bg-orbynex-deepSpace text-orbynex-magenta">
                 {calc.badge}
               </span>
             </div>
@@ -43,16 +43,16 @@ import { calculators } from '../../data/calculators.js';
               <span class="text-[10px] font-mono text-orbynex-cyan uppercase tracking-wider block mb-1">
                 {calc.category}
               </span>
-              <h2 class="text-xl font-display font-bold text-white group-hover:text-orbynex-magenta transition-colors">
+              <h2 class="text-xl font-display font-bold text-slate-900 dark:text-white group-hover:text-orbynex-magenta transition-colors">
                 {calc.title}
               </h2>
-              <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+              <p class="text-xs text-slate-600 dark:text-gray-400 mt-2 leading-relaxed">
                 {calc.description}
               </p>
             </div>
           </div>
 
-          <div class="pt-6 border-t border-orbynex-lineDark/60 mt-6 flex items-center justify-between text-xs font-bold text-orbynex-magenta group-hover:translate-x-1 transition-transform">
+          <div class="pt-6 border-t border-slate-100 dark:border-orbynex-lineDark/60 mt-6 flex items-center justify-between text-xs font-bold text-orbynex-magenta group-hover:translate-x-1 transition-transform">
             Abrir calculadora <span class="ml-1">→</span>
           </div>
         </a>

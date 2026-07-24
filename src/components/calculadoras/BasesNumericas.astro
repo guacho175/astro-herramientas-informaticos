@@ -1,0 +1,48 @@
+---
+---
+<div class="space-y-4">
+  <div>
+    <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1">Decimal (Base 10):</label>
+    <input type="number" id="in-dec" value="255" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white font-mono text-sm" />
+  </div>
+  <div>
+    <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1">Binario (Base 2):</label>
+    <input type="text" id="in-bin" value="11111111" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-orbynex-cyan font-mono text-sm" />
+  </div>
+  <div class="grid grid-cols-2 gap-3">
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1">Hexadecimal (Base 16):</label>
+      <input type="text" id="in-hex" value="FF" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-orbynex-magenta font-mono text-sm uppercase" />
+    </div>
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1">Octal (Base 8):</label>
+      <input type="text" id="in-oct" value="377" class="w-full px-4 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-700 dark:text-gray-300 font-mono text-sm" />
+    </div>
+  </div>
+</div>
+
+<script>
+  function initBases() {
+    const inDec = document.getElementById('in-dec') as HTMLInputElement;
+    const inBin = document.getElementById('in-bin') as HTMLInputElement;
+    const inHex = document.getElementById('in-hex') as HTMLInputElement;
+    const inOct = document.getElementById('in-oct') as HTMLInputElement;
+
+    if (!inDec || !inBin || !inHex || !inOct) return;
+
+    function syncBases(num: number) {
+      if (isNaN(num)) return;
+      inDec.value = num.toString(10);
+      inBin.value = num.toString(2);
+      inHex.value = num.toString(16).toUpperCase();
+      inOct.value = num.toString(8);
+    }
+
+    inDec.addEventListener('input', (e) => syncBases(parseInt((e.target as HTMLInputElement).value, 10)));
+    inBin.addEventListener('input', (e) => syncBases(parseInt((e.target as HTMLInputElement).value, 2)));
+    inHex.addEventListener('input', (e) => syncBases(parseInt((e.target as HTMLInputElement).value, 16)));
+    inOct.addEventListener('input', (e) => syncBases(parseInt((e.target as HTMLInputElement).value, 8)));
+  }
+
+  document.addEventListener('astro:page-load', initBases);
+</script>

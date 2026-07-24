@@ -1,0 +1,70 @@
+---
+---
+<div class="space-y-4">
+  <div>
+    <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">Cantidad a convertir:</label>
+    <input
+      type="number"
+      id="storage-val"
+      value="1"
+      min="0"
+      class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white text-base font-mono focus:border-orbynex-cyan"
+    />
+  </div>
+
+  <div class="grid grid-cols-2 gap-4">
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">Desde unidad:</label>
+      <select id="storage-from-unit" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white text-xs font-mono">
+        <option value="B">Bytes (B)</option>
+        <option value="KB">Kilobytes (KB)</option>
+        <option value="MB">Megabytes (MB)</option>
+        <option value="GB" selected>Gigabytes (GB)</option>
+        <option value="TB">Terabytes (TB)</option>
+        <option value="PB">Petabytes (PB)</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs font-mono text-slate-500 dark:text-gray-400 mb-1.5">Hacia unidad:</label>
+      <select id="storage-to-unit" class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark text-slate-900 dark:text-white text-xs font-mono">
+        <option value="B">Bytes (B)</option>
+        <option value="KB">Kilobytes (KB)</option>
+        <option value="MB" selected>Megabytes (MB)</option>
+        <option value="GB">Gigabytes (GB)</option>
+        <option value="TB">Terabytes (TB)</option>
+        <option value="PB">Petabytes (PB)</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="p-6 rounded-xl bg-slate-50 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-cyan/30 text-center space-y-1">
+    <span class="block text-xs font-mono text-slate-500 dark:text-gray-400">Resultado equivalente:</span>
+    <span id="storage-out" class="text-2xl sm:text-3xl font-mono font-bold text-orbynex-cyan">1,024 MB</span>
+  </div>
+</div>
+
+<script>
+  function initStorage() {
+    const stVal = document.getElementById('storage-val') as HTMLInputElement;
+    const stFrom = document.getElementById('storage-from-unit') as HTMLSelectElement;
+    const stTo = document.getElementById('storage-to-unit') as HTMLSelectElement;
+    const stOut = document.getElementById('storage-out');
+    
+    if (!stVal || !stFrom || !stTo || !stOut) return;
+
+    const units: Record<string, number> = { B: 1, KB: 1024, MB: 1024**2, GB: 1024**3, TB: 1024**4, PB: 1024**5 };
+
+    function calcStorage() {
+      const v = parseFloat(stVal.value) || 0;
+      const res = (v * units[stFrom.value]) / units[stTo.value];
+      stOut!.textContent = `${res.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${stTo.value}`;
+    }
+    
+    stVal.addEventListener('input', calcStorage);
+    stFrom.addEventListener('change', calcStorage);
+    stTo.addEventListener('change', calcStorage);
+    calcStorage();
+  }
+
+  document.addEventListener('astro:page-load', initStorage);
+</script>

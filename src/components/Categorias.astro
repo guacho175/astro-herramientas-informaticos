@@ -31,7 +31,7 @@ const categorias = [
   <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
     <div>
       <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan">Módulos del Portal</span>
-      <h2 class="text-2xl sm:text-3xl font-display font-black text-white mt-1">Explora por Categoría</h2>
+      <h2 class="text-2xl sm:text-3xl font-display font-black text-slate-900 dark:text-white mt-1">Explora por Categoría</h2>
     </div>
   </div>
 
@@ -39,23 +39,23 @@ const categorias = [
     {categorias.map((cat) => (
       <a
         href={cat.link}
-        class="group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-cardDark hover:-translate-y-1.5"
+        class="group relative p-6 rounded-2xl bg-white dark:bg-orbynex-surfaceDark/70 border border-slate-200 dark:border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-cardLight dark:shadow-cardDark hover:-translate-y-1.5"
       >
         <div class={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${cat.color} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500`}></div>
 
         <div class="relative z-10 space-y-4">
           <div class="flex items-center justify-between">
             <span class="text-4xl">{cat.icon}</span>
-            <span class={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border bg-orbynex-deepSpace/80 ${cat.color}`}>
+            <span class={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border bg-white dark:bg-orbynex-deepSpace/80 ${cat.color}`}>
               {cat.badge}
             </span>
           </div>
 
           <div>
-            <h3 class="text-xl font-display font-bold text-white group-hover:text-orbynex-cyan transition-colors">
+            <h3 class="text-xl font-display font-bold text-slate-900 dark:text-white group-hover:text-orbynex-cyan transition-colors">
               {cat.title}
             </h3>
-            <p class="text-sm text-gray-400 mt-2 leading-relaxed">
+            <p class="text-sm text-slate-600 dark:text-gray-400 mt-2 leading-relaxed">
               {cat.desc}
             </p>
           </div>
