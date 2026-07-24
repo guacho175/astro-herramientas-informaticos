@@ -1,90 +1,69 @@
 ---
 import Logo from './Logo.astro';
-import SymbolRain from './SymbolRain.astro';
 
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="relative z-10 w-full border-t border-orbynex-cyan/30 bg-[#030917] text-gray-400 mt-20 overflow-hidden shadow-2xl">
-  <!-- Lluvia de símbolos informáticos de fondo -->
-  <SymbolRain density={18} opacity={0.25} />
-
-  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16 space-y-12">
+<footer class="relative z-20 w-full border-t border-orbynex-cyan/30 bg-[#040919] text-gray-300 mt-12 shadow-2xl overflow-hidden">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-6">
     
-    <!-- 1. PRIMER LUGAR: LOGO DE LA MARCA DE FORMA DESTACADA -->
-    <div class="border-b border-orbynex-lineDark pb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
-      <div class="space-y-2">
-        <a href="/" class="inline-block">
-          <Logo size="lg" />
-        </a>
-        <p class="text-xs text-gray-400 max-w-lg leading-relaxed pt-1">
-          Plataforma libre de referencia técnica en herramientas, insumos informáticos, calculadoras de ingeniería y tutoriales de desarrollo de software por Orbynex Digital.
-        </p>
-      </div>
+    <!-- Fila Principal Compacta: Logo + Links Ecosistema -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-4 border-b border-orbynex-lineDark/60 pb-6">
+      
+      <!-- Brand Logo -->
+      <a href="/" class="inline-block" aria-label="Ir al inicio">
+        <Logo size="md" />
+      </a>
 
-      <!-- Ecosistema Links -->
-      <div class="flex flex-wrap items-center gap-3">
+      <!-- Ecosistema Links Solicitados -->
+      <div class="flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-semibold">
         <a
           href="https://noticias.orbynexdigital.cl"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-200 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200 shadow-sm"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
         >
-          <span class="w-2 h-2 rounded-full bg-orbynex-cyan animate-pulse"></span>
+          <span class="w-1.5 h-1.5 rounded-full bg-orbynex-cyan animate-pulse"></span>
           Noticias Orbynex
         </a>
+
         <a
-          href="https://portafolio.orbynexdigital.cl"
+          href="https://quesaldra.orbynexdigital.cl"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-200 hover:text-orbynex-magenta hover:border-orbynex-magenta/40 transition-all duration-200 shadow-sm"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-magenta hover:border-orbynex-magenta/40 transition-all duration-200"
         >
-          <span class="w-2 h-2 rounded-full bg-orbynex-magenta animate-pulse"></span>
-          Portafolio Técnico
+          <span class="w-1.5 h-1.5 rounded-full bg-orbynex-magenta animate-pulse"></span>
+          ¿Qué Saldrá?
+        </a>
+
+        <a
+          href="https://orbynexdigital.cl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
+        >
+          <span class="w-1.5 h-1.5 rounded-full bg-orbynex-blue animate-pulse"></span>
+          Orbynex.cl
         </a>
       </div>
     </div>
 
-    <!-- 2. NAVEGACIÓN LIMPIA Y SECCIONES (SIN REDUNDANCIAS) -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 text-xs">
-      
-      <!-- Columna Módulos Principales -->
-      <div class="space-y-3">
-        <h3 class="text-xs font-display font-extrabold text-white uppercase tracking-wider">Módulos del Portal</h3>
-        <ul class="space-y-2 text-gray-300 font-medium">
-          <li><a href="/blog/apps" class="hover:text-orbynex-cyan transition-colors">🛠️ Catálogo de Apps e Insumos</a></li>
-          <li><a href="/blog/calculadoras" class="hover:text-orbynex-cyan transition-colors">🧮 Calculadoras Técnicas Dedicadas</a></li>
-          <li><a href="/blog/guias" class="hover:text-orbynex-cyan transition-colors">📚 Guías y Tutoriales Prácticos</a></li>
-        </ul>
+    <!-- Enlaces Secundarios Limpios -->
+    <div class="flex flex-wrap items-center justify-between gap-4 text-xs font-medium text-gray-400">
+      <div class="flex flex-wrap items-center gap-4 sm:gap-6">
+        <a href="/blog/apps" class="hover:text-orbynex-cyan transition-colors">Apps & Insumos</a>
+        <a href="/blog/calculadoras" class="hover:text-orbynex-cyan transition-colors">Calculadoras</a>
+        <a href="/blog/guias" class="hover:text-orbynex-cyan transition-colors">Guías & Tutoriales</a>
+        <a href="/nosotros" class="hover:text-orbynex-cyan transition-colors">Nosotros</a>
+        <a href="/contacto" class="hover:text-orbynex-cyan transition-colors">Contacto</a>
+        <a href="/politicas" class="hover:text-orbynex-cyan transition-colors">Políticas de Privacidad</a>
       </div>
 
-      <!-- Columna Calculadoras Rápidas -->
-      <div class="space-y-3">
-        <h3 class="text-xs font-display font-extrabold text-white uppercase tracking-wider">Calculadoras Populares</h3>
-        <ul class="space-y-2 text-gray-300 font-medium">
-          <li><a href="/blog/calculadoras/subredes-ip" class="hover:text-orbynex-cyan transition-colors">🌐 Subredes IPv4 y CIDR</a></li>
-          <li><a href="/blog/calculadoras/almacenamiento" class="hover:text-orbynex-cyan transition-colors">💾 Conversor de Almacenamiento</a></li>
-          <li><a href="/blog/calculadoras/generador-contrasenas" class="hover:text-orbynex-cyan transition-colors">🔑 Generador Criptográfico</a></li>
-        </ul>
+      <!-- Copyright Limpio (Sin nombre ni System v2.1) -->
+      <div class="text-[11px] font-mono text-gray-400">
+        © {currentYear} HerramientasTIC • <span class="text-orbynex-cyan font-bold">Orbynex Digital</span>
       </div>
-
-      <!-- Columna Institucional -->
-      <div class="space-y-3">
-        <h3 class="text-xs font-display font-extrabold text-white uppercase tracking-wider">Institucional & Contacto</h3>
-        <ul class="space-y-2 text-gray-300 font-medium">
-          <li><a href="/nosotros" class="hover:text-orbynex-cyan transition-colors">Sobre Nosotros</a></li>
-          <li><a href="/contacto" class="hover:text-orbynex-cyan transition-colors">Contacto & Soporte</a></li>
-          <li><a href="/politicas" class="hover:text-orbynex-cyan transition-colors">Políticas de Privacidad</a></li>
-          <li><a href="https://github.com/guacho175/astro-herramientas-informaticos" target="_blank" class="hover:text-orbynex-cyan transition-colors">Repositorio en GitHub</a></li>
-        </ul>
-      </div>
-
-    </div>
-
-    <!-- 3. BOTTOM BAR COPYRIGHT -->
-    <div class="border-t border-orbynex-lineDark/60 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-gray-500 font-mono">
-      <p>© {currentYear} HerramientasTIC. Creado por <strong class="text-gray-300">Christian Galindez</strong>.</p>
-      <span class="text-orbynex-cyan/80">Orbynex Digital • System v2.1</span>
     </div>
 
   </div>

@@ -67,7 +67,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     </script>
   </head>
 
-  <body class="bg-orbynex-deepSpace text-gray-100 min-h-screen flex flex-col font-sans selection:bg-orbynex-cyan selection:text-black">
+  <body class="min-h-screen flex flex-col font-sans selection:bg-orbynex-cyan selection:text-black">
     
     <!-- Background Grid Pattern & Reactive Glow Orb -->
     <div class="bg-grid" aria-hidden="true"></div>
@@ -79,7 +79,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     <!-- Search Modal Ctrl+K Persistente -->
     <SearchModal transition:persist />
 
-    <!-- Main Content Slot con animación de desvanecimiento suave -->
+    <!-- Main Content Slot -->
     <main class="flex-1 w-full relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" transition:animate="fade">
       <slot />
     </main>

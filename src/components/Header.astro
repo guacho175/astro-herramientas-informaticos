@@ -2,7 +2,6 @@
 import Logo from './Logo.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import CategoryDrawer from './CategoryDrawer.astro';
-import SymbolRain from './SymbolRain.astro';
 
 const navItems = [
   { name: 'Apps & Insumos', href: '/blog/apps' },
@@ -16,33 +15,29 @@ const currentPath = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-40 w-full glass-panel border-b border-orbynex-lineDark transition-all duration-300 relative overflow-hidden">
-  <!-- Lluvia de símbolos informáticos de fondo en Header -->
-  <SymbolRain density={10} opacity={0.12} />
-
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16 sm:h-20">
       
-      <!-- Left side: Category Drawer trigger + Brand Logo (Redirecciona al inicio) -->
-      <div class="flex items-center gap-3 sm:gap-4">
-        <!-- Category Drawer Button -->
-        <button
-          id="toggle-category-drawer"
-          type="button"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-orbynex-surfaceDark/90 border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/50 text-xs font-bold transition-all duration-200"
-          aria-label="Abrir panel de categorías"
-        >
-          <span class="text-sm">🗂️</span>
-          <span class="hidden sm:inline">Categorías</span>
-        </button>
-
-        <!-- Brand Logo (Redirección a Inicio /) -->
+      <!-- Left side: BRAND LOGO ES EL PRIMER ELEMENTO ABSOLUTO -->
+      <div class="flex items-center">
         <a href="/" class="flex items-center" aria-label="Ir a Inicio">
           <Logo size="md" />
         </a>
       </div>
 
-      <!-- Desktop Navigation Links (Sin botón Inicio) -->
+      <!-- Desktop Navigation Links (Incluyendo el botón de Categorías aquí) -->
       <nav class="hidden lg:flex items-center space-x-1">
+        <!-- Category Drawer Trigger Button inside Nav -->
+        <button
+          id="toggle-category-drawer"
+          type="button"
+          class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-orbynex-surfaceDark/90 border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/50 text-xs font-bold transition-all duration-200 mr-1"
+          aria-label="Abrir panel de categorías"
+        >
+          <span class="text-xs">🗂️</span>
+          <span>Categorías</span>
+        </button>
+
         {navItems.map((item) => {
           const isActive = currentPath.startsWith(item.href);
           return (
@@ -100,6 +95,14 @@ const currentPath = Astro.url.pathname;
 
   <!-- Mobile Navigation Dropdown -->
   <div id="mobile-menu" class="hidden lg:hidden border-t border-orbynex-lineDark bg-orbynex-deepSpace/95 backdrop-blur-xl px-4 pt-3 pb-6 space-y-2 relative z-20">
+    <button
+      id="toggle-category-drawer-mobile"
+      type="button"
+      class="w-full text-left px-4 py-2 rounded-xl text-sm font-bold text-orbynex-cyan bg-orbynex-surfaceDark border border-orbynex-cyan/30 flex items-center justify-between"
+    >
+      <span>🗂️ Abrir Categorías</span>
+      <span>→</span>
+    </button>
     {navItems.map((item) => {
       const isActive = currentPath.startsWith(item.href);
       return (
@@ -122,21 +125,38 @@ const currentPath = Astro.url.pathname;
 <CategoryDrawer />
 
 <script is:inline>
-  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-  const mobileMenu = document.getElementById('mobile-menu');
-  const openIcon = document.getElementById('menu-icon-open');
-  const closeIcon = document.getElementById('menu-icon-close');
+  function initHeaderScripts() {
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const openIcon = document.getElementById('menu-icon-open');
+    const closeIcon = document.getElementById('menu-icon-close');
 
-  mobileMenuBtn?.addEventListener('click', () => {
-    const isOpen = !mobileMenu?.classList.contains('hidden');
-    if (isOpen) {
+    mobileMenuBtn?.addEventListener('click', () => {
+      const isOpen = !mobileMenu?.classList.contains('hidden');
+      if (isOpen) {
+        mobileMenu?.classList.add('hidden');
+        openIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+      } else {
+        mobileMenu?.classList.remove('hidden');
+        openIcon?.classList.add('hidden');
+        closeIcon?.classList.remove('hidden');
+      }
+    });
+
+    const mobileCategoryBtn = document.getElementById('toggle-category-drawer-mobile');
+    const categoryDrawer = document.getElementById('category-drawer');
+    const categoryDrawerOverlay = document.getElementById('category-drawer-overlay');
+
+    mobileCategoryBtn?.addEventListener('click', () => {
       mobileMenu?.classList.add('hidden');
       openIcon?.classList.remove('hidden');
       closeIcon?.classList.add('hidden');
-    } else {
-      mobileMenu?.classList.remove('hidden');
-      openIcon?.classList.add('hidden');
-      closeIcon?.classList.remove('hidden');
-    }
-  });
+      categoryDrawer?.classList.remove('translate-x-full');
+      categoryDrawerOverlay?.classList.remove('hidden');
+    });
+  }
+
+  initHeaderScripts();
+  document.addEventListener('astro:page-load', initHeaderScripts);
 </script>
