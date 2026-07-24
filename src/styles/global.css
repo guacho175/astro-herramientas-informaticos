@@ -158,27 +158,76 @@ body {
   color: #334155 !important;
 }
 
-/* Bloques de Código PRE */
+/* BLOQUES DE CÓDIGO ESTILO TERMINAL IDE (SÓLIDO, ALTO CONTRASTE Y NÍTIDO) */
 .prose-custom pre {
-  padding: 1.25rem;
+  background-color: #080e1e !important;
+  border: 1px solid rgba(0, 212, 255, 0.25) !important;
+  color: #f8fafc !important;
+  padding: 1.25rem 1.5rem;
   border-radius: 1rem;
   font-family: var(--font-mono);
   font-size: 0.875rem;
   overflow-x: auto;
   margin-top: 1.5em;
   margin-bottom: 1.5em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
-[data-theme="dark"] .prose-custom pre {
-  background-color: #0c1b3a !important;
-  border: 1px solid rgba(100, 150, 255, 0.2) !important;
-  color: #e2e8f0 !important;
+.prose-custom pre code {
+  background-color: transparent !important;
+  color: #f8fafc !important;
+  padding: 0 !important;
+  border: none !important;
+  font-family: var(--font-mono);
 }
 
-[data-theme="light"] .prose-custom pre {
-  background-color: #f1f5f9 !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #0f172a !important;
+/* Resaltado de Sintaxis en Bloques de Código */
+.prose-custom pre code span {
+  color: inherit;
+}
+.prose-custom pre code .token.comment,
+.prose-custom pre code .token.prolog,
+.prose-custom pre code .token.doctype,
+.prose-custom pre code .token.cdata {
+  color: #64748b !important;
+  font-style: italic;
+}
+.prose-custom pre code .token.punctuation {
+  color: #94a3b8 !important;
+}
+.prose-custom pre code .token.property,
+.prose-custom pre code .token.tag,
+.prose-custom pre code .token.boolean,
+.prose-custom pre code .token.number,
+.prose-custom pre code .token.constant,
+.prose-custom pre code .token.symbol {
+  color: #00d4ff !important;
+  font-weight: 600;
+}
+.prose-custom pre code .token.selector,
+.prose-custom pre code .token.attr-name,
+.prose-custom pre code .token.string,
+.prose-custom pre code .token.char,
+.prose-custom pre code .token.builtin,
+.prose-custom pre code .token.inserted {
+  color: #34d399 !important;
+}
+.prose-custom pre code .token.operator,
+.prose-custom pre code .token.entity,
+.prose-custom pre code .token.url,
+.prose-custom pre code .language-css .token.string,
+.prose-custom pre code .style .token.string {
+  color: #f472b6 !important;
+}
+.prose-custom pre code .token.atrule,
+.prose-custom pre code .token.attr-value,
+.prose-custom pre code .token.keyword {
+  color: #38bdf8 !important;
+  font-weight: 700;
+}
+.prose-custom pre code .token.function,
+.prose-custom pre code .token.class-name {
+  color: #fbbf24 !important;
 }
 
 /* Código Inline `code` */
@@ -187,16 +236,19 @@ body {
   border-radius: 0.375rem;
   font-family: var(--font-mono);
   font-size: 0.85em;
+  font-weight: 600;
 }
 
 [data-theme="dark"] .prose-custom code:not(pre code) {
   background-color: rgba(0, 212, 255, 0.15);
   color: #00d4ff;
+  border: 1px solid rgba(0, 212, 255, 0.2);
 }
 
 [data-theme="light"] .prose-custom code:not(pre code) {
   background-color: rgba(20, 99, 255, 0.1);
   color: #1463ff;
+  border: 1px solid rgba(20, 99, 255, 0.2);
 }
 
 /* Gradient Text Effect */
