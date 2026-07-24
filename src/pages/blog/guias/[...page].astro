@@ -1,20 +1,29 @@
 ---
-import Layout from '../../layouts/Layout.astro';
+import Layout from '../../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 
-const tutorials = await getCollection('tutorials');
+export async function getStaticPaths({ paginate }: { paginate: Function }) {
+  const tutorials = await getCollection('tutorials');
+  // Ordenar tutoriales (más recientes primero)
+  tutorials.sort((a, b) => (b.data.title > a.data.title ? 1 : -1));
+  
+  // Paginación a 9 guías por página para escalabilidad masiva
+  return paginate(tutorials, { pageSize: 9 });
+}
+
+const { page } = Astro.props;
 ---
 
 <Layout
-  title="Guías y Tutoriales | HerramientasTIC - Orbynex Digital"
-  description="Colección de guías paso a paso sobre Git, Astro, AWS, Linux y desarrollo de software."
+  title={`Guías y Tutoriales - Página ${page.currentPage} | HerramientasTIC`}
+  description="Colección de guías paso a paso sobre Git, Astro, Docker, Kubernetes, AWS y desarrollo de software."
 >
   <div class="py-8 space-y-8">
     
     <!-- Encabezado de la Sección -->
     <div class="text-center max-w-3xl mx-auto space-y-3">
       <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
-        Documentación Técnica
+        Documentación Técnica • Página {page.currentPage} de {page.lastPage}
       </span>
       <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
         Guías & <span class="text-gradient">Tutoriales Prácticos</span>
@@ -24,12 +33,12 @@ const tutorials = await getCollection('tutorials');
       </p>
     </div>
 
-    <!-- Buscador de Guías -->
+    <!-- Buscador de Guías en tiempo real -->
     <div class="max-w-xl mx-auto relative">
       <input
         type="text"
         id="search-guides-input"
-        placeholder="Buscar por título, tecnología o tema (ej: Git, Astro, AWS)..."
+        placeholder="Buscar en esta página por tecnología (ej: Git, Docker, Astro)..."
         class="w-full px-5 py-3.5 rounded-2xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-white placeholder-gray-500 focus:outline-none focus:border-orbynex-cyan focus:ring-1 focus:ring-orbynex-cyan transition-all text-sm"
       />
       <span class="absolute right-4 top-3.5 text-gray-500">🔍</span>
@@ -37,7 +46,7 @@ const tutorials = await getCollection('tutorials');
 
     <!-- Lista de Guías en Grid -->
     <div id="guides-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
-      {tutorials.map((guide) => (
+      {page.data.map((guide: any) => (
         <article
           class="guide-card group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 shadow-cardDark flex flex-col justify-between"
           data-title={guide.data.title.toLowerCase()}
@@ -46,7 +55,7 @@ const tutorials = await getCollection('tutorials');
           <div class="space-y-4">
             <div class="flex items-center justify-between text-xs font-mono text-orbynex-cyan">
               <span class="px-2.5 py-1 rounded-md bg-orbynex-deepSpace border border-orbynex-lineDark">
-                {guide.data.updated}
+                {guide.data.updated || '2026'}
               </span>
               <span class="text-gray-400">Guía Práctica</span>
             </div>
@@ -70,7 +79,7 @@ const tutorials = await getCollection('tutorials');
           <div class="pt-6 border-t border-orbynex-lineDark/60 mt-6 flex items-center justify-between">
             <span class="text-xs font-mono text-gray-400">Lectura ~5 min</span>
             <a
-              href={`/blog/guias/${guide.data.slug}`}
+              href={`/blog/guias/${guide.data.slug || guide.slug}`}
               class="inline-flex items-center text-xs font-bold text-orbynex-cyan group-hover:translate-x-1 transition-transform"
             >
               Leer Guía <span class="ml-1">→</span>
@@ -80,23 +89,63 @@ const tutorials = await getCollection('tutorials');
       ))}
     </div>
 
+    <!-- Controles de Paginación Escalables -->
+    {page.lastPage > 1 && (
+      <div class="flex items-center justify-center gap-4 pt-8 border-t border-orbynex-lineDark">
+        {page.url.prev ? (
+          <a
+            href={page.url.prev}
+            class="px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-white hover:border-orbynex-cyan text-xs font-bold transition-all"
+          >
+            ← Página Anterior
+          </a>
+        ) : (
+          <span class="px-4 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-gray-600 text-xs font-bold cursor-not-allowed">
+            ← Página Anterior
+          </span>
+        )}
+
+        <span class="text-xs font-mono text-gray-400">
+          Página <strong class="text-white">{page.currentPage}</strong> de {page.lastPage}
+        </span>
+
+        {page.url.next ? (
+          <a
+            href={page.url.next}
+            class="px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-white hover:border-orbynex-cyan text-xs font-bold transition-all"
+          >
+            Página Siguiente →
+          </a>
+        ) : (
+          <span class="px-4 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-gray-600 text-xs font-bold cursor-not-allowed">
+            Página Siguiente →
+          </span>
+        )}
+      </div>
+    )}
+
   </div>
 
   <script is:inline>
-    const searchInput = document.getElementById('search-guides-input');
-    const guideCards = document.querySelectorAll('.guide-card');
+    function initSearch() {
+      const searchInput = document.getElementById('search-guides-input');
+      const guideCards = document.querySelectorAll('.guide-card');
 
-    searchInput?.addEventListener('input', (e) => {
-      const query = e.target.value.toLowerCase().trim();
-      guideCards.forEach((card) => {
-        const title = card.getAttribute('data-title') || '';
-        const desc = card.getAttribute('data-desc') || '';
-        if (title.includes(query) || desc.includes(query)) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
+      searchInput?.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        guideCards.forEach((card) => {
+          const title = card.getAttribute('data-title') || '';
+          const desc = card.getAttribute('data-desc') || '';
+          if (title.includes(query) || desc.includes(query)) {
+            card.classList.remove('hidden');
+          } else {
+            card.classList.add('hidden');
+          }
+        });
       });
-    });
+    }
+
+    initSearch();
+    document.addEventListener('astro:page-load', initSearch);
   </script>
 </Layout>
