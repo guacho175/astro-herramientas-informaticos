@@ -1,0 +1,379 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import { calculators } from '../../../data/calculators.js';
+
+export async function getStaticPaths() {
+  return calculators.map((calc) => ({
+    params: { slug: calc.slug },
+    props: { calculator: calc },
+  }));
+}
+
+const { calculator } = Astro.props;
+---
+
+<Layout
+  title={`${calculator.title} | Calculadoras HerramientasTIC`}
+  description={calculator.description}
+>
+  <div class="py-8 max-w-3xl mx-auto space-y-8">
+    
+    <!-- Navigation Back Button -->
+    <a
+      href="/blog/calculadoras"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-xs font-bold text-orbynex-cyan hover:text-white hover:border-orbynex-cyan transition-all"
+    >
+      ← Volver al catálogo de calculadoras
+    </a>
+
+    <!-- Calculator Title Header -->
+    <header class="space-y-3 border-b border-orbynex-lineDark pb-6">
+      <div class="flex items-center gap-3">
+        <span class="text-4xl p-3 rounded-2xl bg-orbynex-surfaceDark border border-orbynex-lineDark">
+          {calculator.icon}
+        </span>
+        <div>
+          <span class="text-xs font-mono font-bold text-orbynex-cyan uppercase tracking-wider">
+            {calculator.category} • {calculator.badge}
+          </span>
+          <h1 class="text-2xl sm:text-4xl font-display font-black text-white">
+            {calculator.title}
+          </h1>
+        </div>
+      </div>
+      <p class="text-sm text-gray-300 leading-relaxed pt-1">
+        {calculator.description}
+      </p>
+    </header>
+
+    <!-- CALCULATOR CONTENT BY SLUG -->
+    <div class="p-6 sm:p-8 rounded-2xl bg-orbynex-surfaceDark/80 border border-orbynex-lineDark shadow-2xl space-y-6">
+      
+      <!-- 1. Conversor de Almacenamiento -->
+      {calculator.slug === 'almacenamiento' && (
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1.5">Cantidad a convertir:</label>
+            <input
+              type="number"
+              id="storage-val"
+              value="1"
+              min="0"
+              class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white text-base font-mono focus:border-orbynex-cyan"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1.5">Desde unidad:</label>
+              <select id="storage-from-unit" class="w-full px-3.5 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white text-xs font-mono">
+                <option value="B">Bytes (B)</option>
+                <option value="KB">Kilobytes (KB)</option>
+                <option value="MB">Megabytes (MB)</option>
+                <option value="GB" selected>Gigabytes (GB)</option>
+                <option value="TB">Terabytes (TB)</option>
+                <option value="PB">Petabytes (PB)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1.5">Hacia unidad:</label>
+              <select id="storage-to-unit" class="w-full px-3.5 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white text-xs font-mono">
+                <option value="B">Bytes (B)</option>
+                <option value="KB">Kilobytes (KB)</option>
+                <option value="MB" selected>Megabytes (MB)</option>
+                <option value="GB">Gigabytes (GB)</option>
+                <option value="TB">Terabytes (TB)</option>
+                <option value="PB">Petabytes (PB)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="p-6 rounded-xl bg-orbynex-deepSpace border border-orbynex-cyan/30 text-center space-y-1">
+            <span class="block text-xs font-mono text-gray-400">Resultado equivalente:</span>
+            <span id="storage-out" class="text-2xl sm:text-3xl font-mono font-bold text-orbynex-cyan">1,024 MB</span>
+          </div>
+        </div>
+      )}
+
+      <!-- 2. Subredes IPv4 -->
+      {calculator.slug === 'subredes-ip' && (
+        <div class="space-y-4">
+          <div class="grid grid-cols-3 gap-3">
+            <div class="col-span-2">
+              <label class="block text-xs font-mono text-gray-400 mb-1.5">Dirección IPv4:</label>
+              <input type="text" id="ip-val" value="192.168.1.1" class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white font-mono text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1.5">CIDR (/):</label>
+              <input type="number" id="cidr-val" value="24" min="1" max="32" class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-cyan font-mono text-sm" />
+            </div>
+          </div>
+
+          <div class="p-5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark space-y-2 text-xs font-mono">
+            <div class="flex justify-between py-1 border-b border-orbynex-lineDark/40">
+              <span class="text-gray-400">Máscara de Subred:</span>
+              <span id="ip-mask-out" class="text-orbynex-cyan font-bold">255.255.255.0</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-orbynex-lineDark/40">
+              <span class="text-gray-400">Dirección de Red:</span>
+              <span id="ip-net-out" class="text-white font-bold">192.168.1.0</span>
+            </div>
+            <div class="flex justify-between py-1 border-b border-orbynex-lineDark/40">
+              <span class="text-gray-400">Dirección Broadcast:</span>
+              <span id="ip-bcast-out" class="text-orbynex-magenta font-bold">192.168.1.255</span>
+            </div>
+            <div class="flex justify-between py-1">
+              <span class="text-gray-400">Total Hosts Útiles:</span>
+              <span id="ip-hosts-out" class="text-gray-200 font-bold">254</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <!-- 3. Generador de Contraseñas -->
+      {calculator.slug === 'generador-contrasenas' && (
+        <div class="space-y-4">
+          <div>
+            <div class="flex justify-between text-xs font-mono text-gray-300 mb-1">
+              <span>Longitud deseada:</span>
+              <span id="pass-len-lbl" class="text-orbynex-cyan font-bold">16 caracteres</span>
+            </div>
+            <input type="range" id="pass-slider" min="8" max="64" value="16" class="w-full accent-orbynex-cyan" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs font-mono text-gray-300">
+            <label class="flex items-center gap-2 cursor-pointer p-2 rounded bg-orbynex-deepSpace border border-orbynex-lineDark">
+              <input type="checkbox" id="chk-upper" checked class="accent-orbynex-cyan" /> Mayúsculas (A-Z)
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer p-2 rounded bg-orbynex-deepSpace border border-orbynex-lineDark">
+              <input type="checkbox" id="chk-lower" checked class="accent-orbynex-cyan" /> Minúsculas (a-z)
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer p-2 rounded bg-orbynex-deepSpace border border-orbynex-lineDark">
+              <input type="checkbox" id="chk-nums" checked class="accent-orbynex-cyan" /> Números (0-9)
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer p-2 rounded bg-orbynex-deepSpace border border-orbynex-lineDark">
+              <input type="checkbox" id="chk-syms" checked class="accent-orbynex-cyan" /> Símbolos (!@#$)
+            </label>
+          </div>
+
+          <div class="p-4 rounded-xl bg-orbynex-deepSpace border border-orbynex-magenta/40 flex items-center justify-between gap-3">
+            <span id="pass-res-out" class="font-mono text-base text-orbynex-magenta font-bold truncate">GeneratePass123!</span>
+            <button id="copy-pass-action" type="button" class="px-4 py-2 rounded-lg text-xs font-bold bg-orbynex-blue text-white hover:bg-orbynex-cyan hover:text-black transition-all shrink-0">
+              Copiar 📋
+            </button>
+          </div>
+        </div>
+      )}
+
+      <!-- 4. Bases Numéricas -->
+      {calculator.slug === 'bases-numericas' && (
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1">Decimal (Base 10):</label>
+            <input type="number" id="in-dec" value="255" class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white font-mono text-sm" />
+          </div>
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1">Binario (Base 2):</label>
+            <input type="text" id="in-bin" value="11111111" class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-cyan font-mono text-sm" />
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">Hexadecimal (Base 16):</label>
+              <input type="text" id="in-hex" value="FF" class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-magenta font-mono text-sm uppercase" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1">Octal (Base 8):</label>
+              <input type="text" id="in-oct" value="377" class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-gray-300 font-mono text-sm" />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <!-- 5. Hashes Criptográficos -->
+      {calculator.slug === 'generador-hash' && (
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-mono text-gray-400 mb-1.5">Texto o cadena de entrada:</label>
+            <textarea id="hash-text-in" rows="3" placeholder="Ingresa el texto a procesar..." class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white font-mono text-sm focus:border-orbynex-cyan">HerramientasTIC</textarea>
+          </div>
+
+          <div class="space-y-3 font-mono text-xs">
+            <div class="p-3.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark">
+              <span class="text-gray-400 block mb-1">Hash SHA-256 (256-bits):</span>
+              <span id="sha256-out" class="text-orbynex-cyan font-bold break-all">Calculando...</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <!-- 6. Ancho de Banda -->
+      {calculator.slug === 'ancho-banda' && (
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1.5">Tamaño archivo (GB):</label>
+              <input type="number" id="file-gb" value="10" min="0.1" step="0.1" class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white font-mono text-sm" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-gray-400 mb-1.5">Velocidad (Mbps):</label>
+              <input type="number" id="speed-mbps" value="100" min="1" class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-cyan font-mono text-sm" />
+            </div>
+          </div>
+
+          <div class="p-6 rounded-xl bg-orbynex-deepSpace border border-orbynex-magenta/40 text-center space-y-1">
+            <span class="block text-xs font-mono text-gray-400">Tiempo de Descarga Estimado:</span>
+            <span id="download-time-out" class="text-2xl font-mono font-bold text-orbynex-magenta">13 min 40 seg</span>
+          </div>
+        </div>
+      )}
+
+    </div>
+
+  </div>
+
+  <script is:inline>
+    // Storage Converter
+    const stVal = document.getElementById('storage-val');
+    const stFrom = document.getElementById('storage-from-unit');
+    const stTo = document.getElementById('storage-to-unit');
+    const stOut = document.getElementById('storage-out');
+    const units = { B: 1, KB: 1024, MB: 1024**2, GB: 1024**3, TB: 1024**4, PB: 1024**5 };
+
+    function calcStorage() {
+      if (!stVal) return;
+      const v = parseFloat(stVal.value) || 0;
+      const res = (v * units[stFrom.value]) / units[stTo.value];
+      stOut.textContent = `${res.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${stTo.value}`;
+    }
+    stVal?.addEventListener('input', calcStorage);
+    stFrom?.addEventListener('change', calcStorage);
+    stTo?.addEventListener('change', calcStorage);
+    calcStorage();
+
+    // IP Subnet Calculator
+    const ipIn = document.getElementById('ip-val');
+    const cidrIn = document.getElementById('cidr-val');
+    const maskOut = document.getElementById('ip-mask-out');
+    const netOut = document.getElementById('ip-net-out');
+    const bcastOut = document.getElementById('ip-bcast-out');
+    const hostsOut = document.getElementById('ip-hosts-out');
+
+    function calcSubnet() {
+      if (!ipIn || !cidrIn) return;
+      const cidr = parseInt(cidrIn.value) || 24;
+      const maskInt = (0xFFFFFFFF << (32 - cidr)) >>> 0;
+      maskOut.textContent = [(maskInt >>> 24) & 255, (maskInt >>> 16) & 255, (maskInt >>> 8) & 255, maskInt & 255].join('.');
+
+      const parts = ipIn.value.split('.').map(Number);
+      if (parts.length === 4 && parts.every(n => !isNaN(n) && n >= 0 && n <= 255)) {
+        const ipInt = ((parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3]) >>> 0;
+        const netInt = (ipInt & maskInt) >>> 0;
+        const bcastInt = (netInt | (~maskInt >>> 0)) >>> 0;
+
+        netOut.textContent = [(netInt >>> 24) & 255, (netInt >>> 16) & 255, (netInt >>> 8) & 255, netInt & 255].join('.');
+        bcastOut.textContent = [(bcastInt >>> 24) & 255, (bcastInt >>> 16) & 255, (bcastInt >>> 8) & 255, bcastInt & 255].join('.');
+        hostsOut.textContent = Math.max(0, Math.pow(2, 32 - cidr) - 2).toLocaleString();
+      }
+    }
+    ipIn?.addEventListener('input', calcSubnet);
+    cidrIn?.addEventListener('input', calcSubnet);
+    calcSubnet();
+
+    // Password Generator
+    const slider = document.getElementById('pass-slider');
+    const lbl = document.getElementById('pass-len-lbl');
+    const chkU = document.getElementById('chk-upper');
+    const chkL = document.getElementById('chk-lower');
+    const chkN = document.getElementById('chk-nums');
+    const chkS = document.getElementById('chk-syms');
+    const passRes = document.getElementById('pass-res-out');
+    const copyBtn = document.getElementById('copy-pass-action');
+
+    function genPass() {
+      if (!slider) return;
+      const len = parseInt(slider.value);
+      lbl.textContent = `${len} caracteres`;
+      let pool = '';
+      if (chkU.checked) pool += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      if (chkL.checked) pool += 'abcdefghijklmnopqrstuvwxyz';
+      if (chkN.checked) pool += '0123456789';
+      if (chkS.checked) pool += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+      if (!pool) { passRes.textContent = 'Selecciona una opción'; return; }
+      let out = '';
+      for (let i = 0; i < len; i++) out += pool.charAt(Math.floor(Math.random() * pool.length));
+      passRes.textContent = out;
+    }
+    slider?.addEventListener('input', genPass);
+    chkU?.addEventListener('change', genPass);
+    chkL?.addEventListener('change', genPass);
+    chkN?.addEventListener('change', genPass);
+    chkS?.addEventListener('change', genPass);
+    genPass();
+    copyBtn?.addEventListener('click', () => {
+      navigator.clipboard.writeText(passRes.textContent);
+      copyBtn.textContent = '¡Copiado! ✓';
+      setTimeout(() => copyBtn.textContent = 'Copiar 📋', 2000);
+    });
+
+    // Bases Converter
+    const inDec = document.getElementById('in-dec');
+    const inBin = document.getElementById('in-bin');
+    const inHex = document.getElementById('in-hex');
+    const inOct = document.getElementById('in-oct');
+
+    function syncBases(num) {
+      if (isNaN(num)) return;
+      inDec.value = num.toString(10);
+      inBin.value = num.toString(2);
+      inHex.value = num.toString(16).toUpperCase();
+      inOct.value = num.toString(8);
+    }
+    inDec?.addEventListener('input', (e) => syncBases(parseInt(e.target.value, 10)));
+    inBin?.addEventListener('input', (e) => syncBases(parseInt(e.target.value, 2)));
+    inHex?.addEventListener('input', (e) => syncBases(parseInt(e.target.value, 16)));
+    inOct?.addEventListener('input', (e) => syncBases(parseInt(e.target.value, 8)));
+
+    // Hash Generator SHA-256
+    const hashIn = document.getElementById('hash-text-in');
+    const shaOut = document.getElementById('sha256-out');
+
+    async function calcHash() {
+      if (!hashIn || !shaOut) return;
+      const text = hashIn.value;
+      const msgUint8 = new TextEncoder().encode(text);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      shaOut.textContent = hashHex;
+    }
+    hashIn?.addEventListener('input', calcHash);
+    calcHash();
+
+    // Download Speed Calculator
+    const fileGb = document.getElementById('file-gb');
+    const speedMbps = document.getElementById('speed-mbps');
+    const dlOut = document.getElementById('download-time-out');
+
+    function calcDownload() {
+      if (!fileGb || !speedMbps) return;
+      const gb = parseFloat(fileGb.value) || 0;
+      const mbps = parseFloat(speedMbps.value) || 1;
+      const totalBits = gb * 1024 * 1024 * 1024 * 8;
+      const seconds = totalBits / (mbps * 1000 * 1000);
+      
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600) / 60);
+      const secs = Math.floor(seconds % 60);
+
+      let str = '';
+      if (hrs > 0) str += `${hrs}h `;
+      if (mins > 0 || hrs > 0) str += `${mins}m `;
+      str += `${secs}s`;
+
+      dlOut.textContent = str;
+    }
+    fileGb?.addEventListener('input', calcDownload);
+    speedMbps?.addEventListener('input', calcDownload);
+    calcDownload();
+  </script>
+</Layout>

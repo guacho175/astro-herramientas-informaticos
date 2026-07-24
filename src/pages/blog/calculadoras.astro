@@ -1,337 +1,63 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { calculators } from '../../data/calculators.js';
 ---
 
 <Layout
-  title="Calculadoras Técnicas e Interactivas | HerramientasTIC"
-  description="Herramientas interactivas para conversión de datos, redes IP, bases numéricas y generación de contraseñas seguras."
+  title="Catálogo de Calculadoras Técnicas | HerramientasTIC"
+  description="Colección de utilidades interactivas dedicadas para redes IP, conversión de datos, criptografía y tiempo de descarga."
 >
-  <div class="py-8 space-y-12">
+  <div class="py-8 space-y-8">
     
     <!-- Encabezado de la Sección -->
     <div class="text-center max-w-3xl mx-auto space-y-3">
       <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-magenta px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
-        Utilidades & Cómputo
+        Módulo de Cómputo & Redes
       </span>
       <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
-        Calculadoras <span class="text-gradient">Técnicas Interactivas</span>
+        Calculadoras <span class="text-gradient">Técnicas Dedicadas</span>
       </h1>
       <p class="text-sm sm:text-base text-gray-300">
-        Herramientas de cálculo en tiempo real para conversión de datos, subredes IPv4, criptografía y bases numéricas.
+        Selecciona una herramienta interactiva especializada para realizar cálculos en tiempo real. Cada utilidad cuenta con su propia vista independiente.
       </p>
     </div>
 
-    <!-- Grid de Calculadoras -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-      
-      <!-- 1. Convertidor de Unidades de Almacenamiento -->
-      <div class="p-6 rounded-2xl bg-orbynex-surfaceDark/80 border border-orbynex-lineDark shadow-cardDark space-y-4">
-        <div class="flex items-center gap-3">
-          <span class="text-3xl p-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark">💾</span>
-          <div>
-            <h2 class="text-lg font-display font-bold text-white">Conversor de Almacenamiento</h2>
-            <span class="text-xs text-orbynex-cyan font-mono">Bytes, KB, MB, GB, TB, PB</span>
-          </div>
-        </div>
+    <!-- Grid del Catálogo de Calculadoras -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+      {calculators.map((calc) => (
+        <a
+          href={`/blog/calculadoras/${calc.slug}`}
+          class="group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-magenta/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 shadow-cardDark flex flex-col justify-between hover:-translate-y-1.5"
+        >
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-4xl p-2.5 rounded-2xl bg-orbynex-deepSpace border border-orbynex-lineDark">
+                {calc.icon}
+              </span>
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border border-orbynex-magenta/30 bg-orbynex-deepSpace text-orbynex-magenta">
+                {calc.badge}
+              </span>
+            </div>
 
-        <div class="space-y-3 pt-2">
-          <div>
-            <label class="block text-xs font-mono text-gray-400 mb-1">Valor de entrada:</label>
-            <input
-              type="number"
-              id="storage-input"
-              value="1"
-              min="0"
-              class="w-full px-4 py-2.5 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white focus:outline-none focus:border-orbynex-cyan text-sm font-mono"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
             <div>
-              <label class="block text-xs font-mono text-gray-400 mb-1">Desde:</label>
-              <select id="storage-from" class="w-full px-3 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white text-xs font-mono">
-                <option value="B">Bytes (B)</option>
-                <option value="KB">Kilobytes (KB)</option>
-                <option value="MB">Megabytes (MB)</option>
-                <option value="GB" selected>Gigabytes (GB)</option>
-                <option value="TB">Terabytes (TB)</option>
-                <option value="PB">Petabytes (PB)</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-gray-400 mb-1">Hacia:</label>
-              <select id="storage-to" class="w-full px-3 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white text-xs font-mono">
-                <option value="B">Bytes (B)</option>
-                <option value="KB">Kilobytes (KB)</option>
-                <option value="MB" selected>Megabytes (MB)</option>
-                <option value="GB">Gigabytes (GB)</option>
-                <option value="TB">Terabytes (TB)</option>
-                <option value="PB">Petabytes (PB)</option>
-              </select>
+              <span class="text-[10px] font-mono text-orbynex-cyan uppercase tracking-wider block mb-1">
+                {calc.category}
+              </span>
+              <h2 class="text-xl font-display font-bold text-white group-hover:text-orbynex-magenta transition-colors">
+                {calc.title}
+              </h2>
+              <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                {calc.description}
+              </p>
             </div>
           </div>
 
-          <div class="p-4 rounded-xl bg-orbynex-deepSpace/90 border border-orbynex-cyan/30 text-center">
-            <span class="block text-xs font-mono text-gray-400">Resultado Calculado:</span>
-            <span id="storage-result" class="text-xl font-mono font-bold text-orbynex-cyan">1,024 MB</span>
+          <div class="pt-6 border-t border-orbynex-lineDark/60 mt-6 flex items-center justify-between text-xs font-bold text-orbynex-magenta group-hover:translate-x-1 transition-transform">
+            Abrir calculadora <span class="ml-1">→</span>
           </div>
-        </div>
-      </div>
-
-      <!-- 2. Generador de Contraseñas Seguras -->
-      <div class="p-6 rounded-2xl bg-orbynex-surfaceDark/80 border border-orbynex-lineDark shadow-cardDark space-y-4">
-        <div class="flex items-center gap-3">
-          <span class="text-3xl p-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark">🔑</span>
-          <div>
-            <h2 class="text-lg font-display font-bold text-white">Generador de Contraseñas</h2>
-            <span class="text-xs text-orbynex-magenta font-mono">Criptográficamente Segura</span>
-          </div>
-        </div>
-
-        <div class="space-y-3 pt-2">
-          <div>
-            <div class="flex justify-between text-xs font-mono text-gray-400 mb-1">
-              <span>Longitud:</span>
-              <span id="pass-len-val" class="text-orbynex-cyan font-bold">16 caracteres</span>
-            </div>
-            <input
-              type="range"
-              id="pass-length"
-              min="8"
-              max="64"
-              value="16"
-              class="w-full accent-orbynex-cyan"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-2 text-xs text-gray-300 font-mono">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="pass-upper" checked class="accent-orbynex-cyan" /> Mayúsculas (A-Z)
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="pass-lower" checked class="accent-orbynex-cyan" /> Minúsculas (a-z)
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="pass-nums" checked class="accent-orbynex-cyan" /> Números (0-9)
-            </label>
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" id="pass-syms" checked class="accent-orbynex-cyan" /> Símbolos (!@#$)
-            </label>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-orbynex-deepSpace/90 border border-orbynex-lineDark flex items-center justify-between">
-            <span id="pass-output" class="font-mono text-sm text-orbynex-magenta font-bold truncate">GeneratePass123!</span>
-            <button
-              id="copy-pass-btn"
-              type="button"
-              class="px-3 py-1 rounded-lg text-xs font-bold bg-orbynex-blue text-white hover:bg-orbynex-cyan hover:text-black transition-all"
-            >
-              Copiar 📋
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. Convertidor de Bases Numéricas -->
-      <div class="p-6 rounded-2xl bg-orbynex-surfaceDark/80 border border-orbynex-lineDark shadow-cardDark space-y-4">
-        <div class="flex items-center gap-3">
-          <span class="text-3xl p-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark">🔢</span>
-          <div>
-            <h2 class="text-lg font-display font-bold text-white">Convertidor de Bases</h2>
-            <span class="text-xs text-orbynex-blue font-mono">Binario, Octal, Decimal, Hex</span>
-          </div>
-        </div>
-
-        <div class="space-y-3 pt-2">
-          <div>
-            <label class="block text-xs font-mono text-gray-400 mb-1">Decimal (Base 10):</label>
-            <input type="number" id="base-dec" value="255" class="w-full px-3.5 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white font-mono text-xs focus:border-orbynex-cyan" />
-          </div>
-          <div>
-            <label class="block text-xs font-mono text-gray-400 mb-1">Binario (Base 2):</label>
-            <input type="text" id="base-bin" value="11111111" class="w-full px-3.5 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-cyan font-mono text-xs focus:border-orbynex-cyan" />
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-mono text-gray-400 mb-1">Hexadecimal (Base 16):</label>
-              <input type="text" id="base-hex" value="FF" class="w-full px-3.5 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-magenta font-mono text-xs uppercase" />
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-gray-400 mb-1">Octal (Base 8):</label>
-              <input type="text" id="base-oct" value="377" class="w-full px-3.5 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-gray-300 font-mono text-xs" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. Calculadora de Subredes IP IPv4 -->
-      <div class="p-6 rounded-2xl bg-orbynex-surfaceDark/80 border border-orbynex-lineDark shadow-cardDark space-y-4">
-        <div class="flex items-center gap-3">
-          <span class="text-3xl p-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark">🌐</span>
-          <div>
-            <h2 class="text-lg font-display font-bold text-white">Calculadora Subredes IPv4</h2>
-            <span class="text-xs text-orbynex-cyan font-mono">CIDR, Máscara & Red</span>
-          </div>
-        </div>
-
-        <div class="space-y-3 pt-2">
-          <div class="grid grid-cols-3 gap-2">
-            <div class="col-span-2">
-              <label class="block text-xs font-mono text-gray-400 mb-1">IP Dirección:</label>
-              <input type="text" id="ip-addr" value="192.168.1.1" class="w-full px-3 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white font-mono text-xs" />
-            </div>
-            <div>
-              <label class="block text-xs font-mono text-gray-400 mb-1">CIDR /:</label>
-              <input type="number" id="ip-cidr" value="24" min="1" max="32" class="w-full px-3 py-2 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-orbynex-cyan font-mono text-xs" />
-            </div>
-          </div>
-
-          <div class="p-3.5 rounded-xl bg-orbynex-deepSpace/90 border border-orbynex-lineDark space-y-1 text-xs font-mono">
-            <div class="flex justify-between">
-              <span class="text-gray-400">Máscara Subred:</span>
-              <span id="ip-mask" class="text-orbynex-cyan">255.255.255.0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-400">IP de Red:</span>
-              <span id="ip-net" class="text-white">192.168.1.0</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-400">IP Broadcast:</span>
-              <span id="ip-bcast" class="text-orbynex-magenta">192.168.1.255</span>
-            </div>
-            <div class="flex justify-between">
-              <span class="text-gray-400">Hosts Útiles:</span>
-              <span id="ip-hosts" class="text-gray-300">254</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+        </a>
+      ))}
     </div>
 
   </div>
-
-  <script is:inline>
-    // 1. Storage Converter Logic
-    const storageInput = document.getElementById('storage-input');
-    const storageFrom = document.getElementById('storage-from');
-    const storageTo = document.getElementById('storage-to');
-    const storageResult = document.getElementById('storage-result');
-
-    const unitsInBytes = {
-      B: 1,
-      KB: 1024,
-      MB: 1024 * 1024,
-      GB: 1024 * 1024 * 1024,
-      TB: 1024 * 1024 * 1024 * 1024,
-      PB: 1024 * 1024 * 1024 * 1024 * 1024,
-    };
-
-    function updateStorage() {
-      const val = parseFloat(storageInput.value) || 0;
-      const bytes = val * unitsInBytes[storageFrom.value];
-      const result = bytes / unitsInBytes[storageTo.value];
-      storageResult.textContent = `${result.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${storageTo.value}`;
-    }
-
-    storageInput?.addEventListener('input', updateStorage);
-    storageFrom?.addEventListener('change', updateStorage);
-    storageTo?.addEventListener('change', updateStorage);
-
-    // 2. Password Generator Logic
-    const passLen = document.getElementById('pass-length');
-    const passLenVal = document.getElementById('pass-len-val');
-    const passUpper = document.getElementById('pass-upper');
-    const passLower = document.getElementById('pass-lower');
-    const passNums = document.getElementById('pass-nums');
-    const passSyms = document.getElementById('pass-syms');
-    const passOutput = document.getElementById('pass-output');
-    const copyPassBtn = document.getElementById('copy-pass-btn');
-
-    function generatePassword() {
-      const len = parseInt(passLen.value);
-      passLenVal.textContent = `${len} caracteres`;
-
-      let chars = '';
-      if (passUpper.checked) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-      if (passLower.checked) chars += 'abcdefghijklmnopqrstuvwxyz';
-      if (passNums.checked) chars += '0123456789';
-      if (passSyms.checked) chars += '!@#$%^&*()_+-=[]{}|;:,.<>?';
-
-      if (!chars) {
-        passOutput.textContent = 'Selecciona al menos una opción';
-        return;
-      }
-
-      let res = '';
-      for (let i = 0; i < len; i++) {
-        res += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
-      passOutput.textContent = res;
-    }
-
-    passLen?.addEventListener('input', generatePassword);
-    passUpper?.addEventListener('change', generatePassword);
-    passLower?.addEventListener('change', generatePassword);
-    passNums?.addEventListener('change', generatePassword);
-    passSyms?.addEventListener('change', generatePassword);
-    generatePassword();
-
-    copyPassBtn?.addEventListener('click', () => {
-      navigator.clipboard.writeText(passOutput.textContent);
-      copyPassBtn.textContent = '¡Copiado! ✓';
-      setTimeout(() => { copyPassBtn.textContent = 'Copiar 📋'; }, 2000);
-    });
-
-    // 3. Base Converter Logic
-    const baseDec = document.getElementById('base-dec');
-    const baseBin = document.getElementById('base-bin');
-    const baseHex = document.getElementById('base-hex');
-    const baseOct = document.getElementById('base-oct');
-
-    function updateBases(fromNum) {
-      if (isNaN(fromNum)) return;
-      baseDec.value = fromNum.toString(10);
-      baseBin.value = fromNum.toString(2);
-      baseHex.value = fromNum.toString(16).toUpperCase();
-      baseOct.value = fromNum.toString(8);
-    }
-
-    baseDec?.addEventListener('input', (e) => updateBases(parseInt(e.target.value, 10)));
-    baseBin?.addEventListener('input', (e) => updateBases(parseInt(e.target.value, 2)));
-    baseHex?.addEventListener('input', (e) => updateBases(parseInt(e.target.value, 16)));
-    baseOct?.addEventListener('input', (e) => updateBases(parseInt(e.target.value, 8)));
-
-    // 4. IP Subnet Calculator Logic
-    const ipAddr = document.getElementById('ip-addr');
-    const ipCidr = document.getElementById('ip-cidr');
-    const ipMask = document.getElementById('ip-mask');
-    const ipNet = document.getElementById('ip-net');
-    const ipBcast = document.getElementById('ip-bcast');
-    const ipHosts = document.getElementById('ip-hosts');
-
-    function calculateSubnet() {
-      const cidr = parseInt(ipCidr.value) || 24;
-      const maskInt = (0xFFFFFFFF << (32 - cidr)) >>> 0;
-      const maskStr = [(maskInt >>> 24) & 255, (maskInt >>> 16) & 255, (maskInt >>> 8) & 255, maskInt & 255].join('.');
-      ipMask.textContent = maskStr;
-
-      const ipParts = ipAddr.value.split('.').map(Number);
-      if (ipParts.length === 4 && ipParts.every(n => !isNaN(n) && n >= 0 && n <= 255)) {
-        const ipInt = ((ipParts[0] << 24) | (ipParts[1] << 16) | (ipParts[2] << 8) | ipParts[3]) >>> 0;
-        const netInt = (ipInt & maskInt) >>> 0;
-        const bcastInt = (netInt | (~maskInt >>> 0)) >>> 0;
-
-        ipNet.textContent = [(netInt >>> 24) & 255, (netInt >>> 16) & 255, (netInt >>> 8) & 255, netInt & 255].join('.');
-        ipBcast.textContent = [(bcastInt >>> 24) & 255, (bcastInt >>> 16) & 255, (bcastInt >>> 8) & 255, bcastInt & 255].join('.');
-        
-        const totalHosts = Math.max(0, Math.pow(2, 32 - cidr) - 2);
-        ipHosts.textContent = totalHosts.toLocaleString();
-      }
-    }
-
-    ipAddr?.addEventListener('input', calculateSubnet);
-    ipCidr?.addEventListener('input', calculateSubnet);
-    calculateSubnet();
-  </script>
 </Layout>

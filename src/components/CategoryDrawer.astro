@@ -1,0 +1,123 @@
+---
+const mainCategories = [
+  {
+    name: 'Apps & Insumos Informáticos',
+    desc: 'Catálogo de software, IDEs, herramientas de IA y utilidades.',
+    href: '/blog/apps',
+    icon: '🛠️',
+    badge: 'Directorio',
+  },
+  {
+    name: 'Calculadoras Técnicas',
+    desc: 'Almacenamiento, IPv4, contraseñas, bases numéricas y hashes.',
+    href: '/blog/calculadoras',
+    icon: '🧮',
+    badge: 'Utilidades',
+  },
+  {
+    name: 'Guías & Tutoriales',
+    desc: 'Artículos paso a paso sobre desarrollo, Linux, Git, AWS y Cloud.',
+    href: '/blog/guias',
+    icon: '📚',
+    badge: 'Documentación',
+  },
+];
+
+const subCategories = [
+  { name: 'Redes & Subredes IPv4', href: '/blog/calculadoras/subredes-ip', icon: '🌐' },
+  { name: 'Conversor de Almacenamiento', href: '/blog/calculadoras/almacenamiento', icon: '💾' },
+  { name: 'Generador de Contraseñas', href: '/blog/calculadoras/generador-contrasenas', icon: '🔑' },
+  { name: 'Conversor de Bases Numéricas', href: '/blog/calculadoras/bases-numericas', icon: '🔢' },
+  { name: 'Generador de Hashes Criptográficos', href: '/blog/calculadoras/generador-hash', icon: '🔒' },
+  { name: 'Calculadora de Ancho de Banda', href: '/blog/calculadoras/ancho-banda', icon: '⚡' },
+];
+---
+
+<!-- Overlay backdrop -->
+<div id="category-drawer-overlay" class="fixed inset-0 z-50 hidden bg-orbynex-deepSpace/80 backdrop-blur-sm transition-opacity duration-300"></div>
+
+<!-- Drawer Panel (Sidebar) -->
+<aside
+  id="category-drawer"
+  class="fixed top-0 left-0 bottom-0 z-50 w-80 max-w-[85vw] bg-orbynex-surfaceDark border-r border-orbynex-lineDark shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between overflow-y-auto"
+>
+  <div>
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-orbynex-lineDark flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🗂️</span>
+        <span class="font-display font-bold text-base text-white">Categorías & Módulos</span>
+      </div>
+      <button id="close-category-drawer" type="button" class="p-1.5 rounded-xl text-gray-400 hover:text-white hover:bg-orbynex-deepSpace">
+        ✕
+      </button>
+    </div>
+
+    <!-- Módulos Principales -->
+    <div class="p-5 space-y-6">
+      <div>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-orbynex-cyan block mb-3">Secciones Principales</span>
+        <div class="space-y-2">
+          {mainCategories.map((cat) => (
+            <a
+              href={cat.href}
+              class="group flex items-start gap-3 p-3 rounded-xl bg-orbynex-deepSpace/60 border border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all"
+            >
+              <span class="text-2xl">{cat.icon}</span>
+              <div>
+                <span class="font-display font-bold text-sm text-white group-hover:text-orbynex-cyan transition-colors block">
+                  {cat.name}
+                </span>
+                <span class="text-xs text-gray-400 block mt-0.5 leading-snug">
+                  {cat.desc}
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <!-- Calculadoras Directas -->
+      <div>
+        <span class="text-[10px] font-mono font-bold uppercase tracking-wider text-orbynex-magenta block mb-3">Calculadoras Rápidas</span>
+        <div class="space-y-1.5">
+          {subCategories.map((sub) => (
+            <a
+              href={sub.href}
+              class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-gray-300 hover:text-white hover:bg-orbynex-deepSpace hover:border hover:border-orbynex-lineDark transition-all"
+            >
+              <span class="text-sm">{sub.icon}</span>
+              <span>{sub.name}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Drawer Footer -->
+  <div class="p-5 border-t border-orbynex-lineDark text-center">
+    <span class="text-[11px] font-mono text-gray-500">HerramientasTIC • Orbynex Digital</span>
+  </div>
+</aside>
+
+<script is:inline>
+  const categoryBtn = document.getElementById('toggle-category-drawer');
+  const drawer = document.getElementById('category-drawer');
+  const overlay = document.getElementById('category-drawer-overlay');
+  const closeBtn = document.getElementById('close-category-drawer');
+
+  function openDrawer() {
+    drawer?.classList.remove('-translate-x-full');
+    overlay?.classList.remove('hidden');
+  }
+
+  function closeDrawer() {
+    drawer?.classList.add('-translate-x-full');
+    overlay?.classList.add('hidden');
+  }
+
+  categoryBtn?.addEventListener('click', openDrawer);
+  closeBtn?.addEventListener('click', closeDrawer);
+  overlay?.addEventListener('click', closeDrawer);
+</script>
