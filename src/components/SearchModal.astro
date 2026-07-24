@@ -1,12 +1,12 @@
 ---
 import { tools } from '../data/tools.js';
-import { getCollection } from 'astro:content';
+import { tutorialService } from '../lib/application/services/TutorialService';
 
-const tutorials = await getCollection('tutorials');
+const fallbackGuides = await tutorialService.getTutorialCatalog();
 
 const searchItems = [
   ...tools.map(t => ({ title: t.title, desc: t.description, url: t.link, isExternal: true, type: 'App' })),
-  ...tutorials.map(g => ({ title: g.data.title, desc: g.data.description, url: `/blog/guias/${g.data.slug}`, isExternal: false, type: 'Guía' })),
+  ...fallbackGuides.map(g => ({ title: g.title, desc: g.description, url: `/blog/guias/${g.slug}`, isExternal: false, type: 'Guía' })),
   { title: 'Calculadoras Técnicas', desc: 'Conversor de almacenamiento, subredes IP y contraseñas', url: '/blog/calculadoras', isExternal: false, type: 'Utilidad' },
   { title: 'Sobre Nosotros', desc: 'Conoce la visión de HerramientasTIC y Orbynex Digital', url: '/nosotros', isExternal: false, type: 'Página' },
   { title: 'Contacto & Soporte', desc: 'Envía tus mensajes o sugerencias al equipo', url: '/contacto', isExternal: false, type: 'Página' }

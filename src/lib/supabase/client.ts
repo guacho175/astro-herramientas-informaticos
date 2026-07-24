@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import WebSocket from 'ws';
 
 // Valores por defecto para prevenir errores en tiempo de compilación si faltan variables
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || '';
@@ -9,4 +10,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 // Exportamos una instancia Singleton del cliente
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: false,
+    autoRefreshToken: false,
+    detectSessionInUrl: false
+  },
+  realtime: {
+    transport: WebSocket
+  }
+});

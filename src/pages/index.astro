@@ -1,12 +1,14 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
+import Categorias from '../components/Categorias.astro';
 import HerramientasDestacadas from '../components/HerramientasDestacadas.astro';
-import { getCollection } from 'astro:content';
+import { tutorialService } from '../lib/application/services/TutorialService';
 import { calculators } from '../data/calculators.js';
 
-const tutorials = await getCollection('tutorials');
-const latestTutorials = tutorials.slice(0, 6);
+// Fetch guides from Supabase
+const tutorials = await tutorialService.getTutorialCatalog();
+const recentGuides = tutorials.slice(0, 3);
 const topCalculators = calculators.slice(0, 4);
 ---
 
@@ -76,21 +78,21 @@ const topCalculators = calculators.slice(0, 4);
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {latestTutorials.map((guide) => (
+      {recentGuides.map((guide) => (
         <a
-          href={`/blog/guias/${guide.data.slug || guide.slug}`}
+          href={`/blog/guias/${guide.slug}`}
           class="group p-5 rounded-2xl bg-white dark:bg-[#0c1b3a] border border-slate-200 dark:border-orbynex-lineDark hover:border-orbynex-cyan/60 hover:-translate-y-1 transition-all duration-300 shadow-cardLight dark:shadow-cardDark flex flex-col justify-between cursor-pointer"
         >
           <div class="space-y-3">
             <div class="flex items-center justify-between text-xs text-orbynex-cyan font-mono">
-              <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark">{guide.data.updated || '2026'}</span>
-              <span class="text-slate-400 dark:text-gray-400">Guía Práctica</span>
+              <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark">{new Date(guide.created_at).getFullYear()}</span>
+              <span class="text-slate-400 dark:text-gray-400">{guide.category || 'Guía Práctica'}</span>
             </div>
             <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white group-hover:text-orbynex-cyan transition-colors">
-              {guide.data.title}
+              {guide.title}
             </h3>
             <p class="text-xs text-slate-500 dark:text-gray-400 line-clamp-2">
-              {guide.data.description}
+              {guide.description}
             </p>
           </div>
 

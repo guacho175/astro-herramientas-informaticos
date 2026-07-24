@@ -8,6 +8,8 @@ import BasesNumericas from '../../../components/calculadoras/BasesNumericas.astr
 import GeneradorHash from '../../../components/calculadoras/GeneradorHash.astro';
 import AnchoBanda from '../../../components/calculadoras/AnchoBanda.astro';
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   return calculators.map((calc) => ({
     params: { slug: calc.slug },
