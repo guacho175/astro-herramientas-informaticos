@@ -1,31 +1,102 @@
 ---
-// guías.astro
 import Layout from '../../layouts/Layout.astro';
-import HerramientasDestacadas from '../../components/HerramientasDestacadas.astro';
-import TutorialList from "../../components/TutorialList.astro";
-import BarraBusqueda from "../../components/BarraBusqueda.astro";
-import { getCollection } from "astro:content";
+import { getCollection } from 'astro:content';
 
-const tutorials = await getCollection("tutorials");
-
-const title = "Guías y Tutoriales | Herramientas para Informáticos";
-const description = "Paso a paso para dominar herramientas y conceptos clave en informática.";
-const keywords = "guías, tutoriales, informática, aprender, herramientas";
+const tutorials = await getCollection('tutorials');
 ---
 
-<Layout title={title} description={description} keywords={keywords}>
-  <HerramientasDestacadas active="guias">
-    <h2 class="text-2xl font-bold text-blue-500 mb-6">📘 Guías y Tutoriales</h2>
-    <p class="text-xs opacity-70">Total tutoriales: {tutorials.length}</p>
+<Layout
+  title="Guías y Tutoriales | HerramientasTIC - Orbynex Digital"
+  description="Colección de guías paso a paso sobre Git, Astro, AWS, Linux y desarrollo de software."
+>
+  <div class="py-8 space-y-8">
+    
+    <!-- Encabezado de la Sección -->
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
+        Documentación Técnica
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
+        Guías & <span class="text-gradient">Tutoriales Prácticos</span>
+      </h1>
+      <p class="text-sm sm:text-base text-gray-300">
+        Aprende paso a paso con nuestras guías técnicas de infraestructura, control de versiones, frontend y la nube.
+      </p>
+    </div>
 
-    <p class="mb-8 text-gray-700 dark:text-gray-300">
-      Aquí encontrarás guías paso a paso, tutoriales prácticos y explicaciones claras.
-    </p>
+    <!-- Buscador de Guías -->
+    <div class="max-w-xl mx-auto relative">
+      <input
+        type="text"
+        id="search-guides-input"
+        placeholder="Buscar por título, tecnología o tema (ej: Git, Astro, AWS)..."
+        class="w-full px-5 py-3.5 rounded-2xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-white placeholder-gray-500 focus:outline-none focus:border-orbynex-cyan focus:ring-1 focus:ring-orbynex-cyan transition-all text-sm"
+      />
+      <span class="absolute right-4 top-3.5 text-gray-500">🔍</span>
+    </div>
 
-    <!-- Barra de búsqueda -->
-    <BarraBusqueda placeholder="Buscar tutorial..." targetSelector=".tutorial-item" />
+    <!-- Lista de Guías en Grid -->
+    <div id="guides-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+      {tutorials.map((guide) => (
+        <article
+          class="guide-card group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 shadow-cardDark flex flex-col justify-between"
+          data-title={guide.data.title.toLowerCase()}
+          data-desc={guide.data.description.toLowerCase()}
+        >
+          <div class="space-y-4">
+            <div class="flex items-center justify-between text-xs font-mono text-orbynex-cyan">
+              <span class="px-2.5 py-1 rounded-md bg-orbynex-deepSpace border border-orbynex-lineDark">
+                {guide.data.updated}
+              </span>
+              <span class="text-gray-400">Guía Práctica</span>
+            </div>
 
-    <!-- Lista de tutoriales -->
-    <TutorialList tutorials={tutorials} />
-  </HerramientasDestacadas>
+            {guide.data.image && (
+              <div class="w-12 h-12 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark p-2 flex items-center justify-center">
+                <img src={guide.data.image} alt={guide.data.title} class="w-full h-full object-contain" />
+              </div>
+            )}
+
+            <div>
+              <h2 class="text-xl font-display font-bold text-white group-hover:text-orbynex-cyan transition-colors">
+                {guide.data.title}
+              </h2>
+              <p class="text-xs text-gray-400 mt-2 leading-relaxed line-clamp-3">
+                {guide.data.description}
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-orbynex-lineDark/60 mt-6 flex items-center justify-between">
+            <span class="text-xs font-mono text-gray-400">Lectura ~5 min</span>
+            <a
+              href={`/blog/guias/${guide.data.slug}`}
+              class="inline-flex items-center text-xs font-bold text-orbynex-cyan group-hover:translate-x-1 transition-transform"
+            >
+              Leer Guía <span class="ml-1">→</span>
+            </a>
+          </div>
+        </article>
+      ))}
+    </div>
+
+  </div>
+
+  <script is:inline>
+    const searchInput = document.getElementById('search-guides-input');
+    const guideCards = document.querySelectorAll('.guide-card');
+
+    searchInput?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      guideCards.forEach((card) => {
+        const title = card.getAttribute('data-title') || '';
+        const desc = card.getAttribute('data-desc') || '';
+        if (title.includes(query) || desc.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  </script>
 </Layout>

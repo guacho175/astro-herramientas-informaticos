@@ -3,7 +3,6 @@ import Layout from "../../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 
-// Generamos las rutas dinámicas
 export async function getStaticPaths() {
   const tutorials = await getCollection("tutorials");
   return tutorials.map((tut: CollectionEntry<"tutorials">) => ({
@@ -12,51 +11,86 @@ export async function getStaticPaths() {
   }));
 }
 
-// Tipar explícitamente las props para evitar el error de 'never'
 const { tutorial } = Astro.props as { tutorial: CollectionEntry<"tutorials"> };
 const { Content } = await tutorial.render();
 ---
 
-<Layout title={tutorial.data.title} description={tutorial.data.description}>
-  <main class="mt-20">
-    <!-- Sección principal con imagen y detalles -->
-    <section class="max-w-5xl mx-auto px-4 py-12 grid md:grid-cols-2 gap-10 items-start">
-      
-      <!-- Columna izquierda -->
-      <div class="space-y-6">
-        <img 
-          src={tutorial.data.image} 
-          alt={tutorial.data.title}
-          class="rounded-2xl shadow-lg w-full object-cover h-auto max-h-[400px]" 
-        />
-        <a 
-          href="/blog/guias" 
-          class="inline-block text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          ← Volver a todas las guías
-        </a>
+<Layout title={`${tutorial.data.title} | Guías HerramientasTIC`} description={tutorial.data.description}>
+  
+  <!-- Reading Progress Bar -->
+  <div id="read-progress" class="fixed top-20 left-0 h-1 bg-gradient-to-r from-orbynex-cyan via-orbynex-blue to-orbynex-magenta z-50 w-0 transition-all duration-150"></div>
+
+  <article class="py-8 max-w-4xl mx-auto space-y-8">
+    
+    <!-- Botón Volver -->
+    <a
+      href="/blog/guias"
+      class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-xs font-bold text-orbynex-cyan hover:text-white hover:border-orbynex-cyan transition-all"
+    >
+      ← Volver al catálogo de guías
+    </a>
+
+    <!-- Header del Artículo -->
+    <header class="space-y-4 border-b border-orbynex-lineDark pb-8">
+      <div class="flex items-center gap-3 text-xs font-mono text-orbynex-cyan">
+        <span class="px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
+          Guía Técnica
+        </span>
+        <span>•</span>
+        <span>Actualizado: {tutorial.data.updated}</span>
       </div>
 
-      <!-- Columna derecha -->
-      <div>
-        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center md:text-left">
-          {tutorial.data.title}
-        </h1>
-        <p class="text-gray-700 dark:text-gray-300 mb-4">
-          {tutorial.data.description}
-        </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
-          <strong>📅 Última actualización:</strong> {tutorial.data.updated}
-        </p>
-        <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">
-          <strong>✍️ Autor:</strong> Christian Galíndez
-        </p>
-      </div>
-    </section>
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-white leading-tight">
+        {tutorial.data.title}
+      </h1>
 
-    <!-- Contenido del tutorial en Markdown -->
-    <section class="prose lg:prose-lg max-w-4xl mx-auto px-4 py-8 dark:prose-invert">
+      <p class="text-base sm:text-lg text-gray-300 leading-relaxed">
+        {tutorial.data.description}
+      </p>
+
+      <!-- Ficha de Autor -->
+      <div class="flex items-center gap-3 pt-4">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-orbynex-cyan to-orbynex-magenta p-[2px]">
+          <div class="w-full h-full bg-orbynex-deepSpace rounded-full flex items-center justify-center font-display font-bold text-white text-xs">
+            CG
+          </div>
+        </div>
+        <div>
+          <span class="block text-xs font-bold text-white">Christian Galindez</span>
+          <span class="block text-[10px] text-gray-400 font-mono">Backend, APIs & Cloud Architect</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido del Artículo en Markdown -->
+    <div class="prose prose-invert prose-cyan max-w-none prose-headings:font-display prose-headings:font-bold prose-code:font-mono prose-code:text-orbynex-cyan prose-pre:bg-orbynex-surfaceDark prose-pre:border prose-pre:border-orbynex-lineDark">
       <Content />
-    </section>
-  </main>
+    </div>
+
+    <!-- Call to action al pie de la guía -->
+    <footer class="pt-8 border-t border-orbynex-lineDark flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="text-xs text-gray-400">
+        ¿Te sirvió esta guía? Compártela o explora más contenido técnico en <a href="https://noticias.orbynexdigital.cl" target="_blank" class="text-orbynex-cyan hover:underline">Noticias Orbynex</a>.
+      </div>
+      <a
+        href="/blog/guias"
+        class="px-5 py-2.5 rounded-xl text-xs font-bold bg-orbynex-surfaceDark border border-orbynex-lineDark text-white hover:border-orbynex-cyan transition-all"
+      >
+        Ver más guías →
+      </a>
+    </footer>
+
+  </article>
+
+  <script is:inline>
+    window.addEventListener('scroll', () => {
+      const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+      const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+      const scrolled = (winScroll / height) * 100;
+      const progressBar = document.getElementById('read-progress');
+      if (progressBar) {
+        progressBar.style.width = scrolled + '%';
+      }
+    });
+  </script>
 </Layout>

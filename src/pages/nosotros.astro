@@ -1,0 +1,67 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Logo from '../components/Logo.astro';
+---
+
+<Layout
+  title="Sobre Nosotros | HerramientasTIC - Orbynex Digital"
+  description="Conoce la misión, arquitectura y propósito del portal HerramientasTIC de Orbynex Digital."
+>
+  <div class="py-8 max-w-4xl mx-auto space-y-12">
+    
+    <!-- Hero Sección Nosotros -->
+    <div class="text-center space-y-4">
+      <div class="inline-flex justify-center mb-2">
+        <Logo size="lg" />
+      </div>
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
+        Nuestra Misión & <span class="text-gradient">Propósito</span>
+      </h1>
+      <p class="text-base sm:text-lg text-gray-300 max-w-2xl mx-auto leading-relaxed">
+        Facilitar el acceso libre a herramientas de software, calculadoras de ingeniería y documentación técnica de calidad para el ecosistema tecnológico.
+      </p>
+    </div>
+
+    <!-- Bloques Informativos -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <div class="p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-orbynex-blue/20 border border-orbynex-blue/40 flex items-center justify-center text-orbynex-cyan font-bold text-lg">
+          🌐
+        </div>
+        <h2 class="text-xl font-display font-bold text-white">Ecosistema Orbynex Digital</h2>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          HerramientasTIC forma parte de la red de plataformas desarrolladas por Christian Galindez bajo el sello de Orbynex Digital, conectando noticias de tecnología, proyectos de software y recursos educacionales libres.
+        </p>
+      </div>
+
+      <div class="p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark space-y-3">
+        <div class="w-10 h-10 rounded-xl bg-orbynex-magenta/20 border border-orbynex-magenta/40 flex items-center justify-center text-orbynex-magenta font-bold text-lg">
+          ⚡
+        </div>
+        <h2 class="text-xl font-display font-bold text-white">Arquitectura Ultra Rápida</h2>
+        <p class="text-xs text-gray-400 leading-relaxed">
+          Construido con Astro 5 y Tailwind CSS como un sitio 100% estático (SSG), garantizando carga instantánea, consumo mínimo de datos y máxima puntuación de accesibilidad y SEO.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Tarjeta de Autor / Creador -->
+    <div class="p-8 rounded-2xl bg-gradient-to-r from-orbynex-surfaceDark via-orbynex-surfaceStrong to-orbynex-surfaceDark border border-orbynex-lineDark flex flex-col md:flex-row items-center gap-6">
+      <div class="w-20 h-20 rounded-full bg-gradient-to-tr from-orbynex-cyan via-orbynex-blue to-orbynex-magenta p-[3px] shrink-0">
+        <div class="w-full h-full bg-orbynex-deepSpace rounded-full flex items-center justify-center font-display font-black text-2xl text-white">
+          CG
+        </div>
+      </div>
+      <div class="space-y-2 text-center md:text-left">
+        <span class="text-xs font-mono text-orbynex-cyan uppercase tracking-wider">Creador y Arquitecto Principal</span>
+        <h3 class="text-2xl font-display font-bold text-white">Christian Galindez</h3>
+        <p class="text-xs text-gray-300 leading-relaxed max-w-xl">
+          Desarrollador backend con especialización en APIs, sistemas distribuidos e infraestructura cloud. Explora mis trabajos en mi <a href="https://portafolio.orbynexdigital.cl" target="_blank" class="text-orbynex-cyan underline">Portafolio Técnico</a>.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</Layout>

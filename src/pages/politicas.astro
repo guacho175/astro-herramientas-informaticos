@@ -2,32 +2,43 @@
 import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout>
-  <section class="max-w-4xl mx-auto py-10 px-4 space-y-6">
-    <h1 class="text-3xl font-bold text-blue-500 mb-4">📝 Política de Privacidad</h1>
+<Layout
+  title="Políticas de Privacidad & Términos | HerramientasTIC"
+  description="Información referente al uso de datos, cookies y privacidad en HerramientasTIC."
+>
+  <div class="py-8 max-w-4xl mx-auto space-y-8">
+    
+    <div class="border-b border-orbynex-lineDark pb-6">
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan">Términos Legales</span>
+      <h1 class="text-3xl sm:text-4xl font-display font-black text-white mt-1">Política de Privacidad</h1>
+      <p class="text-xs font-mono text-gray-400 mt-2">Última actualización: Julio 2026</p>
+    </div>
 
-    <p class="text-gray-800">
-      Esta política describe cómo recopilamos, usamos y protegemos tu información personal cuando visitas nuestro sitio.
-    </p>
+    <div class="space-y-6 text-sm text-gray-300 leading-relaxed bg-orbynex-surfaceDark/60 p-6 sm:p-8 rounded-2xl border border-orbynex-lineDark">
+      <p>
+        En <strong>HerramientasTIC</strong> (Orbynex Digital), valoramos la privacidad de nuestros usuarios y nos comprometemos a proteger sus datos en todo momento.
+      </p>
 
-    <p class="text-gray-800">
-      Podemos recopilar tu nombre, correo electrónico y otros datos si completas formularios o te registras.
-    </p>
+      <h2 class="text-lg font-display font-bold text-white pt-2">1. Recopilación de Información</h2>
+      <p>
+        No requerimos registro de cuenta obligatorio para acceder a nuestras herramientas, calculadoras o guías. Los datos personales (como nombre y correo electrónico) solo son recopilados de forma voluntaria al completar nuestro formulario de contacto.
+      </p>
 
-    <p class="text-gray-800">
-      Usamos tus datos para mejorar la experiencia del sitio, responder consultas y enviar información relevante.
-    </p>
+      <h2 class="text-lg font-display font-bold text-white pt-2">2. Uso de Cookies y Analítica</h2>
+      <p>
+        Utilizamos cookies técnicas y herramientas de analítica web para evaluar el rendimiento, mejorar la navegación y garantizar la seguridad de la plataforma.
+      </p>
 
-    <p class="text-gray-800">
-      Este sitio utiliza cookies para mejorar la experiencia del usuario y mostrar anuncios personalizados.
-    </p>
+      <h2 class="text-lg font-display font-bold text-white pt-2">3. Enlaces a Sitios de Terceros</h2>
+      <p>
+        Nuestro catálogo de aplicaciones contiene enlaces a plataformas externas y sitios oficiales. No nos hacemos responsables de las políticas de privacidad o contenidos de dichos sitios web de terceros.
+      </p>
 
-    <p class="text-gray-800">
-      Este sitio puede mostrar anuncios de terceros (como Google AdSense) que pueden usar cookies para mostrar contenido personalizado.
-    </p>
+      <h2 class="text-lg font-display font-bold text-white pt-2">4. Contacto</h2>
+      <p>
+        Para resolver dudas respecto a estos términos, puedes escribirnos directamente a través de nuestra <a href="/contacto" class="text-orbynex-cyan underline">Página de Contacto</a>.
+      </p>
+    </div>
 
-    <p class="text-gray-800">
-      Si tienes preguntas sobre nuestra política, escríbenos desde la <a href="/contacto" class="text-blue-500 underline">página de contacto</a>.
-    </p>
-  </section>
+  </div>
 </Layout>

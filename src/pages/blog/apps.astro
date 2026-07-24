@@ -1,30 +1,97 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import Categorias from '../../components/Categorias.astro';
-import ToolsCards from '../../components/ToolsCards.astro';
-import SearchBar from '../../components/BarraBusqueda.astro';
-
-const title = "Aplicaciones Recomendadas | Herramientas para Informáticos";
-const description = "Apps útiles para estudiantes y profesionales de informática.";
-const keywords = "apps, herramientas, productividad, informática";
+import { tools } from '../../data/tools.js';
 ---
 
-<Layout title={title} description={description} keywords={keywords}>
-  <section class="py-10 w-full">
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6 w-full mb-6">
-
-      <!-- Columna 1: Menú lateral -->
-      <div class="space-y-6 col-span-1">
-        <h3 class="text-2xl font-bold text-blue-400">🛠 Herramientas</h3>
-        <Categorias active="apps" />
-      </div>
-
-      <!-- Columna 2-5: Buscador + tarjetas -->
-      <div class="col-span-1 lg:col-span-4 space-y-4">
-        <SearchBar placeholder="Buscar aplicación..." targetSelector=".tool-card" />
-        <ToolsCards />
-      </div>
-
+<Layout
+  title="Catálogo de Apps e Insumos Informáticos | HerramientasTIC"
+  description="Selección curada de aplicaciones, editores de código, herramientas de inteligencia artificial y utilidades para desarrolladores."
+>
+  <div class="py-8 space-y-8">
+    
+    <!-- Encabezado -->
+    <div class="text-center max-w-3xl mx-auto space-y-3">
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
+        Catálogo de Software & Insumos
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
+        Aplicaciones & <span class="text-gradient">Herramientas Recomendadas</span>
+      </h1>
+      <p class="text-sm sm:text-base text-gray-300">
+        Directorio curado de software esencial, editores, plataformas colaborativas e inteligencia artificial para potenciar tu flujo de trabajo.
+      </p>
     </div>
-  </section>
+
+    <!-- Buscador en Cliente -->
+    <div class="max-w-xl mx-auto relative">
+      <input
+        type="text"
+        id="search-apps-input"
+        placeholder="Buscar por nombre o descripción (ej: Notion, VS Code, Figma)..."
+        class="w-full px-5 py-3.5 rounded-2xl bg-orbynex-surfaceDark border border-orbynex-lineDark text-white placeholder-gray-500 focus:outline-none focus:border-orbynex-cyan focus:ring-1 focus:ring-orbynex-cyan transition-all text-sm"
+      />
+      <span class="absolute right-4 top-3.5 text-gray-500">🔍</span>
+    </div>
+
+    <!-- Grid de Herramientas -->
+    <div id="apps-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
+      {tools.map((item) => (
+        <div
+          class="app-card group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-blue/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 shadow-cardDark flex flex-col justify-between"
+          data-title={item.title.toLowerCase()}
+          data-desc={item.description.toLowerCase()}
+        >
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-4xl p-2.5 rounded-2xl bg-orbynex-deepSpace border border-orbynex-lineDark shadow-sm">
+                {item.emoji}
+              </span>
+              <span class="px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border border-orbynex-lineDark bg-orbynex-deepSpace text-orbynex-cyan">
+                Recomendado
+              </span>
+            </div>
+
+            <div>
+              <h2 class="text-xl font-display font-bold text-white group-hover:text-orbynex-cyan transition-colors">
+                {item.title}
+              </h2>
+              <p class="text-xs text-gray-400 mt-2 leading-relaxed">
+                {item.description}
+              </p>
+            </div>
+          </div>
+
+          <div class="pt-6 border-t border-orbynex-lineDark/60 mt-6">
+            <a
+              href={item.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 rounded-xl text-xs font-bold bg-orbynex-deepSpace hover:bg-orbynex-blue text-gray-200 hover:text-white border border-orbynex-lineDark hover:border-orbynex-blue transition-all duration-200"
+            >
+              Abrir sitio oficial ↗
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+  </div>
+
+  <script is:inline>
+    const searchInput = document.getElementById('search-apps-input');
+    const appCards = document.querySelectorAll('.app-card');
+
+    searchInput?.addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      appCards.forEach((card) => {
+        const title = card.getAttribute('data-title') || '';
+        const desc = card.getAttribute('data-desc') || '';
+        if (title.includes(query) || desc.includes(query)) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  </script>
 </Layout>

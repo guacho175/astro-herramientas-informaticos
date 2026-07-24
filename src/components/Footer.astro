@@ -1,10 +1,76 @@
 ---
-// Footer simple con enlaces
+import Logo from './Logo.astro';
+
+const currentYear = new Date().getFullYear();
 ---
-<footer class="mt-12 border-t border-gray-700 text-center text-sm text-gray-500 p-4">
-  <p>&copy; 2025 Christian Galíndez. Todos los derechos reservados.</p>
-  <div class="mt-2">
-    <a href="/politicas" class="underline hover:text-white mr-2">Política de privacidad</a>
-    <a href="/contacto" class="underline hover:text-white">Contacto</a>
+
+<footer class="relative z-10 w-full border-t border-orbynex-lineDark bg-orbynex-deepSpace/90 backdrop-blur-lg text-gray-400 mt-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 lg:gap-12">
+      
+      <!-- Columna 1: Brand Info -->
+      <div class="md:col-span-2 space-y-4">
+        <Logo size="lg" />
+        <p class="text-sm text-gray-400 max-w-md leading-relaxed mt-3">
+          Plataforma libre de referencia técnica en herramientas, insumos informáticos, calculadoras de ingeniería y tutoriales de desarrollo de software.
+        </p>
+        
+        <!-- Red de Portales Orbynex -->
+        <div class="pt-2">
+          <span class="text-xs font-mono text-orbynex-cyan uppercase tracking-wider block mb-2">Ecosistema Orbynex Digital</span>
+          <div class="flex flex-wrap gap-2">
+            <a
+              href="https://noticias.orbynexdigital.cl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-cyan hover:border-orbynex-cyan/40 transition-all duration-200"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-orbynex-cyan animate-pulse"></span>
+              Noticias Orbynex
+            </a>
+            <a
+              href="https://portafolio.orbynexdigital.cl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-medium bg-orbynex-surfaceDark border border-orbynex-lineDark text-gray-300 hover:text-orbynex-magenta hover:border-orbynex-magenta/40 transition-all duration-200"
+            >
+              <span class="w-1.5 h-1.5 rounded-full bg-orbynex-magenta animate-pulse"></span>
+              Portafolio Técnico (Christian Galindez)
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Columna 2: Navegación Rápida -->
+      <div>
+        <h3 class="text-sm font-display font-bold text-white uppercase tracking-wider mb-4">Navegación</h3>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/" class="hover:text-orbynex-cyan transition-colors">Inicio</a></li>
+          <li><a href="/blog/apps" class="hover:text-orbynex-cyan transition-colors">Catálogo de Apps</a></li>
+          <li><a href="/blog/calculadoras" class="hover:text-orbynex-cyan transition-colors">Calculadoras Técnicas</a></li>
+          <li><a href="/blog/guias" class="hover:text-orbynex-cyan transition-colors">Guías y Tutoriales</a></li>
+          <li><a href="/nosotros" class="hover:text-orbynex-cyan transition-colors">Sobre Nosotros</a></li>
+        </ul>
+      </div>
+
+      <!-- Columna 3: Enlaces Legales & Contacto -->
+      <div>
+        <h3 class="text-sm font-display font-bold text-white uppercase tracking-wider mb-4">Institucional</h3>
+        <ul class="space-y-2.5 text-sm">
+          <li><a href="/contacto" class="hover:text-orbynex-cyan transition-colors">Contacto & Soporte</a></li>
+          <li><a href="/politicas" class="hover:text-orbynex-cyan transition-colors">Políticas de Privacidad</a></li>
+          <li><a href="https://github.com/guacho175/astro-herramientas-informaticos" target="_blank" rel="noopener" class="hover:text-orbynex-cyan transition-colors">Repositorio GitHub</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Bottom Bar -->
+    <div class="border-t border-orbynex-lineDark mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+      <p>© {currentYear} HerramientasTIC. Todos los derechos reservados. Desarrollado por <strong class="text-gray-300">Christian Galindez</strong>.</p>
+      <div class="flex items-center space-x-4">
+        <span class="font-mono text-orbynex-cyan/80">Orbynex Digital System v2.0</span>
+      </div>
+    </div>
   </div>
 </footer>

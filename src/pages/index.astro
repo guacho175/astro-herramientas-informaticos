@@ -1,13 +1,64 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import HerramientasDestacadas from '../components/HerramientasDestacadas.astro';
+import Hero from '../components/Hero.astro';
 import Categorias from '../components/Categorias.astro';
+import HerramientasDestacadas from '../components/HerramientasDestacadas.astro';
+import { getCollection } from 'astro:content';
 
-
-const title = "Inicio | Herramientas para Informáticos";
-const description = "recursos y utilidades para estudiantes y profesionales de la informática.";
-const keywords = "informática, herramientas, apps, estudiantes, utilidades";
+const tutorials = await getCollection('tutorials');
+const latestTutorials = tutorials.slice(0, 3);
 ---
-<Layout title={title} description={description} keywords={keywords}>
+
+<Layout
+  title="HerramientasTIC | Recursos, Apps y Calculadoras Informáticas por Orbynex Digital"
+  description="Portal de insumos informáticos, calculadoras técnicas, tutoriales de programación y herramientas de productividad por Orbynex Digital."
+>
+  <!-- Hero Section -->
+  <Hero />
+
+  <!-- Categorías de Módulos -->
+  <Categorias />
+
+  <!-- Herramientas Destacadas -->
   <HerramientasDestacadas />
+
+  <!-- Sección de Guías Recientes -->
+  <section class="py-12 border-t border-orbynex-lineDark">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan">Documentación Técnica</span>
+        <h2 class="text-2xl sm:text-3xl font-display font-black text-white mt-1">Últimas Guías Publicadas</h2>
+      </div>
+      <a href="/blog/guias" class="text-xs font-display font-bold text-orbynex-cyan hover:underline">
+        Explorar todas las guías →
+      </a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {latestTutorials.map((guide) => (
+        <a
+          href={`/blog/guias/${guide.data.slug}`}
+          class="group p-5 rounded-2xl bg-orbynex-surfaceDark/60 border border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 shadow-cardDark flex flex-col justify-between"
+        >
+          <div class="space-y-3">
+            <div class="flex items-center justify-between text-xs text-orbynex-cyan/80 font-mono">
+              <span>{guide.data.updated}</span>
+              <span class="px-2 py-0.5 rounded bg-orbynex-deepSpace border border-orbynex-lineDark">Guía</span>
+            </div>
+            <h3 class="font-display font-bold text-lg text-white group-hover:text-orbynex-cyan transition-colors">
+              {guide.data.title}
+            </h3>
+            <p class="text-xs text-gray-400 line-clamp-2">
+              {guide.data.description}
+            </p>
+          </div>
+
+          <div class="pt-4 text-xs font-bold text-orbynex-cyan flex items-center group-hover:translate-x-1 transition-transform">
+            Leer artículo completo <span class="ml-1">→</span>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
 </Layout>

@@ -1,22 +1,77 @@
 ---
-import BaseLayout from '../layouts/Layout.astro';
+import Layout from '../layouts/Layout.astro';
 ---
 
-<BaseLayout title="Contacto" description="Formulario para contactarte conmigo.">
-  <h1 class="text-3xl font-bold mb-4 text-center text-blue-400">📬 Contáctame</h1>
-  <form class="space-y-6 bg-gray-800 p-6 rounded-lg shadow" netlify>
-    <div>
-      <label class="block text-sm font-medium">Nombre</label>
-      <input type="text" name="nombre" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required />
+<Layout
+  title="Contacto | HerramientasTIC - Orbynex Digital"
+  description="Ponte en contacto con el equipo de HerramientasTIC y Orbynex Digital."
+>
+  <div class="py-8 max-w-3xl mx-auto space-y-8">
+    
+    <div class="text-center space-y-3">
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan px-3 py-1 rounded-full bg-orbynex-surfaceDark border border-orbynex-lineDark">
+        Atención & Consultas
+      </span>
+      <h1 class="text-3xl sm:text-5xl font-display font-black text-white">
+        Ponte en <span class="text-gradient">Contacto</span>
+      </h1>
+      <p class="text-sm text-gray-300">
+        ¿Tienes sugerencias de nuevas herramientas, comentarios o consultas técnicas? Envíanos tu mensaje.
+      </p>
     </div>
-    <div>
-      <label class="block text-sm font-medium">Correo</label>
-      <input type="email" name="correo" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required />
+
+    <!-- Formulario de Contacto -->
+    <div class="p-8 rounded-2xl bg-orbynex-surfaceDark/80 border border-orbynex-lineDark shadow-cardDark space-y-6">
+      <form class="space-y-4" onsubmit="event.preventDefault(); alert('¡Gracias por tu mensaje! Responderemos a la brevedad.');">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-mono text-gray-300 mb-1.5">Tu Nombre:</label>
+            <input
+              type="text"
+              required
+              placeholder="Ej: Laura Pérez"
+              class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orbynex-cyan"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-mono text-gray-300 mb-1.5">Tu Correo Electrónico:</label>
+            <input
+              type="email"
+              required
+              placeholder="ejemplo@correo.com"
+              class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orbynex-cyan"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1.5">Asunto:</label>
+          <input
+            type="text"
+            required
+            placeholder="Sugerencia / Consulta de herramienta..."
+            class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orbynex-cyan"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1.5">Mensaje:</label>
+          <textarea
+            rows="5"
+            required
+            placeholder="Escribe tu mensaje detallado aquí..."
+            class="w-full px-4 py-3 rounded-xl bg-orbynex-deepSpace border border-orbynex-lineDark text-white placeholder-gray-500 text-sm focus:outline-none focus:border-orbynex-cyan"
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3.5 px-6 rounded-xl font-display font-bold text-sm bg-gradient-to-r from-orbynex-cyan via-orbynex-blue to-orbynex-magenta text-white shadow-glowCyan hover:shadow-glowMagenta hover:scale-[1.01] transition-all duration-200"
+        >
+          Enviar Mensaje 🚀
+        </button>
+      </form>
     </div>
-    <div>
-      <label class="block text-sm font-medium">Mensaje</label>
-      <textarea name="mensaje" rows="4" class="w-full mt-1 p-2 rounded bg-gray-700 text-white" required></textarea>
-    </div>
-    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">Enviar</button>
-  </form>
-</BaseLayout>
+
+  </div>
+</Layout>

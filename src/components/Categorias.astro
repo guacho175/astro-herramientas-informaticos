@@ -1,21 +1,70 @@
 ---
-const pathname = Astro.url.pathname;
-
 const categorias = [
-  { id: "apps", titulo: "📱 Apps recomendadas", link: "/blog/apps" },
-  { id: "guias", titulo: "📘 Guías y tutoriales", link: "/blog/guias" },
-  { id: "calculadoras", titulo: "📊 Calculadoras online", link: "/blog/calculadoras" },
+  {
+    title: 'Apps & Insumos',
+    desc: 'Selección de herramientas de desarrollo, editores, extensiones e inteligencia artificial.',
+    icon: '📂',
+    link: '/blog/apps',
+    badge: 'Popular',
+    color: 'from-orbynex-cyan/20 to-orbynex-blue/10 border-orbynex-cyan/30 text-orbynex-cyan',
+  },
+  {
+    title: 'Calculadoras Técnicas',
+    desc: 'Conversores de almacenamiento, calculadoras de subredes IP y herramientas numéricas.',
+    icon: '🧮',
+    link: '/blog/calculadoras',
+    badge: 'Utilidades',
+    color: 'from-orbynex-magenta/20 to-purple-600/10 border-orbynex-magenta/30 text-orbynex-magenta',
+  },
+  {
+    title: 'Guías & Tutoriales',
+    desc: 'Artículos paso a paso de Git, Astro, AWS, Linux, Python y desarrollo web moderno.',
+    icon: '📚',
+    link: '/blog/guias',
+    badge: 'Documentación',
+    color: 'from-orbynex-blue/20 to-indigo-600/10 border-orbynex-blue/30 text-orbynex-blue',
+  },
 ];
 ---
-<nav class="hidden md:flex flex-col space-y-3">
-  {categorias.map(cat => (
-    <a
-      href={cat.link}
-      class={`text-lg font-medium transition hover:text-blue-500 text-gray-800 ${
-        pathname === cat.link ? 'text-blue-500 font-bold' : ''
-      }`}
-    >
-      {cat.titulo}
-    </a>
-  ))}
-</nav>
+
+<section class="py-12">
+  <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+    <div>
+      <span class="text-xs font-mono font-bold uppercase tracking-wider text-orbynex-cyan">Módulos del Portal</span>
+      <h2 class="text-2xl sm:text-3xl font-display font-black text-white mt-1">Explora por Categoría</h2>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {categorias.map((cat) => (
+      <a
+        href={cat.link}
+        class="group relative p-6 rounded-2xl bg-orbynex-surfaceDark/70 border border-orbynex-lineDark hover:border-orbynex-cyan/50 hover:bg-orbynex-surfaceStrong transition-all duration-300 flex flex-col justify-between overflow-hidden shadow-cardDark hover:-translate-y-1.5"
+      >
+        <div class={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${cat.color} rounded-full blur-2xl group-hover:scale-150 transition-transform duration-500`}></div>
+
+        <div class="relative z-10 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-4xl">{cat.icon}</span>
+            <span class={`px-2.5 py-1 rounded-lg text-[10px] font-mono font-bold uppercase border bg-orbynex-deepSpace/80 ${cat.color}`}>
+              {cat.badge}
+            </span>
+          </div>
+
+          <div>
+            <h3 class="text-xl font-display font-bold text-white group-hover:text-orbynex-cyan transition-colors">
+              {cat.title}
+            </h3>
+            <p class="text-sm text-gray-400 mt-2 leading-relaxed">
+              {cat.desc}
+            </p>
+          </div>
+        </div>
+
+        <div class="relative z-10 pt-6 flex items-center text-xs font-bold text-orbynex-cyan group-hover:translate-x-1 transition-transform">
+          Acceder al módulo <span class="ml-1">→</span>
+        </div>
+      </a>
+    ))}
+  </div>
+</section>

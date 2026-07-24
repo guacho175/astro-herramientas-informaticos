@@ -1,3 +1,117 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --bg: #060f24;
+  --bg-soft: #071a3d;
+  --surface: #0c1b3a;
+  --surface-strong: #0f2248;
+  --text: #f0f4ff;
+  --muted: rgba(200, 215, 255, 0.68);
+  --line: rgba(100, 150, 255, 0.12);
+  --accent-cyan: #00d4ff;
+  --accent-blue: #1463ff;
+  --accent-magenta: #d946ef;
+  --font-display: "Montserrat", "Space Grotesk", sans-serif;
+  --font-body: "Inter", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  
+  --glow-x: 50%;
+  --glow-y: 30%;
+}
+
+[data-theme="light"] {
+  --bg: #f0f4ff;
+  --bg-soft: #e6edff;
+  --surface: #ffffff;
+  --surface-strong: #eef3ff;
+  --text: #0c1535;
+  --muted: rgba(12, 21, 53, 0.65);
+  --line: rgba(20, 99, 255, 0.12);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: var(--font-body);
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Background Grid Pattern */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(to right, rgba(100, 150, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(100, 150, 255, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at 50% 30%, black 40%, transparent 85%);
+}
+
+[data-theme="light"] .bg-grid {
+  background-image: 
+    linear-gradient(to right, rgba(20, 99, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(20, 99, 255, 0.04) 1px, transparent 1px);
+}
+
+/* Mouse Follower Glow Orb */
+.glow-orb {
+  position: fixed;
+  pointer-events: none;
+  z-index: 0;
+  width: 600px;
+  height: 600px;
+  top: var(--glow-y);
+  left: var(--glow-x);
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(0, 212, 255, 0.07) 0%, rgba(20, 99, 255, 0.05) 40%, rgba(217, 70, 239, 0.02) 70%, transparent 100%);
+  border-radius: 50%;
+  transition: transform 0.15s ease-out;
+  filter: blur(40px);
+}
+
+/* Glassmorphism utility */
+.glass-panel {
+  background: rgba(12, 27, 58, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(100, 150, 255, 0.14);
+}
+
+[data-theme="light"] .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(20, 99, 255, 0.12);
+}
+
+/* Gradient Text Effect */
+.text-gradient {
+  background: linear-gradient(135deg, #00d4ff 0%, #1463ff 50%, #d946ef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 150, 255, 0.2);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-cyan);
+}
