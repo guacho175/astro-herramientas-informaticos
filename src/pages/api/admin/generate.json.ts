@@ -1,17 +1,48 @@
 import { aiGeneratorService } from '../../../lib/application/services/AIGeneratorService';
 import { tutorialService } from '../../../lib/application/services/TutorialService';
+import { supabase } from '../../../lib/supabase/client';
+import crypto from 'crypto';
 import type { APIRoute } from 'astro';
+
+/**
+ * Función helper para verificar el hash (scrypt)
+ */
+function verifyPassword(password: string, hash: string): boolean {
+  try {
+    const [salt, key] = hash.split(':');
+    const keyBuffer = Buffer.from(key, 'hex');
+    const derivedKey = crypto.scryptSync(password, salt, 64);
+    return crypto.timingSafeEqual(keyBuffer, derivedKey);
+  } catch (error) {
+    return false;
+  }
+}
 
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
     const { topic, password } = body;
-
-    // Hardcoded password for basic protection
-    const ADMIN_PASSWORD = import.meta.env.ADMIN_PASSWORD || 'admin123';
     
-    if (password !== ADMIN_PASSWORD) {
-      return new Response(JSON.stringify({ error: 'Acceso no autorizado.' }), { status: 401 });
+    if (!password) {
+      return new Response(JSON.stringify({ error: 'Falta la contraseña.' }), { status: 401 });
+    }
+
+    // 1. Obtener el hash de la base de datos (clave 'primary_admin')
+    const { data: adminKeyData, error: dbError } = await supabase
+      .from('admin_keys')
+      .select('password_hash')
+      .eq('key_name', 'primary_admin')
+      .single();
+
+    if (dbError || !adminKeyData) {
+      console.error('[Admin API] Error obteniendo clave de la BD:', dbError?.message);
+      return new Response(JSON.stringify({ error: 'Configuración de seguridad no inicializada en Supabase.' }), { status: 500 });
+    }
+
+    // 2. Verificar el hash criptográfico
+    const isValid = verifyPassword(password, adminKeyData.password_hash);
+    if (!isValid) {
+      return new Response(JSON.stringify({ error: 'Acceso no autorizado. Clave incorrecta.' }), { status: 401 });
     }
 
     if (!topic) {
