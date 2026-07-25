@@ -32,6 +32,12 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: 'Falta la contraseña.' }), { status: 401 });
     }
 
+    // DEBUG: log env var presence
+    const urlPresent = !!(import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL);
+    const keyPresent = !!(import.meta.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY);
+    console.log(`[Admin API DEBUG] supabaseUrl present: ${urlPresent}, serviceKey present: ${keyPresent}`);
+    console.log(`[Admin API DEBUG] supabaseUrl value starts with: ${supabaseUrl.substring(0, 20)}`);
+
     // 1. Obtener el hash de la base de datos (clave 'primary_admin')
     const { data: adminKeyData, error: dbError } = await supabaseAdmin
       .from('admin_keys')
@@ -39,13 +45,22 @@ export const POST: APIRoute = async ({ request }) => {
       .eq('key_name', 'primary_admin')
       .single();
 
+    console.log(`[Admin API DEBUG] DB query result - error: ${dbError?.message || 'none'}, data present: ${!!adminKeyData}`);
+    if (adminKeyData) {
+      console.log(`[Admin API DEBUG] Hash starts with: ${adminKeyData.password_hash?.substring(0, 20)}`);
+    }
+
     if (dbError || !adminKeyData) {
       console.error('[Admin API] Error obteniendo clave de la BD:', dbError?.message);
-      return new Response(JSON.stringify({ error: 'Configuración de seguridad no inicializada en Supabase.' }), { status: 500 });
+      return new Response(JSON.stringify({ 
+        error: 'Configuración de seguridad no inicializada en Supabase.',
+        debug: { dbError: dbError?.message, urlPresent, keyPresent }
+      }), { status: 500 });
     }
 
     // 2. Verificar el hash criptográfico
     const isValid = verifyPassword(password, adminKeyData.password_hash);
+    console.log(`[Admin API DEBUG] Password verification result: ${isValid}`);
     if (!isValid) {
       return new Response(JSON.stringify({ error: 'Acceso no autorizado. Clave incorrecta.' }), { status: 401 });
     }
