@@ -1,3 +1,5 @@
+import { loadEnv } from 'vite';
+
 export class AIGeneratorService {
   private apiKey: string;
   // Cascada de modelos. Empieza por el más rápido/económico, si falla salta al siguiente.
@@ -12,7 +14,8 @@ export class AIGeneratorService {
   ];
 
   constructor() {
-    this.apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
+    const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
+    this.apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || env.GEMINI_API_KEY || '';
   }
 
   /**
