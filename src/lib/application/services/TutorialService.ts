@@ -43,6 +43,10 @@ export class TutorialService {
     }
   }
 
+  async createTutorial(tutorialData: any): Promise<Tutorial> {
+    return await this.repository.create(tutorialData);
+  }
+
   // Ejemplo de lógica de negocio adicional
   getEstimatedReadingTime(content: string): number {
     const words = content.trim().split(/\s+/).length;

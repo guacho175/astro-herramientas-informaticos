@@ -1,0 +1,109 @@
+---
+import Layout from "../../layouts/Layout.astro";
+
+// Optional: you can handle basic auth in the frontend or just let the API do it
+---
+<Layout title="Admin | Generador AI" description="Panel de generación de tutoriales automatizados.">
+  <div class="max-w-3xl mx-auto py-12 px-6">
+    <header class="mb-10 text-center">
+      <h1 class="text-4xl font-display font-black text-slate-900 dark:text-white mb-4">
+        AI Tutorial Generator
+      </h1>
+      <p class="text-slate-600 dark:text-gray-400">
+        Ingresa el tema y la API de Gemini (Cascada Flash/Pro) se encargará de redactar, formatear y guardar el tutorial directamente en Supabase.
+      </p>
+    </header>
+
+    <div class="bg-white dark:bg-orbynex-surface border border-slate-200 dark:border-orbynex-lineDark p-8 rounded-3xl shadow-xl">
+      <form id="generator-form" class="space-y-6">
+        <div>
+          <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+            Contraseña de Administrador
+          </label>
+          <input 
+            type="password" 
+            id="password" 
+            required 
+            placeholder="Introduce la contraseña"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orbynex-cyan outline-none transition"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-2">
+            Tema o Título del Tutorial
+          </label>
+          <input 
+            type="text" 
+            id="topic" 
+            required 
+            placeholder="Ej: Patrones de Diseño en React con TypeScript"
+            class="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-orbynex-cyan outline-none transition"
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          id="submit-btn"
+          class="w-full bg-gradient-to-r from-orbynex-cyan to-orbynex-blue text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-orbynex-cyan/30 transition-all flex justify-center items-center gap-2"
+        >
+          <span>Generar y Guardar</span>
+          <svg id="spinner" class="animate-spin h-5 w-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </button>
+      </form>
+
+      <div id="status-message" class="mt-6 text-sm font-bold text-center hidden p-4 rounded-xl"></div>
+    </div>
+  </div>
+
+  <script is:inline>
+    const form = document.getElementById('generator-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const spinner = document.getElementById('spinner');
+    const statusMsg = document.getElementById('status-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const password = document.getElementById('password').value;
+      const topic = document.getElementById('topic').value;
+
+      // Reset state
+      submitBtn.disabled = true;
+      spinner.classList.remove('hidden');
+      statusMsg.classList.add('hidden');
+      statusMsg.className = 'mt-6 text-sm font-bold text-center p-4 rounded-xl';
+
+      try {
+        const response = await fetch('/api/admin/generate.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ topic, password })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          statusMsg.textContent = '✅ ' + result.message + ' Slug: ' + result.data.slug;
+          statusMsg.classList.add('bg-green-100', 'text-green-800', 'dark:bg-green-900/30', 'dark:text-green-400');
+          form.reset();
+        } else {
+          statusMsg.textContent = '❌ Error: ' + (result.error || result.details);
+          statusMsg.classList.add('bg-red-100', 'text-red-800', 'dark:bg-red-900/30', 'dark:text-red-400');
+        }
+      } catch (err) {
+        statusMsg.textContent = '❌ Error de red al contactar la API.';
+        statusMsg.classList.add('bg-red-100', 'text-red-800', 'dark:bg-red-900/30', 'dark:text-red-400');
+      } finally {
+        statusMsg.classList.remove('hidden');
+        submitBtn.disabled = false;
+        spinner.classList.add('hidden');
+      }
+    });
+  </script>
+</Layout>

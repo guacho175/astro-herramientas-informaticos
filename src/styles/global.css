@@ -132,17 +132,17 @@ body {
   color: #0f172a !important;
 }
 
-/* Colores de Párrafos y Listas */
+/* Colores de Párrafos y Listas (Alto Contraste) */
 [data-theme="dark"] .prose-custom p,
 [data-theme="dark"] .prose-custom li,
 [data-theme="dark"] .prose-custom strong {
-  color: #cbd5e1 !important;
+  color: #f1f5f9 !important; /* Casi blanco puro para mejor lectura */
 }
 
 [data-theme="light"] .prose-custom p,
 [data-theme="light"] .prose-custom li,
 [data-theme="light"] .prose-custom strong {
-  color: #334155 !important;
+  color: #0f172a !important; /* Casi negro puro para mejor lectura */
 }
 
 /* BLOQUES DE CÓDIGO ESTILO TERMINAL IDE (SÓLIDO, ALTO CONTRASTE Y NÍTIDO) */

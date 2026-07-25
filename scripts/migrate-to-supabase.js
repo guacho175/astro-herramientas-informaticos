@@ -1,6 +1,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
+import WebSocket from 'ws';
 import dotenv from 'dotenv';
 
 // Cargar variables de entorno desde la raíz del proyecto
@@ -14,7 +15,18 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey, {
+  auth: {
+    persistSession: false
+  },
+  global: {
+    fetch: fetch,
+    headers: { 'x-my-custom-header': 'migrate-script' }
+  },
+  realtime: {
+    transport: WebSocket
+  }
+});
 
 const TUTORIALS_DIR = path.join(process.cwd(), 'src', 'content', 'tutorials');
 
