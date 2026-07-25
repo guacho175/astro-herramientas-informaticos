@@ -37,11 +37,12 @@ El tutorial debe ser en español latinoamericano, tener más de 1200 palabras, i
 y usar alertas/notas en markdown.
 El tono debe ser técnico pero fácil de entender.
 
-Responde ÚNICAMENTE en formato JSON válido con la siguiente estructura, sin bloques de código markdown alrededor:
+REGLA CRÍTICA:
+Todo artículo generado debe cumplir estrictamente con el esquema de contenido. Debes devolver la respuesta ÚNICAMENTE en formato JSON válido con la siguiente estructura (sin bloques de código markdown alrededor):
 {
   "title": "Un título SEO atractivo (max 60 caracteres)",
-  "description": "Una meta descripción técnica (max 150 caracteres)",
-  "category": "Categoría (ej. Backend, Frontend, DevOps)",
+  "description": "Una meta descripción técnica (max 150 caracteres). ESTE CAMPO ES ESTRICTAMENTE OBLIGATORIO.",
+  "category": "Categoría (ej. Backend, Frontend, DevOps, Desarrollo Web)",
   "content_markdown": "El contenido completo del artículo en Markdown."
 }
     `;

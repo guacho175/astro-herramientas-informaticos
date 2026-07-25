@@ -1,0 +1,2 @@
+Siempre revisa `TUTORIAL_GUIDELINES.md` antes de crear o modificar contenido (Markdown) en este repositorio. 
+Especialmente, TODOS los tutoriales `.md` deben tener obligatoriamente el campo `description` en su Frontmatter de YAML para que Astro pueda compilar.
