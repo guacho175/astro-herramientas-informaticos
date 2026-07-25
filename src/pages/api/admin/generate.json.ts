@@ -1,8 +1,12 @@
 import { aiGeneratorService } from '../../../lib/application/services/AIGeneratorService';
 import { tutorialService } from '../../../lib/application/services/TutorialService';
-import { supabase } from '../../../lib/supabase/client';
+import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 import type { APIRoute } from 'astro';
+
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || '';
+const supabaseServiceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 /**
  * Función helper para verificar el hash (scrypt)
@@ -28,7 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // 1. Obtener el hash de la base de datos (clave 'primary_admin')
-    const { data: adminKeyData, error: dbError } = await supabase
+    const { data: adminKeyData, error: dbError } = await supabaseAdmin
       .from('admin_keys')
       .select('password_hash')
       .eq('key_name', 'primary_admin')
@@ -71,7 +75,16 @@ export const POST: APIRoute = async ({ request }) => {
       views: 0
     };
 
-    const inserted = await tutorialService.createTutorial(tutorialPayload);
+    const { data: inserted, error: insertError } = await supabaseAdmin
+      .from('tutorials')
+      .insert([tutorialPayload])
+      .select()
+      .single();
+
+    if (insertError) {
+      console.error('[Admin API] Error insertando tutorial:', insertError);
+      return new Response(JSON.stringify({ error: 'Error al guardar el tutorial en la base de datos.' }), { status: 500 });
+    }
 
     return new Response(JSON.stringify({ 
       success: true, 
