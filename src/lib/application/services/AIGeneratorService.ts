@@ -1,4 +1,4 @@
-import { loadEnv } from 'vite';
+import 'dotenv/config';
 
 export class AIGeneratorService {
   private apiKey: string;
@@ -14,8 +14,7 @@ export class AIGeneratorService {
   ];
 
   constructor() {
-    const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
-    this.apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || env.GEMINI_API_KEY || '';
+    this.apiKey = import.meta.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY || '';
   }
 
   /**

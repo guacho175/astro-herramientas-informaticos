@@ -1,13 +1,12 @@
 import { aiGeneratorService } from '../../../lib/application/services/AIGeneratorService';
 import { tutorialService } from '../../../lib/application/services/TutorialService';
 import { createClient } from '@supabase/supabase-js';
-import { loadEnv } from 'vite';
+import 'dotenv/config';
 import crypto from 'crypto';
 import type { APIRoute } from 'astro';
 
-const env = loadEnv(process.env.NODE_ENV || 'development', process.cwd(), '');
-const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || env.PUBLIC_SUPABASE_URL || '';
-const supabaseServiceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || '';
+const supabaseServiceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
 /**
