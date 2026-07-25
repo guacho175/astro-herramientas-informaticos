@@ -2,6 +2,7 @@
 slug: apis-serverless-supabase
 title: "Guía Completa: Creación de APIs Serverless con Supabase Edge Functions"
 category: Backend
+description: "Aprende a crear, probar y desplegar APIs Serverless escalables usando Supabase Edge Functions y Deno."
 image: /images/tutorials/supabase-edge-functions.png
 ---
 

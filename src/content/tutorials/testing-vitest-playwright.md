@@ -2,6 +2,7 @@
 slug: testing-vitest-playwright
 title: "Guía Definitiva de Testing con Vitest y Playwright"
 category: "Desarrollo Web"
+description: "Aprende a configurar y dominar pruebas unitarias y E2E utilizando Vitest y Playwright para garantizar calidad de software."
 image: "/images/tutorials/testing-vitest-playwright.webp"
 ---
 

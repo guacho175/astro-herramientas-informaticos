@@ -2,6 +2,7 @@
 title: "Optimización SEO Técnico en Astro: La Guía Definitiva"
 slug: "optimizacion-seo-astro"
 category: "Desarrollo Web"
+description: "Descubre cómo optimizar el SEO Técnico en Astro para dominar los motores de búsqueda y mejorar tu visibilidad web."
 image: "/images/seo-astro.webp"
 ---
 

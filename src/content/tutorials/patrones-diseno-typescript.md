@@ -2,6 +2,7 @@
 slug: "patrones-diseno-arquitectura-limpia-typescript"
 title: "Patrones de Diseño Modernos y Arquitectura Limpia en TypeScript"
 category: "Desarrollo de Software"
+description: "Aprende sobre Patrones de Diseño Modernos y Arquitectura Limpia en TypeScript para crear software escalable y mantenible."
 image: "/images/patrones-typescript.png"
 ---
 
