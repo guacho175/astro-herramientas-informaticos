@@ -1,0 +1,12 @@
+# robots.txt - HerramientasTIC by Orbynex Digital
+# https://herramientastic.orbynexdigital.cl
+
+User-agent: *
+Allow: /
+
+# Bloquear rutas de administración y APIs internas
+Disallow: /admin/
+Disallow: /api/admin/
+
+# Sitemap
+Sitemap: https://herramientastic.orbynexdigital.cl/sitemap.xml

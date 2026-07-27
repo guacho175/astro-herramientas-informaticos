@@ -72,7 +72,7 @@ const contentHtml = marked.parse(tutorial.content_markdown || '');
     </header>
 
     <!-- Contenido del Artículo parseado con marked -->
-    <div class="prose-custom max-w-none" set:html={contentHtml} />
+    <div class="prose-custom max-w-none text-justify" set:html={contentHtml} />
 
     <!-- Call to action al pie de la guía -->
     <footer class="pt-8 border-t border-slate-200 dark:border-orbynex-lineDark flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -86,6 +86,33 @@ const contentHtml = marked.parse(tutorial.content_markdown || '');
         Ver más guías →
       </a>
     </footer>
+
+    <!-- JSON-LD TechArticle para SEO/GEO -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "TechArticle",
+      "headline": tutorial.title,
+      "description": tutorial.description,
+      "author": {
+        "@type": "Person",
+        "name": "Christian Galindez",
+        "jobTitle": "Backend, APIs & Cloud Architect"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Orbynex Digital",
+        "url": "https://orbynexdigital.cl"
+      },
+      "datePublished": tutorial.created_at || new Date().toISOString(),
+      "dateModified": tutorial.updated_at || tutorial.created_at || new Date().toISOString(),
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `https://herramientastic.orbynexdigital.cl/blog/guias/${tutorial.slug}`
+      },
+      "articleSection": tutorial.category || "Guía Técnica",
+      "inLanguage": "es",
+      "isAccessibleForFree": true
+    })} />
 
   </article>
 

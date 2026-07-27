@@ -24,7 +24,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
 ---
 
 <!DOCTYPE html>
-<html lang="es" data-theme="dark" class="dark">
+<html lang="es" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,6 +35,18 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
 
     <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- SEO Meta Tags -->
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+    <meta name="author" content="Orbynex Digital" />
+    <meta name="publisher" content="Orbynex Digital" />
+    <link rel="sitemap" href="/sitemap.xml" />
+
+    <!-- GEO Meta Tags -->
+    <meta name="geo.region" content="CL" />
+    <meta name="geo.placename" content="Chile" />
+    <meta name="language" content="es" />
+    <meta name="content-language" content="es-CL" />
 
     <!-- Google Fonts con swap no bloqueante -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -50,12 +62,39 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://herramie
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={image} />
+    <meta property="og:locale" content="es_CL" />
+    <meta property="og:site_name" content="HerramientasTIC by Orbynex Digital" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+
+    <!-- JSON-LD Structured Data (GEO - Generative Engine Optimization) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "HerramientasTIC",
+      "url": "https://herramientastic.orbynexdigital.cl",
+      "description": "Portal de utilidades, aplicaciones esenciales, calculadoras de ingeniería y tutoriales de desarrollo de software por Orbynex Digital.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Orbynex Digital",
+        "url": "https://orbynexdigital.cl"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://herramientastic.orbynexdigital.cl/blog/guias?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "inLanguage": "es"
+    })} />
 
     <!-- Theme & Global App Controller -->
     <script is:inline>
       function getSavedTheme() {
-        return localStorage.getItem('orbynex-theme') || 
-          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        return localStorage.getItem('orbynex-theme') || 'light';
       }
 
       function syncThemeUI(theme) {

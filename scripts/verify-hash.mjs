@@ -25,7 +25,8 @@ if (data && data.length > 0) {
 
   try {
     const keyBuffer = Buffer.from(key, 'hex');
-    const derivedKey = crypto.scryptSync('admin123', salt, 64);
+    const testPassword = process.env.ADMIN_TEST_PASSWORD || 'contraseña_segura';
+    const derivedKey = crypto.scryptSync(testPassword, salt, 64);
 
     console.log('keyBuffer byte length:', keyBuffer.length);
     console.log('derivedKey byte length:', derivedKey.length);

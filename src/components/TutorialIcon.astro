@@ -1,0 +1,146 @@
+---
+interface Props {
+  category?: string;
+  title?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { category = 'General', title = '', size = 'md' } = Astro.props;
+
+const sizeClasses = {
+  sm: 'w-8 h-8',
+  md: 'w-12 h-12',
+  lg: 'w-16 h-16',
+};
+
+// Mapeo de categorías a colores de acento
+const categoryColors: Record<string, { gradient: string; iconColor: string }> = {
+  'Backend': { gradient: 'from-emerald-500 to-teal-600', iconColor: 'text-emerald-400' },
+  'DevOps': { gradient: 'from-orange-500 to-amber-600', iconColor: 'text-orange-400' },
+  'Desarrollo Web': { gradient: 'from-blue-500 to-indigo-600', iconColor: 'text-blue-400' },
+  'Frontend': { gradient: 'from-cyan-500 to-blue-600', iconColor: 'text-cyan-400' },
+  'React': { gradient: 'from-cyan-400 to-blue-500', iconColor: 'text-cyan-300' },
+  'Desarrollo de Software': { gradient: 'from-violet-500 to-purple-600', iconColor: 'text-violet-400' },
+  'Control de Versiones': { gradient: 'from-red-500 to-orange-600', iconColor: 'text-red-400' },
+  'Redes': { gradient: 'from-sky-500 to-blue-600', iconColor: 'text-sky-400' },
+  'Ciberseguridad': { gradient: 'from-red-600 to-rose-700', iconColor: 'text-red-500' },
+  'Sistemas Operativos': { gradient: 'from-amber-500 to-yellow-600', iconColor: 'text-amber-400' },
+  'Bases de Datos': { gradient: 'from-indigo-500 to-blue-700', iconColor: 'text-indigo-400' },
+  'Programación': { gradient: 'from-green-500 to-emerald-600', iconColor: 'text-green-400' },
+  'Cloud': { gradient: 'from-orange-400 to-yellow-500', iconColor: 'text-orange-300' },
+};
+
+const defaultColors = { gradient: 'from-orbynex-cyan to-orbynex-blue', iconColor: 'text-orbynex-cyan' };
+const colors = categoryColors[category] || defaultColors;
+---
+
+<div class={`${sizeClasses[size]} rounded-xl bg-gradient-to-br ${colors.gradient} p-[2px] shadow-md flex-shrink-0`}>
+  <div class="w-full h-full bg-white dark:bg-orbynex-deepSpace rounded-[10px] flex items-center justify-center">
+    {/* Backend / APIs */}
+    {(category === 'Backend') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect>
+        <rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect>
+        <line x1="6" y1="6" x2="6.01" y2="6"></line>
+        <line x1="6" y1="18" x2="6.01" y2="18"></line>
+      </svg>
+    )}
+    {/* DevOps / Docker */}
+    {(category === 'DevOps') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+      </svg>
+    )}
+    {/* Desarrollo Web / Frontend */}
+    {(category === 'Desarrollo Web' || category === 'Frontend') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </svg>
+    )}
+    {/* React */}
+    {(category === 'React') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="2"></circle>
+        <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(0 12 12)"></ellipse>
+        <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)"></ellipse>
+        <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)"></ellipse>
+      </svg>
+    )}
+    {/* Desarrollo de Software / Patrones */}
+    {(category === 'Desarrollo de Software') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+      </svg>
+    )}
+    {/* Control de Versiones / Git */}
+    {(category === 'Control de Versiones') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="18" r="3"></circle>
+        <circle cx="6" cy="6" r="3"></circle>
+        <path d="M6 21V9a9 9 0 0 0 9 9"></path>
+      </svg>
+    )}
+    {/* Redes */}
+    {(category === 'Redes') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="2" width="6" height="6" rx="1"></rect>
+        <rect x="16" y="2" width="6" height="6" rx="1"></rect>
+        <rect x="9" y="16" width="6" height="6" rx="1"></rect>
+        <path d="M5 8v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"></path>
+        <path d="M12 12v4"></path>
+      </svg>
+    )}
+    {/* Ciberseguridad */}
+    {(category === 'Ciberseguridad') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+        <path d="M9 12l2 2 4-4"></path>
+      </svg>
+    )}
+    {/* Sistemas Operativos / Linux */}
+    {(category === 'Sistemas Operativos') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="4 17 10 11 4 5"></polyline>
+        <line x1="12" y1="19" x2="20" y2="19"></line>
+      </svg>
+    )}
+    {/* Bases de Datos */}
+    {(category === 'Bases de Datos') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+      </svg>
+    )}
+    {/* Programación / Python */}
+    {(category === 'Programación') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2a3 3 0 0 0-3 3v4a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"></path>
+        <path d="M6 9H5a2 2 0 0 0-2 2v1a2 2 0 0 0 2 2h1"></path>
+        <path d="M18 9h1a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-1"></path>
+        <path d="M12 14v4"></path>
+        <path d="M8 18h8"></path>
+        <path d="M10 22h4"></path>
+      </svg>
+    )}
+    {/* Cloud / AWS */}
+    {(category === 'Cloud') && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+      </svg>
+    )}
+    {/* Default / General */}
+    {(!['Backend', 'DevOps', 'Desarrollo Web', 'Frontend', 'React', 'Desarrollo de Software', 'Control de Versiones', 'Redes', 'Ciberseguridad', 'Sistemas Operativos', 'Bases de Datos', 'Programación', 'Cloud'].includes(category)) && (
+      <svg class={`w-3/5 h-3/5 ${colors.iconColor}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+        <polyline points="10 9 9 9 8 9"></polyline>
+      </svg>
+    )}
+  </div>
+</div>

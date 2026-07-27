@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero.astro';
 import Categorias from '../components/Categorias.astro';
 import HerramientasDestacadas from '../components/HerramientasDestacadas.astro';
+import TutorialIcon from '../components/TutorialIcon.astro';
 import { tutorialService } from '../lib/application/services/TutorialService';
 import { calculators } from '../data/calculators.js';
 
@@ -88,6 +89,12 @@ const topCalculators = calculators.slice(0, 4);
               <span class="px-2 py-0.5 rounded bg-slate-100 dark:bg-orbynex-deepSpace border border-slate-200 dark:border-orbynex-lineDark">{new Date(guide.created_at).getFullYear()}</span>
               <span class="text-slate-400 dark:text-gray-400">{guide.category || 'Guía Práctica'}</span>
             </div>
+            {guide.category && (
+              <TutorialIcon category={guide.category} title={guide.title} size="md" />
+            )}
+            {!guide.category && (
+              <TutorialIcon category="General" title={guide.title} size="md" />
+            )}
             <h3 class="font-display font-bold text-lg text-slate-900 dark:text-white group-hover:text-orbynex-cyan transition-colors">
               {guide.title}
             </h3>

@@ -10,7 +10,8 @@ const tutorials = defineCollection({
       required_error: "La descripción corta es requerida.",
     }),
     slug: z.string().optional(),
-    image: z.string().optional().default("https://astro.build/assets/press/astro-icon-dark.svg"),
+    category: z.string().optional().default("General"),
+    image: z.string().optional().default("/images/tutorials/astro-icon-dark.png"),
     updated: z.string().optional().default("Jul 2026"),
   }),
 });
