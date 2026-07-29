@@ -2,10 +2,12 @@
 
 [![Astro](https://img.shields.io/badge/Astro-v5.13-ff5d01?style=flat-square&logo=astro&logoColor=white)](https://astro.build)
 [![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v3.4-38bdf8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Supabase](https://img.shields.io/badge/Supabase-Database-3ecf8e?style=flat-square&logo=supabase&logoColor=white)](https://supabase.com)
 [![Vercel](https://img.shields.io/badge/Deployed%20with-Vercel-000000?style=flat-square&logo=vercel&logoColor=white)](https://herramientastic.orbynexdigital.cl)
-[![License](https://img.shields.io/badge/License-MIT-blue.style=flat-square)](LICENSE)
 
-Portal web de utilidades, aplicaciones esenciales, calculadoras y guías técnicas de informática para estudiantes, profesionales y entusiastas del desarrollo de software. Diseñado con una arquitectura moderna, rápida y estática utilizando **Astro 5** and **Tailwind CSS**.
+Motor de generación de tutoriales técnicos y portal público de utilidades, aplicaciones y calculadoras de informática. Construido con **Astro 5** en modo servidor, **Tailwind CSS** y **Supabase**.
+
+> 📌 **Documentación técnica:** este README es material de presentación. El estado real del sistema vive en [`docs/PROJECT_STATE.md`](docs/PROJECT_STATE.md), y las reglas para agentes de código en [`AGENTS.md`](AGENTS.md).
 
 ---
 
@@ -18,11 +20,12 @@ Portal web de utilidades, aplicaciones esenciales, calculadoras y guías técnic
 
 ## ✨ Características Principales
 
-- 📚 **Guías y Tutoriales Dinámicos:** Colecciones de contenido Markdown administradas mediante la API de colecciones nativa de Astro.
-- 🛠️ **Catálogo de Herramientas:** Selección curada de software, extensiones e IDEs indispensables para productividad.
-- 🧮 **Calculadoras y Utilidades:** Herramientas interactivas para conversión y cómputo informático.
-- 🎨 **Diseño Moderno & Responsive:** Interfaz optimizada para pantallas móviles, tablets y de escritorio con Tailwind CSS.
-- ⚡ **Rendimiento Ultra Rápido:** Compilado como sitio 100% estático (SSG), garantizando puntuaciones de 100% en Lighthouse.
+- 🤖 **Generación de tutoriales con IA:** panel administrativo que crea artículos técnicos mediante la API de Gemini y los publica al instante.
+- 📚 **Guías dinámicas:** los tutoriales se almacenan en Supabase y se renderizan en servidor, sin necesidad de redesplegar para publicar.
+- 🛠️ **Catálogo de Herramientas:** selección curada de software, extensiones e IDEs para productividad.
+- 🧮 **Calculadoras y Utilidades:** subredes, bases numéricas, hashes, contraseñas, ancho de banda y conversión de almacenamiento.
+- 🎨 **Diseño Moderno & Responsive:** interfaz optimizada para móvil, tablet y escritorio, con modo oscuro.
+- ⚡ **Rendimiento:** renderizado en servidor con caché en el edge (`stale-while-revalidate`) para minimizar latencia y consultas a la base de datos.
 
 ---
 
@@ -31,20 +34,22 @@ Portal web de utilidades, aplicaciones esenciales, calculadoras y guías técnic
 ```text
 /
 ├── public/                # Archivos estáticos e imágenes públicas
+├── docs/                  # Documentación canónica (estado, API, contenido, ADR)
+├── scripts/               # Utilidades operativas (seed, admin, verificación)
+├── supabase/
+│   └── migrations/        # Esquema de base de datos
 ├── src/
 │   ├── assets/            # Recursos visuales e íconos SVG
-│   ├── components/        # Componentes UI reutilizables (Navbar, Cards, Footer)
-│   ├── content/           # Colecciones de contenido Markdown
-│   │   ├── tutorials/     # Artículos y tutoriales (.md)
-│   │   └── content.config.ts  # Configuración y esquema de Zod
-│   ├── data/              # Datos estáticos (Herramientas, tutoriales destacados)
-│   ├── layouts/           # Plantilla base (Layout.astro)
-│   └── pages/             # Enrutamiento basado en archivos (.astro)
-│       ├── blog/          # Secciones de Apps, Calculadoras y Guías ([slug].astro)
-│       ├── contacto.astro
-│       ├── index.astro
-│       └── politicas.astro
-├── astro.config.mjs       # Configuración global de Astro e integraciones
+│   ├── components/        # Componentes UI y calculadoras
+│   ├── data/              # Catálogos estáticos (herramientas, calculadoras)
+│   ├── layouts/           # Plantillas base
+│   ├── lib/               # Capas: domain · application · infrastructure
+│   └── pages/             # Enrutamiento por archivos
+│       ├── admin/         # Panel de generación de tutoriales
+│       ├── api/           # Endpoints (generación, búsqueda)
+│       └── blog/          # Apps, Calculadoras y Guías ([slug].astro)
+├── AGENTS.md              # Reglas para agentes de código
+├── astro.config.mjs
 └── package.json
 ```
 
@@ -55,8 +60,10 @@ Portal web de utilidades, aplicaciones esenciales, calculadoras y guías técnic
 ### Requisitos Previos
 - **Node.js**: v18.x o superior
 - **npm**: v9.x o superior
+- Un proyecto de **Supabase** con las migraciones de `supabase/migrations/` aplicadas
+- Una clave de API de **Google Gemini** (solo si vas a usar el generador)
 
-### Pasos:
+### Pasos
 
 1. **Clonar el repositorio:**
    ```bash
@@ -69,11 +76,20 @@ Portal web de utilidades, aplicaciones esenciales, calculadoras y guías técnic
    npm install
    ```
 
-3. **Iniciar el servidor de desarrollo:**
+3. **Configurar el entorno:** crea un archivo `.env` en la raíz con estas variables:
+   ```bash
+   PUBLIC_SUPABASE_URL=
+   PUBLIC_SUPABASE_ANON_KEY=
+   SUPABASE_SERVICE_ROLE_KEY=
+   GEMINI_API_KEY=
+   ```
+   > ⚠️ `SUPABASE_SERVICE_ROLE_KEY` omite las políticas de seguridad de la base de datos. Nunca la expongas al cliente ni la incluyas en un commit.
+
+4. **Iniciar el servidor de desarrollo:**
    ```bash
    npm run dev
    ```
-   Abre [http://localhost:4321](http://localhost:4321) en tu navegador para ver la aplicación en vivo.
+   Abre [http://localhost:4321](http://localhost:4321) en tu navegador.
 
 ---
 
@@ -82,13 +98,16 @@ Portal web de utilidades, aplicaciones esenciales, calculadoras y guías técnic
 | Comando | Descripción |
 | :--- | :--- |
 | `npm run dev` | Inicia el servidor local de desarrollo en `localhost:4321`. |
-| `npm run build` | Compila la aplicación para producción en la carpeta `./dist`. |
-| `npm run preview` | Previsualiza la compilación localmente antes de desplegar. |
+| `npm run build` | Compila la aplicación para producción. |
+| `npm run preview` | Previsualiza la compilación localmente. |
+| `node scripts/check-docs.mjs` | Valida la consistencia de la documentación. |
 | `npx vercel` | Despliega una versión de prueba en Vercel. |
-| `npx vercel --prod` | Despliega directamente la versión de producción en Vercel. |
+| `npx vercel --prod` | Despliega la versión de producción. |
+
+El despliegue habitual es automático: Vercel compila en cada push a `main`.
 
 ---
 
 ## 📄 Licencia
 
-Este proyecto está bajo la Licencia MIT. Siéntete libre de utilizarlo como referencia en tu portafolio o proyectos personales.
+Repositorio privado. Todos los derechos reservados.

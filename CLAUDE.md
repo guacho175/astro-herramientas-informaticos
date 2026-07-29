@@ -1,0 +1,3 @@
+Las reglas de este repositorio están en [AGENTS.md](AGENTS.md). Léelo antes de trabajar.
+
+No añadas reglas a este archivo: es solo un puntero.

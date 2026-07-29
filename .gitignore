@@ -28,11 +28,4 @@ pnpm-debug.log*
 # Vercel deployment folder
 .vercel
 
-# Local agent guide & internal docs (do not push to public repo)
-GUIDE_FOR_AGENTS.md
-TUTORIAL_GUIDELINES.md
-
-# Ignorar archivos markdown estáticos de tutoriales (ahora viven en Supabase)
-src/content/tutorials/*.md
-
 .env*
