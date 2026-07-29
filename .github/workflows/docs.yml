@@ -1,0 +1,20 @@
+name: docs
+
+# Valida únicamente la consistencia documental.
+# El build NO se ejecuta aquí a propósito: Vercel ya compila en cada push.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validar documentación
+        run: node scripts/check-docs.mjs
