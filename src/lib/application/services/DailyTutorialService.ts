@@ -150,7 +150,18 @@ function assertGeneratedTutorial(value: GeneratedTutorial): void {
 }
 
 function safeError(error: unknown): string {
-  if (error instanceof Error && error.name) return error.name;
+  if (!error || typeof error !== 'object') return 'GenerationError';
+
+  const record = error as Record<string, unknown>;
+  const nested = [record.lastError, record.cause]
+    .find((candidate): candidate is Record<string, unknown> => Boolean(candidate && typeof candidate === 'object'));
+  const name = error instanceof Error && error.name ? error.name : 'GenerationError';
+  const nestedName = typeof nested?.name === 'string' ? nested.name : '';
+  const status = [record.statusCode, nested?.statusCode]
+    .find((candidate) => typeof candidate === 'number');
+  const parts = [name, nestedName, status ? `HTTP${status}` : ''].filter(Boolean);
+
+  if (parts.length > 0) return parts.join('-').slice(0, 100);
   return 'GenerationError';
 }
 
