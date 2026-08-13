@@ -25,7 +25,7 @@ Existen dos vías permanentes y una vía promocional temporal:
 | `GET /api/cron/generate-tutorials.json` | dos tutoriales diarios de tecnología emergente | `CRON_SECRET` enviado por Vercel Cron |
 | `POST /api/admin/generate-promotion.json` | lotes temporales, máximo dos por llamada | `CRON_SECRET` y `PROMOTION_BATCH_ENABLED=true` |
 
-El panel manual continúa usando Gemini. Las ejecuciones automática y promocional usan Vercel AI Gateway y están desacopladas del panel.
+El panel manual continúa usando Gemini. Las ejecuciones automática y promocional usan Vercel AI Gateway y están desacopladas del panel. El modelo primario se define con `VERCEL_AI_MODEL`; `VERCEL_AI_FALLBACK_MODELS` acepta una lista separada por comas que el Gateway intenta en orden cuando el primario no está disponible.
 
 La selección automática prioriza entradas recientes de feeds oficiales de Vercel, Cloudflare, Astro, AI SDK y Supabase. Si no hay candidatos utilizables, rota un catálogo curado de temas. La salida debe citar todas las fuentes entregadas, superar 1200 palabras e incluir secciones H2/H3 y código.
 

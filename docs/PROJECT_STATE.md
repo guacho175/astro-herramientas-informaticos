@@ -94,6 +94,7 @@ Variables requeridas (**nombres únicamente; nunca escribas valores en documenta
 | `GEMINI_API_KEY` | solo servidor | generación de contenido |
 | `AI_GATEWAY_API_KEY` | solo servidor, alternativa a OIDC | autenticación manual en Vercel AI Gateway |
 | `VERCEL_AI_MODEL` | solo servidor, opcional | modelo Gateway; por defecto `inclusionai/ling-3.0-tiny-free` |
+| `VERCEL_AI_FALLBACK_MODELS` | solo servidor, opcional | modelos Gateway alternativos, separados por coma y probados en orden |
 | `CRON_SECRET` | solo servidor | autenticación del cron y del lote promocional |
 | `PROMOTION_BATCH_ENABLED` | solo servidor | habilita explícitamente el endpoint promocional temporal |
 | `PROMOTION_END_AT` | solo servidor, opcional | fin ISO-8601 de la ventana promocional |
@@ -119,7 +120,7 @@ El despliegue habitual es automático: Vercel construye en cada push a `main`.
 1. **RLS permisiva en `tutorials`** — cualquier rol `authenticated` puede insertar y actualizar. Hoy no existe registro de usuarios, por lo que la superficie real es pequeña, pero la política no es la deseable a largo plazo.
 2. **Sin pruebas automatizadas ni verificación de tipos** — no existe `npm test`, `npm run lint` ni `astro check`.
 3. **No existe endpoint público de lectura de tutoriales** — el consumo externo previsto en el ADR 0003 todavía no tiene superficie implementada.
-4. **Promoción de modelo temporal** — `inclusionai/ling-3.0-tiny-free` puede dejar de estar disponible o ser gratuito. `VERCEL_AI_MODEL` debe cambiarse a un modelo vigente; el código no garantiza gratuidad.
+4. **Promoción de modelo temporal** — `inclusionai/ling-3.0-tiny-free` puede dejar de estar disponible o ser gratuito. `VERCEL_AI_MODEL` y `VERCEL_AI_FALLBACK_MODELS` deben apuntar a modelos vigentes; el código no garantiza gratuidad.
 5. **Fuentes emergentes con degradación** — si los feeds oficiales no responden, el cron usa un catálogo curado. Esto mantiene continuidad, pero puede producir una actualización de un tema conocido en vez de una noticia del día.
 6. **Scripts de migración obsoletos** — `scripts/seed-tutorials.mjs` y `scripts/migrate-to-supabase.js` leen de `src/content/tutorials/`, directorio eliminado el 2026-07-28. No funcionan. Se conservan por valor histórico; candidatos a eliminación.
 7. **Dependencias con avisos de seguridad** — al 2026-08-13, `npm audit --omit=dev` reporta 18 vulnerabilidades (15 altas, 2 moderadas y 1 baja), principalmente en Astro, el adaptador de Vercel y dependencias transitivas. La corrección completa requiere evaluar actualizaciones mayores fuera del alcance de la automatización de contenido; el reporte no atribuye avisos a AI SDK.

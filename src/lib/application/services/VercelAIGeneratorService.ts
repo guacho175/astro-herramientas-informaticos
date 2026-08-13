@@ -193,6 +193,25 @@ function resolveModel(): GatewayModelId {
   return configuredModel as GatewayModelId;
 }
 
+function resolveFallbackModels(primaryModel: GatewayModelId): GatewayModelId[] {
+  const configuredFallbacks =
+    import.meta.env.VERCEL_AI_FALLBACK_MODELS?.trim() ||
+    process.env.VERCEL_AI_FALLBACK_MODELS?.trim();
+
+  if (!configuredFallbacks) return [];
+
+  return [...new Set(configuredFallbacks.split(',').map((model) => model.trim()))]
+    .filter((model) => model && model !== primaryModel)
+    .map((model) => {
+      if (!/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._-]*$/i.test(model)) {
+        throw new Error(
+          'VERCEL_AI_FALLBACK_MODELS debe ser una lista de modelos "proveedor/modelo".',
+        );
+      }
+      return model as GatewayModelId;
+    });
+}
+
 function buildPrompt({ topic, sources }: NormalizedInput, attempt: number): string {
   const sourcesSection =
     sources.length > 0
@@ -261,6 +280,7 @@ export class VercelAIGeneratorService {
   ): Promise<TutorialGenerationResult> {
     const normalizedInput = normalizeInput(input, sourceUrls);
     const model = resolveModel();
+    const fallbackModels = resolveFallbackModels(model);
     let lastValidationError: unknown;
 
     for (let attempt = 1; attempt <= STRUCTURED_OUTPUT_ATTEMPTS; attempt += 1) {
@@ -277,6 +297,7 @@ export class VercelAIGeneratorService {
           providerOptions: {
             gateway: {
               tags: ['feature:tutorial-generation', 'content:emerging-technology'],
+              ...(fallbackModels.length > 0 ? { models: fallbackModels } : {}),
             },
           },
         });
