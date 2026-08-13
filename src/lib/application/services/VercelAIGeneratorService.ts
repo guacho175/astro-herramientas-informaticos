@@ -21,7 +21,7 @@ const MAX_TOPIC_LENGTH = 240;
 const MAX_SOURCES = 10;
 const MIN_CONTENT_WORDS = 1200;
 const REQUEST_TIMEOUT_MS = 90_000;
-const TRANSIENT_RETRIES = 2;
+const TRANSIENT_RETRIES = 1;
 const STRUCTURED_OUTPUT_ATTEMPTS = 2;
 
 type NormalizedInput = {
@@ -290,7 +290,7 @@ export class VercelAIGeneratorService {
             description: 'Tutorial técnico validado para publicación.',
             schema: createOutputSchema(normalizedInput.sources),
           }),
-          maxOutputTokens: 7_000,
+          maxOutputTokens: 4_500,
           maxRetries: TRANSIENT_RETRIES,
           timeout: REQUEST_TIMEOUT_MS,
           providerOptions: {
