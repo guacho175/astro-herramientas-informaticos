@@ -32,11 +32,12 @@ export class TutorialAdminRepository {
     return this.client;
   }
 
-  async list(): Promise<Tutorial[]> {
+  async list(): Promise<Pick<Tutorial, 'slug' | 'title' | 'description'>[]> {
     const { data, error } = await this.getClient()
       .from(this.tableName)
-      .select('*')
-      .order('created_at', { ascending: false });
+      .select('slug,title,description')
+      .order('created_at', { ascending: false })
+      .limit(1_000);
 
     if (error) throw new Error('No se pudo consultar el catálogo administrativo.');
     return data || [];

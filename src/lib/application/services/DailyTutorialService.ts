@@ -16,7 +16,7 @@ export interface DailyTutorialGenerator {
 }
 
 export interface DailyTutorialStore {
-  list(): Promise<Tutorial[]>;
+  list(): Promise<Pick<Tutorial, 'slug' | 'title' | 'description'>[]>;
   findBySlug(slug: string): Promise<Tutorial | null>;
   findBySlugPrefix(prefix: string): Promise<Tutorial | null>;
   claimJob(jobKey: string): Promise<boolean>;
@@ -76,7 +76,7 @@ function titleSlug(title: string): string {
   return normalize(title).replace(/\s+/g, '-').slice(0, 80).replace(/-+$/g, '') || 'guia';
 }
 
-function isCovered(topic: DailyTopic, tutorials: Tutorial[]): boolean {
+function isCovered(topic: DailyTopic, tutorials: Pick<Tutorial, 'slug' | 'title' | 'description'>[]): boolean {
   const catalogEntries = tutorials.map((tutorial) => normalize(`${tutorial.title} ${tutorial.description}`));
 
   return topic.dedupeTerms.some((term) => {
@@ -115,7 +115,7 @@ function discoveredTopic(candidate: EmergingTopicCandidate): DailyTopic {
 
 function selectTopics(
   date: Date,
-  tutorials: Tutorial[],
+  tutorials: Pick<Tutorial, 'slug' | 'title' | 'description'>[],
   count: number,
   discovered: EmergingTopicCandidate[],
 ): DailyTopic[] {
