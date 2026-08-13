@@ -1,3 +1,5 @@
+import { primarySourceResearchService } from './PrimarySourceResearchService';
+
 export interface TechnologySource {
   title: string;
   url: string;
@@ -105,7 +107,7 @@ export class TechnologyFeedService {
     const cutoff = Date.now() - 45 * 24 * 60 * 60 * 1000;
     const seen = new Set<string>();
 
-    return sources
+    const candidates = sources
       .filter((source) => {
         if (!source.publishedAt) return true;
         const timestamp = Date.parse(source.publishedAt);
@@ -123,6 +125,17 @@ export class TechnologyFeedService {
         return [{ topic: source.title, sources: [source] }];
       })
       .slice(0, Math.max(1, Math.min(limit, 50)));
+
+    // Solo se investiga el pequeño conjunto que puede llegar al generador.
+    // Si una página no responde o no es segura, se conserva el extracto RSS.
+    const researched = await Promise.all(
+      candidates.slice(0, 2).map(async (candidate) => ({
+        ...candidate,
+        sources: await primarySourceResearchService.enrichSources(candidate.sources, 2),
+      })),
+    );
+
+    return [...researched, ...candidates.slice(2)];
   }
 }
 

@@ -5,6 +5,7 @@ import type {
   TutorialGenerationResult,
   TutorialResearchSource,
 } from '../../domain/models/TutorialGeneration';
+import { TUTORIAL_CATEGORIES } from '../../domain/models/TutorialGeneration';
 import { emergingTopics, type EmergingTopic } from '../../../data/emergingTopics';
 import {
   technologyFeedService,
@@ -19,10 +20,9 @@ export interface DailyTutorialStore {
   list(): Promise<Pick<Tutorial, 'slug' | 'title' | 'description'>[]>;
   findBySlug(slug: string): Promise<Tutorial | null>;
   findBySlugPrefix(prefix: string): Promise<Tutorial | null>;
-  claimJob(jobKey: string): Promise<boolean>;
-  completeJob(jobKey: string, tutorialSlug: string): Promise<void>;
-  failJob(jobKey: string, errorCode: string): Promise<void>;
-  create(tutorial: Tutorial): Promise<Tutorial>;
+  claimJob(jobKey: string): Promise<string | null>;
+  createAndCompleteJob(jobKey: string, claimToken: string, tutorial: Tutorial): Promise<Tutorial>;
+  failJob(jobKey: string, claimToken: string, errorCode: string): Promise<boolean>;
 }
 
 export type DailyTutorialResult =
@@ -69,7 +69,10 @@ function utcDateKey(date: Date): string {
 }
 
 function idempotencyPrefix(namespace: string, dateKey: string, slot: number): string {
-  return `${namespace}-${dateKey}-${String(slot).padStart(2, '0')}-`;
+  const stableNamespace = namespace.startsWith('promocion-ling-')
+    ? namespace
+    : `${namespace}-${dateKey}`;
+  return `${stableNamespace}-${String(slot).padStart(2, '0')}-`;
 }
 
 function titleSlug(title: string): string {
@@ -172,28 +175,38 @@ export class DailyTutorialService {
     private readonly discoverer: EmergingTopicDiscoverer = technologyFeedService,
   ) {}
 
-  async run(date = new Date(), count = 2, namespace = 'tutorial-emergente'): Promise<DailyTutorialRun> {
+  async run(
+    date = new Date(),
+    count = 2,
+    namespace = 'tutorial-emergente',
+    startingSlot = 1,
+  ): Promise<DailyTutorialRun> {
     if (!Number.isInteger(count) || count < 1 || count > emergingTopics.length) {
       throw new Error('La cantidad solicitada de tutoriales no es válida.');
     }
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(namespace) || namespace.length > 80) {
       throw new Error('El identificador de ejecución no es válido.');
     }
+    if (!Number.isInteger(startingSlot) || startingSlot < 1 || startingSlot + count - 1 > emergingTopics.length) {
+      throw new Error('La posición inicial de generación no es válida.');
+    }
 
     const dateKey = utcDateKey(date);
     const catalog = await this.store.list();
-    const previousCatalog = catalog.filter((tutorial) => !tutorial.slug.startsWith(`${namespace}-${dateKey}-`));
-    const discovered = await this.discoverer.discover(Math.max(count * 4, 8));
-    const topics = selectTopics(date, previousCatalog, count, discovered);
+    const runPrefix = idempotencyPrefix(namespace, dateKey, 1).replace(/01-$/, '');
+    const previousCatalog = catalog.filter((tutorial) => !tutorial.slug.startsWith(runPrefix));
+    const topicWindow = startingSlot + count - 1;
+    const discovered = await this.discoverer.discover(Math.max(topicWindow * 4, 8));
+    const topics = selectTopics(date, previousCatalog, topicWindow, discovered);
     const results: DailyTutorialResult[] = [];
 
     // Secuencial a propósito: reduce ráfagas y respeta mejor los límites del proveedor.
     for (let index = 0; index < count; index += 1) {
-      const slot = index + 1;
-      const topic = topics[index];
+      const slot = startingSlot + index;
+      const topic = topics[startingSlot + index - 1];
       const slugPrefix = idempotencyPrefix(namespace, dateKey, slot);
       const jobKey = slugPrefix.replace(/-$/, '');
-      let claimed = false;
+      let claimToken: string | null = null;
 
       try {
         const existing = await this.store.findBySlugPrefix(slugPrefix);
@@ -202,8 +215,8 @@ export class DailyTutorialService {
           continue;
         }
 
-        claimed = await this.store.claimJob(jobKey);
-        if (!claimed) {
+        claimToken = await this.store.claimJob(jobKey);
+        if (!claimToken) {
           results.push({ slot, status: 'skipped', slug: slugPrefix, reason: 'already-generated', topicId: topic.id });
           continue;
         }
@@ -211,13 +224,17 @@ export class DailyTutorialService {
         const generationTopic = `${topic.title}. ${topic.brief}`.slice(0, 240).trim();
         const generation = await this.generator.generateTutorial({
           topic: generationTopic,
+          suggestedTitle: topic.title,
+          category: (TUTORIAL_CATEGORIES as readonly string[]).includes(topic.category)
+            ? topic.category as TutorialGenerationInput['category']
+            : 'Desarrollo de Software',
           sources: topic.sources,
         });
         const generated = generation;
         assertGeneratedTutorial(generated);
         const slug = `${slugPrefix}${titleSlug(generated.title)}`;
 
-        const created = await this.store.create({
+        const created = await this.store.createAndCompleteJob(jobKey, claimToken, {
           slug,
           title: generated.title.trim(),
           description: generated.description.trim(),
@@ -227,12 +244,21 @@ export class DailyTutorialService {
           is_premium: false,
         });
 
-        await this.store.completeJob(jobKey, created.slug);
-
+        console.info(
+          `[DailyTutorialService] Slot ${slot} creado con ${generation.metadata.resolvedModel}; ` +
+          `tokens: ${generation.metadata.usage.totalTokens ?? 'desconocido'}.`,
+        );
         results.push({ slot, status: 'created', slug: created.slug, title: created.title, topicId: topic.id });
       } catch (error) {
-        if (claimed) await this.store.failJob(jobKey, safeError(error));
         const errorCode = safeError(error);
+        if (claimToken) {
+          try {
+            const failed = await this.store.failJob(jobKey, claimToken, errorCode);
+            if (!failed) console.warn(`[DailyTutorialService] El slot ${slot} perdió la propiedad del job.`);
+          } catch {
+            console.error(`[DailyTutorialService] No se pudo registrar el fallo del slot ${slot}.`);
+          }
+        }
         console.error(`[DailyTutorialService] Falló el slot ${slot} (${topic.id}); código: ${errorCode}.`);
         results.push({ slot, status: 'failed', slug: slugPrefix, error: errorCode, topicId: topic.id });
       }

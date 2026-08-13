@@ -26,6 +26,8 @@ export interface TutorialResearchSource {
 
 export interface TutorialGenerationInput {
   topic: string;
+  suggestedTitle?: string;
+  category?: TutorialCategory;
   sources?: readonly TutorialResearchSource[];
 }
 

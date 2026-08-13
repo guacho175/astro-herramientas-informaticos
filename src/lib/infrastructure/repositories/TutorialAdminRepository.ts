@@ -67,42 +67,57 @@ export class TutorialAdminRepository {
     return data;
   }
 
-  async claimJob(jobKey: string): Promise<boolean> {
+  async claimJob(jobKey: string): Promise<string | null> {
     const { data, error } = await this.getClient().rpc('claim_tutorial_generation_job', {
       p_job_key: jobKey,
+      p_lease_seconds: 360,
     });
 
     if (error) throw new Error('No se pudo reservar la generación del tutorial.');
-    return data === true;
+    if (data !== null && typeof data !== 'string') {
+      throw new Error('La reserva devolvió una respuesta inválida.');
+    }
+    return data;
   }
 
-  async completeJob(jobKey: string, tutorialSlug: string): Promise<void> {
-    const { error } = await this.getClient()
-      .from('tutorial_generation_jobs')
-      .update({
-        status: 'completed',
-        tutorial_slug: tutorialSlug,
-        error_code: null,
-        updated_at: new Date().toISOString(),
+  async createAndCompleteJob(
+    jobKey: string,
+    claimToken: string,
+    tutorial: Tutorial,
+  ): Promise<Tutorial> {
+    const { data, error } = await this.getClient()
+      .rpc('publish_tutorial_generation_job', {
+        p_job_key: jobKey,
+        p_claim_token: claimToken,
+        p_tutorial: tutorial,
       })
-      .eq('job_key', jobKey)
-      .eq('status', 'running');
+      .single();
 
-    if (error) throw new Error('No se pudo completar el registro de generación.');
+    if (error) {
+      if (error.code === '23505') {
+        throw new Error('El tutorial ya existe.');
+      }
+      throw new Error('No se pudo publicar y completar la generación.');
+    }
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      throw new Error('La publicación no devolvió el tutorial creado.');
+    }
+
+    return data as Tutorial;
   }
 
-  async failJob(jobKey: string, errorCode: string): Promise<void> {
-    const { error } = await this.getClient()
-      .from('tutorial_generation_jobs')
-      .update({
-        status: 'failed',
-        error_code: errorCode.slice(0, 100),
-        updated_at: new Date().toISOString(),
-      })
-      .eq('job_key', jobKey)
-      .eq('status', 'running');
+  async failJob(jobKey: string, claimToken: string, errorCode: string): Promise<boolean> {
+    const { data, error } = await this.getClient().rpc('fail_tutorial_generation_job', {
+      p_job_key: jobKey,
+      p_claim_token: claimToken,
+      p_error_code: errorCode.slice(0, 100),
+    });
 
-    if (error) console.error('[TutorialAdminRepository] No se pudo registrar el fallo del job.');
+    if (error) throw new Error('No se pudo registrar el fallo de la generación.');
+    if (typeof data !== 'boolean') {
+      throw new Error('El registro del fallo devolvió una respuesta inválida.');
+    }
+    return data;
   }
 
   async create(tutorial: Tutorial): Promise<Tutorial> {

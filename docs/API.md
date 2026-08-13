@@ -77,18 +77,22 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 
 ## `GET /api/cron/generate-tutorials.json`
 
-Genera hasta dos tutoriales diarios mediante Vercel AI Gateway. Se ejecuta secuencialmente, selecciona novedades desde fuentes oficiales y cae a un catálogo curado. Repetir la llamada del mismo día omite posiciones ya reservadas o completadas.
+Genera un tutorial por invocación mediante Vercel AI Gateway. El query param `slot` admite `1` o `2` (por defecto `1`) para separar los dos cupos diarios. Selecciona novedades desde fuentes oficiales, descarga como máximo dos fuentes primarias con límites de tamaño y redirecciones, y cae a un catálogo curado. Repetir el mismo día y slot omite posiciones ya publicadas o con una reserva vigente.
+
+Vercel programa dos rutas delgadas: `/api/cron/generate-tutorial-slot-1.json` a las 09:00 UTC y `/api/cron/generate-tutorial-slot-2.json` a las 11:00 UTC. Ambas delegan en este mismo contrato con un slot fijo.
 
 **Autenticación:** `Authorization: Bearer <CRON_SECRET>`. Vercel añade esta cabecera al invocar el cron cuando la variable está configurada.
 
 | Código | Causa |
 | :--- | :--- |
-| `200` | dos posiciones creadas u omitidas correctamente |
-| `207` | al menos una posición falló y otra tuvo éxito |
+| `200` | la posición fue creada u omitida correctamente |
+| `400` | `slot` no es `1` o `2` |
 | `401` | secreto ausente o incorrecto |
-| `500` | configuración inválida o todas las posiciones fallaron |
+| `500` | configuración inválida o la posición falló |
 
 La respuesta incluye `date`, `requested`, `created`, `skipped`, `failed` y un arreglo `results` sin secretos ni mensajes internos del proveedor.
+
+Cada reserva usa un lease de seis minutos y un token de propiedad. Un proceso posterior puede recuperar un lease vencido; solo el token vigente puede registrar el fallo o publicar. La inserción del tutorial y el cambio del job a `completed` ocurren en una misma transacción.
 
 ---
 
@@ -102,7 +106,7 @@ Ejecución temporal por lotes pequeños para aprovechar una promoción de modelo
 { "batchId": "lote-01", "count": 2 }
 ```
 
-`batchId` debe ser único por lote y usar minúsculas, números y guiones; `count` admite 1 o 2. Repetir un `batchId` es idempotente.
+`batchId` debe ser único por lote y usar minúsculas, números y guiones; `count` admite 1 o 2. Repetir un `batchId` es idempotente incluso en otro día UTC.
 
 | Código | Causa |
 | :--- | :--- |

@@ -67,10 +67,10 @@ La página fija `Cache-Control: s-maxage=3600, stale-while-revalidate=86400` en 
 ### Flujos de generación
 
 - **Manual:** `POST /api/admin/generate.json` → contraseña contra `admin_keys` → `AIGeneratorService` → cascada Gemini → validación → inserción con cliente de servicio.
-- **Diario:** Vercel Cron → `GET /api/cron/generate-tutorials.json` → fuentes oficiales y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway → validación estructural → `TutorialAdminRepository`.
+- **Diario:** Vercel Cron → rutas independientes `generate-tutorial-slot-{1,2}.json` a las 09:00 y 11:00 UTC → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway → validación → publicación atómica en `TutorialAdminRepository`.
 - **Promocional temporal:** `POST /api/admin/generate-promotion.json` ejecuta lotes protegidos de hasta dos tutoriales mientras la ventana esté habilitada.
 
-La ejecución diaria es secuencial, genera dos tutoriales y reserva una clave por fecha y posición mediante `claim_tutorial_generation_job`; los jobs fallidos pueden reintentarse y los completados se omiten.
+Cada invocación genera un tutorial; los slots `1` y `2` separan los dos cupos diarios. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
 
 ## 4. Datos
 
@@ -78,7 +78,7 @@ Tres tablas en Supabase:
 
 - **`tutorials`** — migración `supabase/migrations/20260724000001_create_tutorials_table.sql`. RLS activo: lectura pública; `INSERT`/`UPDATE` permitidos a cualquier rol `authenticated`; sin política de `DELETE`. Incluye el RPC `increment_tutorial_views` (`SECURITY DEFINER`).
 - **`admin_keys`** — migración `supabase/migrations/20260728000001_create_admin_keys.sql`. Guarda hashes `scrypt` en formato `salt:key`. RLS activo sin políticas: solo accesible con `service_role`.
-- **`tutorial_generation_jobs`** — migración `supabase/migrations/20260813000001_create_tutorial_generation_jobs.sql`. Coordina idempotencia, intentos y resultado de las generaciones automáticas; RLS activo sin políticas y RPC de reserva limitado a `service_role`.
+- **`tutorial_generation_jobs`** — migraciones `20260813000001_create_tutorial_generation_jobs.sql` y `20260813000002_harden_tutorial_generation_jobs.sql`. Coordina idempotencia, intentos, leases y propiedad; RLS activo sin políticas y RPC limitados a `service_role`.
 
 Las migraciones son la fuente autoritativa del esquema. Este documento solo las resume.
 
@@ -93,7 +93,7 @@ Variables requeridas (**nombres únicamente; nunca escribas valores en documenta
 | `SUPABASE_SERVICE_ROLE_KEY` | **solo servidor** | omite RLS; usado por el endpoint admin y los scripts |
 | `GEMINI_API_KEY` | solo servidor | generación de contenido |
 | `AI_GATEWAY_API_KEY` | solo servidor, alternativa a OIDC | autenticación manual en Vercel AI Gateway |
-| `VERCEL_AI_MODEL` | solo servidor, opcional | modelo Gateway; por defecto `inclusionai/ling-3.0-tiny-free` |
+| `VERCEL_AI_MODEL` | solo servidor, opcional | modelo Gateway; producción usa temporalmente `inclusionai/ling-3.0-flash` |
 | `VERCEL_AI_FALLBACK_MODELS` | solo servidor, opcional | modelos Gateway alternativos, separados por coma y probados en orden |
 | `CRON_SECRET` | solo servidor | autenticación del cron y del lote promocional |
 | `PROMOTION_BATCH_ENABLED` | solo servidor | habilita explícitamente el endpoint promocional temporal |
@@ -120,8 +120,8 @@ El despliegue habitual es automático: Vercel construye en cada push a `main`.
 1. **RLS permisiva en `tutorials`** — cualquier rol `authenticated` puede insertar y actualizar. Hoy no existe registro de usuarios, por lo que la superficie real es pequeña, pero la política no es la deseable a largo plazo.
 2. **Sin pruebas automatizadas ni verificación de tipos** — no existe `npm test`, `npm run lint` ni `astro check`.
 3. **No existe endpoint público de lectura de tutoriales** — el consumo externo previsto en el ADR 0003 todavía no tiene superficie implementada.
-4. **Promoción de modelo temporal** — `inclusionai/ling-3.0-tiny-free` puede dejar de estar disponible o ser gratuito. `VERCEL_AI_MODEL` y `VERCEL_AI_FALLBACK_MODELS` deben apuntar a modelos vigentes; el código no garantiza gratuidad.
-5. **Fuentes emergentes con degradación** — si los feeds oficiales no responden, el cron usa un catálogo curado. Esto mantiene continuidad, pero puede producir una actualización de un tema conocido en vez de una noticia del día.
+4. **Modelo temporal** — `inclusionai/ling-3.0-tiny-free` no está disponible actualmente y producción usa `inclusionai/ling-3.0-flash`. La disponibilidad y el precio pueden cambiar; `VERCEL_AI_MODEL` y `VERCEL_AI_FALLBACK_MODELS` deben mantenerse vigentes.
+5. **Fuentes emergentes con degradación** — la investigación primaria aplica restricciones SSRF, timeout y tamaño; si los feeds o documentos oficiales no responden, usa metadatos del feed o un catálogo curado. Puede producir una actualización de un tema conocido en vez de una noticia del día.
 6. **Scripts de migración obsoletos** — `scripts/seed-tutorials.mjs` y `scripts/migrate-to-supabase.js` leen de `src/content/tutorials/`, directorio eliminado el 2026-07-28. No funcionan. Se conservan por valor histórico; candidatos a eliminación.
 7. **Dependencias con avisos de seguridad** — al 2026-08-13, `npm audit --omit=dev` reporta 18 vulnerabilidades (15 altas, 2 moderadas y 1 baja), principalmente en Astro, el adaptador de Vercel y dependencias transitivas. La corrección completa requiere evaluar actualizaciones mayores fuera del alcance de la automatización de contenido; el reporte no atribuye avisos a AI SDK.
 8. **Cuota externa de AI Gateway** — la automatización necesita cuota o créditos disponibles en la cuenta Vercel. Un `HTTP 429` deja el job fallido y reintentable; no se publica contenido parcial ni se duplica el cupo diario.
