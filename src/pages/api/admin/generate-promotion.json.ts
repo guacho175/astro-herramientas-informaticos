@@ -5,6 +5,10 @@ import { tutorialAdminRepository } from '../../../lib/infrastructure/repositorie
 
 const DEFAULT_PROMOTION_END = '2026-08-14T15:00:00.000Z';
 
+function normalizeEnvValue(value: unknown): string {
+  return value === null || value === undefined ? '' : String(value).trim();
+}
+
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -15,17 +19,15 @@ function json(body: unknown, status: number): Response {
   });
 }
 
-const cronSecret = (import.meta.env.CRON_SECRET || process.env.CRON_SECRET || '').trim();
-const promotionBatchEnabled = (
-  import.meta.env.PROMOTION_BATCH_ENABLED ||
-  process.env.PROMOTION_BATCH_ENABLED ||
-  ''
-).trim();
-const configuredPromotionEnd = (
-  import.meta.env.PROMOTION_END_AT ||
-  process.env.PROMOTION_END_AT ||
-  ''
-).trim();
+const cronSecret = normalizeEnvValue(
+  import.meta.env.CRON_SECRET || process.env.CRON_SECRET,
+);
+const promotionBatchEnabled = normalizeEnvValue(
+  import.meta.env.PROMOTION_BATCH_ENABLED || process.env.PROMOTION_BATCH_ENABLED,
+);
+const configuredPromotionEnd = normalizeEnvValue(
+  import.meta.env.PROMOTION_END_AT || process.env.PROMOTION_END_AT,
+);
 
 function parseBody(value: unknown): { batchId: string; count: number } | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;

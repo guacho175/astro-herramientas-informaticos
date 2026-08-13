@@ -63,6 +63,10 @@ function deriveTitle(value: string): string {
   return title.length >= 10 ? title : clampText(`Guía práctica de ${title}`, 60);
 }
 
+function normalizeEnvValue(value: unknown): string {
+  return value === null || value === undefined ? '' : String(value).trim();
+}
+
 function validateTutorialContent(
   value: unknown,
   requiredSources: TutorialResearchSource[],
@@ -176,7 +180,8 @@ function normalizeInput(
 
 function resolveModel(): GatewayModelId {
   const configuredModel =
-    import.meta.env.VERCEL_AI_MODEL?.trim() || process.env.VERCEL_AI_MODEL?.trim();
+    normalizeEnvValue(import.meta.env.VERCEL_AI_MODEL) ||
+    normalizeEnvValue(process.env.VERCEL_AI_MODEL);
 
   if (!configuredModel) return DEFAULT_MODEL;
   if (!/^[a-z0-9][a-z0-9._-]*\/[a-z0-9][a-z0-9._-]*$/i.test(configuredModel)) {
@@ -188,8 +193,8 @@ function resolveModel(): GatewayModelId {
 
 function resolveFallbackModels(primaryModel: GatewayModelId): GatewayModelId[] {
   const configuredFallbacks =
-    import.meta.env.VERCEL_AI_FALLBACK_MODELS?.trim() ||
-    process.env.VERCEL_AI_FALLBACK_MODELS?.trim();
+    normalizeEnvValue(import.meta.env.VERCEL_AI_FALLBACK_MODELS) ||
+    normalizeEnvValue(process.env.VERCEL_AI_FALLBACK_MODELS);
 
   if (!configuredFallbacks) return [];
 
