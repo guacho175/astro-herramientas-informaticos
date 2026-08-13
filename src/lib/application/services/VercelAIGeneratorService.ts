@@ -251,6 +251,7 @@ export class VercelAIGeneratorService {
       system:
         'Eres un arquitecto de software y editor técnico riguroso. No inventes capacidades, comandos, versiones, cifras ni fuentes. Prioriza exactitud, utilidad práctica y seguridad.',
       prompt: buildPrompt(normalizedInput),
+      reasoning: 'none',
       maxOutputTokens: MAX_OUTPUT_TOKENS,
       maxRetries: 0,
       timeout: REQUEST_TIMEOUT_MS,

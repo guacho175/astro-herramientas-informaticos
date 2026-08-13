@@ -27,6 +27,8 @@ Existen dos vías permanentes y una vía promocional temporal:
 
 El panel manual continúa usando Gemini. Las ejecuciones automática y promocional usan Vercel AI Gateway y están desacopladas del panel. El modelo primario se define con `VERCEL_AI_MODEL`; en producción se usa temporalmente `inclusionai/ling-3.0-flash` porque `inclusionai/ling-3.0-tiny-free` no está disponible actualmente. `VERCEL_AI_FALLBACK_MODELS` acepta alternativas separadas por comas.
 
+La generación editorial deshabilita el razonamiento interno del modelo para reservar el presupuesto de salida al tutorial completo. El Gateway conserva un único fallback y no se repite automáticamente una cadena fallida.
+
 La selección automática prioriza entradas recientes de feeds oficiales de Vercel, Cloudflare, Astro, AI SDK y Supabase. Para los primeros candidatos descarga de forma acotada hasta dos documentos primarios: solo HTTPS, hosts públicos, redirecciones validadas, timeout, tamaño máximo y texto sanitizado. Si no hay candidatos utilizables, rota un catálogo curado. La salida debe citar todas las fuentes entregadas, superar 1200 palabras e incluir H2/H3 y código.
 
 Cada slot reserva primero un job con token y lease de seis minutos. Solo el propietario vigente puede publicar o fallar; un lease vencido se puede recuperar. La inserción del tutorial y el cierre del job son atómicos. El cron deduplica por fecha y slot; un `batchId` promocional conserva idempotencia entre días UTC.
