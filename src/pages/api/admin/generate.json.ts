@@ -1,5 +1,4 @@
 import { aiGeneratorService } from '../../../lib/application/services/AIGeneratorService';
-import { tutorialService } from '../../../lib/application/services/TutorialService';
 import { createClient } from '@supabase/supabase-js';
 import 'dotenv/config';
 import crypto from 'crypto';
@@ -7,87 +6,117 @@ import type { APIRoute } from 'astro';
 
 const supabaseUrl = import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL || '';
 const supabaseServiceKey = import.meta.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-/**
- * Función helper para verificar el hash (scrypt)
- */
-function verifyPassword(password: string, hash: string): boolean {
+const jsonResponse = (body: Record<string, unknown>, status: number): Response =>
+  new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json; charset=utf-8' }
+  });
+
+/** Verifica un hash scrypt almacenado como salt:key. */
+function verifyPassword(password: string, hash: unknown): boolean {
+  if (typeof hash !== 'string') {
+    return false;
+  }
+
   try {
-    const [salt, key] = hash.split(':');
+    const [salt, key, ...extraParts] = hash.split(':');
+    if (!salt || !key || extraParts.length > 0 || !/^[a-f\d]{128}$/i.test(key)) {
+      return false;
+    }
+
     const keyBuffer = Buffer.from(key, 'hex');
-    const derivedKey = crypto.scryptSync(password, salt, 64);
-    return crypto.timingSafeEqual(keyBuffer, derivedKey);
-  } catch (error) {
+    const derivedKey = crypto.scryptSync(password, salt, keyBuffer.length);
+    return keyBuffer.length === derivedKey.length && crypto.timingSafeEqual(keyBuffer, derivedKey);
+  } catch {
     return false;
   }
 }
 
+function parseRequestBody(value: unknown): { topic: string; password: string } | null {
+  if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+    return null;
+  }
+
+  const body = value as Record<string, unknown>;
+  if (
+    (body.topic !== undefined && typeof body.topic !== 'string') ||
+    (body.password !== undefined && typeof body.password !== 'string')
+  ) {
+    return null;
+  }
+
+  return {
+    topic: typeof body.topic === 'string' ? body.topic.trim() : '',
+    password: typeof body.password === 'string' ? body.password : ''
+  };
+}
+
 export const POST: APIRoute = async ({ request }) => {
+  let requestBody: unknown;
   try {
-    const body = await request.json();
-    const { topic, password } = body;
-    
-    if (!password) {
-      return new Response(JSON.stringify({ error: 'Falta la contraseña.' }), { status: 401 });
-    }
+    requestBody = await request.json();
+  } catch {
+    return jsonResponse({ error: 'El cuerpo de la solicitud debe ser JSON válido.' }, 400);
+  }
 
-    // DEBUG: log env var presence
-    const urlPresent = !!(import.meta.env.PUBLIC_SUPABASE_URL || process.env.PUBLIC_SUPABASE_URL);
-    const keyPresent = !!(import.meta.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY);
-    console.log(`[Admin API DEBUG] supabaseUrl present: ${urlPresent}, serviceKey present: ${keyPresent}`);
-    console.log(`[Admin API DEBUG] supabaseUrl value starts with: ${supabaseUrl.substring(0, 20)}`);
+  const input = parseRequestBody(requestBody);
+  if (!input) {
+    return jsonResponse({ error: 'La solicitud no tiene el formato esperado.' }, 400);
+  }
 
-    // 1. Obtener el hash de la base de datos (clave 'primary_admin')
+  if (!input.password || input.password.length > 1_024) {
+    return jsonResponse({ error: 'Falta la contraseña.' }, 401);
+  }
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error('[Admin API] La configuración de Supabase no está disponible.');
+    return jsonResponse({ error: 'Configuración de seguridad no disponible.' }, 500);
+  }
+
+  try {
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
     const { data: adminKeyData, error: dbError } = await supabaseAdmin
       .from('admin_keys')
       .select('password_hash')
       .eq('key_name', 'primary_admin')
       .single();
 
-    console.log(`[Admin API DEBUG] DB query result - error: ${dbError?.message || 'none'}, data present: ${!!adminKeyData}`);
-    if (adminKeyData) {
-      console.log(`[Admin API DEBUG] Hash starts with: ${adminKeyData.password_hash?.substring(0, 20)}`);
-    }
-
     if (dbError || !adminKeyData) {
-      console.error('[Admin API] Error obteniendo clave de la BD:', dbError?.message);
-      return new Response(JSON.stringify({ 
-        error: 'Configuración de seguridad no inicializada en Supabase.',
-        debug: { dbError: dbError?.message, urlPresent, keyPresent }
-      }), { status: 500 });
+      console.error('[Admin API] No fue posible consultar la clave administrativa.');
+      return jsonResponse({ error: 'Configuración de seguridad no disponible.' }, 500);
     }
 
-    // 2. Verificar el hash criptográfico
-    const isValid = verifyPassword(password, adminKeyData.password_hash);
-    console.log(`[Admin API DEBUG] Password verification result: ${isValid}`);
-    if (!isValid) {
-      return new Response(JSON.stringify({ error: 'Acceso no autorizado. Clave incorrecta.' }), { status: 401 });
+    if (!verifyPassword(input.password, adminKeyData.password_hash)) {
+      return jsonResponse({ error: 'Acceso no autorizado. Clave incorrecta.' }, 401);
     }
 
-    if (!topic) {
-      return new Response(JSON.stringify({ error: 'El tema es obligatorio.' }), { status: 400 });
+    if (!input.topic || input.topic.length > 200) {
+      return jsonResponse({ error: 'El tema debe contener entre 1 y 200 caracteres.' }, 400);
     }
 
-    // 1. Generar contenido con IA (Cascade Fallback)
-    console.log(`[Admin API] Iniciando generación para el tema: ${topic}`);
-    const generatedData = await aiGeneratorService.generateTutorial(topic);
+    const generatedData = await aiGeneratorService.generateTutorial(input.topic);
 
-    // Generar un slug simple basado en el título
     const slug = generatedData.title
       .toLowerCase()
-      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/(^-|-$)+/g, '');
 
-    // 2. Insertar en Supabase
+    if (!slug) {
+      console.error('[Admin API] El título generado no produjo un slug válido.');
+      return jsonResponse({ error: 'No fue posible procesar el tutorial generado.' }, 500);
+    }
+
     const tutorialPayload = {
       slug,
       title: generatedData.title,
       description: generatedData.description,
       category: generatedData.category,
       content_markdown: generatedData.content_markdown,
-      image: `/images/tutorials/${slug}.png`, // Placeholder image
+      image: `/images/tutorials/${slug}.png`,
       views: 0
     };
 
@@ -98,21 +127,20 @@ export const POST: APIRoute = async ({ request }) => {
       .single();
 
     if (insertError) {
-      console.error('[Admin API] Error insertando tutorial:', insertError);
-      return new Response(JSON.stringify({ error: 'Error al guardar el tutorial en la base de datos.' }), { status: 500 });
+      console.error('[Admin API] No fue posible guardar el tutorial.');
+      return jsonResponse({ error: 'Error al guardar el tutorial en la base de datos.' }, 500);
     }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
-      message: 'Tutorial generado y guardado exitosamente.',
-      data: inserted
-    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
-
-  } catch (error: any) {
-    console.error('[Admin API] Error:', error);
-    return new Response(JSON.stringify({ 
-      error: 'Error interno del servidor', 
-      details: error.message 
-    }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+    return jsonResponse(
+      {
+        success: true,
+        message: 'Tutorial generado y guardado exitosamente.',
+        data: inserted
+      },
+      200
+    );
+  } catch {
+    console.error('[Admin API] La generación del tutorial falló.');
+    return jsonResponse({ error: 'Error interno del servidor.' }, 500);
   }
-}
+};

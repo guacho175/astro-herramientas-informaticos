@@ -1,7 +1,7 @@
 # Creación de tutoriales
 
 > **Fuente de verdad:** este documento es canónico para el proceso de creación e integración de tutoriales.
-> **Última verificación:** 2026-07-28
+> **Última verificación:** 2026-08-13
 
 Reemplaza a los antiguos `GUIDE_FOR_AGENTS.md` y `TUTORIAL_GUIDELINES.md`, que fueron eliminados por duplicación.
 
@@ -17,11 +17,19 @@ No crees archivos `.md` de tutoriales en el repositorio bajo ninguna circunstanc
 
 ## 2. Cómo se inserta un tutorial
 
-La vía vigente es una sola:
+Existen dos vías permanentes y una vía promocional temporal:
 
 | Vía | Cuándo usarla | Autenticación |
 | :--- | :--- | :--- |
 | `POST /api/admin/generate.json` | generación asistida por IA desde el panel `/admin/tutorial-generator` | contraseña verificada contra `admin_keys` |
+| `GET /api/cron/generate-tutorials.json` | dos tutoriales diarios de tecnología emergente | `CRON_SECRET` enviado por Vercel Cron |
+| `POST /api/admin/generate-promotion.json` | lotes temporales, máximo dos por llamada | `CRON_SECRET` y `PROMOTION_BATCH_ENABLED=true` |
+
+El panel manual continúa usando Gemini. Las ejecuciones automática y promocional usan Vercel AI Gateway y están desacopladas del panel.
+
+La selección automática prioriza entradas recientes de feeds oficiales de Vercel, Cloudflare, Astro, AI SDK y Supabase. Si no hay candidatos utilizables, rota un catálogo curado de temas. La salida debe citar todas las fuentes entregadas, superar 1200 palabras e incluir secciones H2/H3 y código.
+
+Cada ejecución reserva primero un job de generación. Repetir la misma fecha, posición y lote no publica duplicados; un job fallido puede volver a intentarse.
 
 El contrato completo del endpoint está en [API.md](API.md).
 
@@ -84,4 +92,4 @@ El sitio se sirve en **SSR**, no se pregenera. Verificar un artículo en `dist/`
 2. Comprobar que el artículo aparece en el listado `http://localhost:4321/blog/guias`.
 3. `npm run build` debe completar sin errores.
 
-> El índice de búsqueda `/api/search.json` se pregenera en tiempo de build (`prerender = true`). Un tutorial insertado después del último despliegue **no aparecerá en el buscador** hasta el siguiente build, aunque sí sea accesible por su URL. Es una limitación conocida, registrada en [PROJECT_STATE.md](PROJECT_STATE.md).
+> El índice `/api/search.json` es dinámico y usa caché compartida de cinco minutos. Un tutorial nuevo puede tardar hasta ese intervalo en aparecer en el buscador.

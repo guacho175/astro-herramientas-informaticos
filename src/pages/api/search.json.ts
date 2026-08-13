@@ -1,7 +1,5 @@
 import { tutorialService } from '../../lib/application/services/TutorialService';
 
-export const prerender = true;
-
 export async function GET() {
   const tutorials = await tutorialService.getTutorialCatalog();
   
@@ -18,7 +16,7 @@ export async function GET() {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Cache-Control': 'public, max-age=3600'
+      'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=3600'
     }
   });
 }

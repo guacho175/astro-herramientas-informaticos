@@ -1,7 +1,7 @@
 # Contrato de API
 
 > **Fuente de verdad:** este documento es canónico para los endpoints HTTP y la forma del recurso `Tutorial`.
-> **Última verificación:** 2026-07-28
+> **Última verificación:** 2026-08-13
 
 Todo cambio en `src/pages/api/`, en la forma de un recurso o en los códigos de respuesta debe reflejarse aquí en el mismo commit.
 
@@ -48,14 +48,13 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 | `200` | `{ success: true, message, data: Tutorial }` | tutorial generado e insertado |
 | `400` | `{ error }` | falta `topic` |
 | `401` | `{ error }` | falta la contraseña o es incorrecta |
-| `500` | `{ error, debug? }` | `admin_keys` inaccesible, fallo de inserción o error interno |
-
-> El campo `debug` de la respuesta 500 expone el mensaje de error de base de datos y la presencia de variables de entorno. Es diagnóstico temporal, no forma parte del contrato y debe retirarse. Ver limitación 1 en [PROJECT_STATE.md](PROJECT_STATE.md).
+| `500` | `{ error }` | configuración inaccesible, fallo de proveedor, validación o inserción |
 
 ### Comportamiento
 
 - El `slug` se **deriva del título generado** (minúsculas, sin acentos, guiones). No se acepta un slug del cliente. Un título que produzca un slug ya existente hace fallar la inserción por la restricción de unicidad y devuelve `500`.
-- `AIGeneratorService` recorre una cascada de modelos Gemini: ante error HTTP, cuota agotada (`429`), respuesta vacía o JSON inválido, salta al siguiente. Si todos fallan, lanza y el endpoint responde `500`.
+- `AIGeneratorService` recorre una cascada Gemini. Solo hace fallback ante errores recuperables, cuota `429`, timeout, modelo no disponible o salida inválida; los demás `4xx` detienen la cascada.
+- Cada modelo tiene timeout y la salida se valida por esquema, longitudes, mínimo de palabras, encabezados y código.
 - `image` se fija a `/images/tutorials/<slug>.png`, un marcador que normalmente no existe; el frontend hace fallback al icono por categoría.
 - La operación no es idempotente: dos llamadas con el mismo `topic` producen dos tutoriales distintos.
 
@@ -65,7 +64,7 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 
 Índice ligero de tutoriales para el buscador del sitio.
 
-**Pregenerado en tiempo de build** (`prerender = true`): su contenido corresponde al último despliegue, no al estado actual de la base de datos. `Cache-Control: public, max-age=3600`.
+**Dinámico con caché compartida:** consulta Supabase cuando la caché se regenera. `Cache-Control: public, s-maxage=300, stale-while-revalidate=3600`.
 
 ```jsonc
 [
@@ -73,6 +72,47 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
     "category": "string", "image": "string", "updated": 2026 }  // año de created_at
 ]
 ```
+
+---
+
+## `GET /api/cron/generate-tutorials.json`
+
+Genera hasta dos tutoriales diarios mediante Vercel AI Gateway. Se ejecuta secuencialmente, selecciona novedades desde fuentes oficiales y cae a un catálogo curado. Repetir la llamada del mismo día omite posiciones ya reservadas o completadas.
+
+**Autenticación:** `Authorization: Bearer <CRON_SECRET>`. Vercel añade esta cabecera al invocar el cron cuando la variable está configurada.
+
+| Código | Causa |
+| :--- | :--- |
+| `200` | dos posiciones creadas u omitidas correctamente |
+| `207` | al menos una posición falló y otra tuvo éxito |
+| `401` | secreto ausente o incorrecto |
+| `500` | configuración inválida o todas las posiciones fallaron |
+
+La respuesta incluye `date`, `requested`, `created`, `skipped`, `failed` y un arreglo `results` sin secretos ni mensajes internos del proveedor.
+
+---
+
+## `POST /api/admin/generate-promotion.json`
+
+Ejecución temporal por lotes pequeños para aprovechar una promoción de modelo sin modificar el cron permanente.
+
+**Autenticación:** `Authorization: Bearer <CRON_SECRET>`. También exige `PROMOTION_BATCH_ENABLED=true` y rechaza llamadas posteriores a `PROMOTION_END_AT` (por defecto `2026-08-14T15:00:00Z`).
+
+```json
+{ "batchId": "lote-01", "count": 2 }
+```
+
+`batchId` debe ser único por lote y usar minúsculas, números y guiones; `count` admite 1 o 2. Repetir un `batchId` es idempotente.
+
+| Código | Causa |
+| :--- | :--- |
+| `200` | lote creado u omitido correctamente |
+| `207` | resultado parcial |
+| `400` | cuerpo o parámetros inválidos |
+| `401` | secreto incorrecto |
+| `403` | lotes promocionales deshabilitados |
+| `410` | ventana promocional terminada |
+| `500` | fallo total o configuración inválida |
 
 ---
 
@@ -98,4 +138,4 @@ No son API, pero forman parte de la superficie observable:
 
 No existe todavía un endpoint público de lectura de tutoriales. Un consumidor externo solo puede leer la tabla `tutorials` directamente desde Supabase con la clave anónima, sujeto a RLS (lectura pública permitida).
 
-Si se implementa ese endpoint, debe documentarse aquí **antes** de anunciarse, y la limitación 1 de [PROJECT_STATE.md](PROJECT_STATE.md) debe estar resuelta.
+Si se implementa ese endpoint, debe documentarse aquí **antes** de anunciarse y conservar una política de acceso coherente con RLS.
