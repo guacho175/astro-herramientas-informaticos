@@ -4,7 +4,7 @@
 
 Implementar una vía automática y desacoplada que genere hasta dos tutoriales diarios sobre tecnología emergente mediante Vercel AI Gateway, sin eliminar ni acoplar el panel manual existente basado en Gemini.
 
-**Estado:** cerrado por decisión del usuario el 2026-08-13. Producción tiene un solo cron diario en la hora de las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. La primera ejecución automática queda pendiente para el 2026-08-14 entre las 05:00 y las 05:59 de Chile continental; no se demostró todavía una publicación real.
+**Estado:** actualizado el 2026-08-13. Producción conserva un solo cron diario en la hora de las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. El panel autenticado `/admin` puede ejecutar esos mismos slots mediante una ruta administrativa que reutiliza el servicio diario; no existe un segundo cron ni se exponen secretos. La primera generación automática real sigue pendiente de autorización y no se demostró todavía una publicación.
 
 ## Alcance
 

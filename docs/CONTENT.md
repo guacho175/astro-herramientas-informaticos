@@ -17,15 +17,17 @@ No crees archivos `.md` de tutoriales en el repositorio bajo ninguna circunstanc
 
 ## 2. Cómo se inserta un tutorial
 
-Existen dos vías permanentes y una vía promocional temporal:
+El panel proporciona login y existen dos vías permanentes de generación, además de una vía promocional temporal:
 
 | Vía | Cuándo usarla | Autenticación |
 | :--- | :--- | :--- |
-| `POST /api/admin/generate.json` | generación asistida por IA desde el panel `/admin/tutorial-generator` | contraseña verificada contra `admin_keys` |
+| `POST /api/admin/login.json` | iniciar sesión en el panel `/admin` | contraseña verificada contra `admin_keys` |
+| `POST /api/admin/generate.json` | generación asistida por IA desde el panel | sesión administrativa y origen del mismo sitio |
+| `POST /api/admin/generate-emerging.json` | ejecutar manualmente los dos slots automáticos diarios | sesión administrativa y origen del mismo sitio |
 | `GET /api/cron/generate-tutorials.json` | una invocación diaria a las 09:00 UTC; genera secuencialmente los dos slots | `CRON_SECRET` enviado por Vercel Cron |
 | `POST /api/admin/generate-promotion.json` | lotes temporales, máximo dos por llamada | `CRON_SECRET` y `PROMOTION_BATCH_ENABLED=true` |
 
-El panel manual está disponible en `/admin/tutorial-generator` y continúa usando Gemini mediante la clave de Google AI Studio y su integración independiente. La ejecución automática usa Vercel AI Gateway y está desacoplada del panel. El modelo se define con `VERCEL_AI_MODEL`; producción usa exclusivamente `google/gemini-2.5-flash`, habilitado para los créditos mensuales del nivel gratuito, y no configura un modelo alternativo en `VERCEL_AI_FALLBACK_MODELS`. El endpoint promocional temporal queda deshabilitado en producción.
+El panel está disponible en `/admin`; la URL histórica `/admin/tutorial-generator` redirige a ella. El login usa la misma contraseña administrativa existente y crea una cookie de sesión firmada, `HttpOnly`, `SameSite=Strict`, temporal y `Secure` en producción. Después del login, el flujo manual continúa usando Gemini mediante la clave de Google AI Studio y no vuelve a pedir ni reenvía la contraseña. La generación automática del panel usa Vercel AI Gateway y llama al mismo servicio que el cron, sin invocar su ruta ni revelar `CRON_SECRET`. Ambos comparten los dos slots del namespace diario `tutorial-emergente`, por lo que ejecutar el botón no suma otros dos tutoriales si el cron ya los procesó. El modelo se define con `VERCEL_AI_MODEL`; producción usa exclusivamente `google/gemini-2.5-flash`, habilitado para los créditos mensuales del nivel gratuito, y no configura un modelo alternativo en `VERCEL_AI_FALLBACK_MODELS`. El endpoint promocional temporal queda deshabilitado en producción.
 
 Solo existe un cron programado: Vercel puede iniciarlo entre las 09:00 y las 09:59 UTC por la precisión horaria del plan Hobby; procesa primero el slot `1` y después el slot `2`. En Chile continental la ventana es 05:00–05:59 mientras rija UTC-4 y 06:00–06:59 mientras rija UTC-3; Vercel no cambia la expresión UTC cuando cambia el horario local.
 

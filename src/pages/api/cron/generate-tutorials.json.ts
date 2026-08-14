@@ -1,7 +1,5 @@
 import type { APIRoute } from 'astro';
-import { DailyTutorialService } from '../../../lib/application/services/DailyTutorialService';
-import { vercelAIGeneratorService } from '../../../lib/application/services/VercelAIGeneratorService';
-import { tutorialAdminRepository } from '../../../lib/infrastructure/repositories/TutorialAdminRepository';
+import { runDailyTutorialGeneration } from '../../../lib/application/services/runDailyTutorialGeneration';
 
 function json(body: unknown, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -39,8 +37,11 @@ export async function handleTutorialCron(
   }
 
   try {
-    const service = new DailyTutorialService(vercelAIGeneratorService, tutorialAdminRepository);
-    const run = await service.run(new Date(), count, 'tutorial-emergente', startingSlot);
+    const run = await runDailyTutorialGeneration({
+      date: new Date(),
+      count,
+      startingSlot,
+    });
 
     if (run.failed === run.requested) {
       return json({ success: false, message: 'No se pudo generar ningún tutorial.', ...run }, 500);

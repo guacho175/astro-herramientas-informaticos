@@ -66,8 +66,8 @@ La página fija `Cache-Control: s-maxage=3600, stale-while-revalidate=86400` en 
 
 ### Flujos de generación
 
-- **Manual:** `POST /api/admin/generate.json` → contraseña contra `admin_keys` → `AIGeneratorService` → cascada Gemini → validación → inserción con cliente de servicio.
-- **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway con `google/gemini-2.5-flash` → validación → publicación atómica en `TutorialAdminRepository`.
+- **Manual:** `POST /api/admin/login.json` → contraseña contra `admin_keys` → cookie de sesión firmada; después `POST /api/admin/generate.json` → `AIGeneratorService` → cascada Gemini → validación → inserción con cliente de servicio.
+- **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway con `google/gemini-2.5-flash` → validación → publicación atómica en `TutorialAdminRepository`. El panel autenticado puede ejecutar ese mismo servicio mediante `POST /api/admin/generate-emerging.json`; comparte los slots `tutorial-emergente` y no invoca la ruta cron ni expone su secreto.
 - **Promocional temporal:** `POST /api/admin/generate-promotion.json` conserva el contrato para diagnósticos controlados, pero está deshabilitado en producción.
 
 La única invocación diaria genera hasta dos tutoriales, uno por vez; los slots `1` y `2` mantienen separados los cupos y sus resultados. Por la precisión horaria del plan Hobby, Vercel puede iniciarla entre las 09:00 y las 09:59 UTC: en Chile continental la ventana es 05:00–05:59 durante UTC-4 y 06:00–06:59 durante UTC-3. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
@@ -91,6 +91,7 @@ Variables requeridas (**nombres únicamente; nunca escribas valores en documenta
 | `PUBLIC_SUPABASE_URL` | cliente y servidor | endpoint del proyecto Supabase |
 | `PUBLIC_SUPABASE_ANON_KEY` | cliente y servidor | lectura pública sujeta a RLS |
 | `SUPABASE_SERVICE_ROLE_KEY` | **solo servidor** | omite RLS; usado por el endpoint admin y los scripts |
+| `ADMIN_SESSION_SECRET` | **solo servidor** | firma de las cookies de sesión administrativa; independiente de secretos de cron, IA y Supabase |
 | `GEMINI_API_KEY` | solo servidor | generación de contenido |
 | `AI_GATEWAY_API_KEY` | solo servidor, alternativa a OIDC | autenticación manual en Vercel AI Gateway |
 | `VERCEL_AI_MODEL` | solo servidor, opcional | modelo Gateway; producción usa `google/gemini-2.5-flash` |

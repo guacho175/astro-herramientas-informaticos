@@ -29,16 +29,44 @@ Forma devuelta por Supabase y por los endpoints que exponen tutoriales. Definici
 
 ---
 
+## Sesión administrativa
+
+El panel canónico es `GET /admin`. Sin una sesión válida muestra el login; tras iniciarla muestra las dos operaciones de generación. La URL histórica `GET /admin/tutorial-generator` redirige temporalmente a `/admin`.
+
+Las rutas administrativas no aceptan la contraseña ni secretos de proveedor fuera del login. Usan la cookie firmada `admin_session`, de 30 minutos, con `HttpOnly`, `SameSite=Strict`, `Path=/` y `Secure` en producción. La firma usa `ADMIN_SESSION_SECRET`, una variable exclusiva de servidor. Todas las solicitudes `POST` del panel validan el `Origin` contra el origen de la petición para reducir CSRF.
+
+### `POST /api/admin/login.json`
+
+Valida la misma contraseña administrativa contra `admin_keys` y abre la sesión. La contraseña se usa solamente en esta solicitud y nunca se guarda en cookies ni en almacenamiento del navegador.
+
+```json
+{ "password": "string" }
+```
+
+| Código | Causa |
+| :--- | :--- |
+| `200` | credenciales válidas; devuelve `Set-Cookie` con la sesión |
+| `400` | cuerpo JSON inválido |
+| `401` | credenciales ausentes o inválidas |
+| `403` | origen no válido |
+| `500` | configuración administrativa no disponible |
+
+### `POST /api/admin/logout.json`
+
+Requiere un origen válido y cierra la sesión del navegador al expirar la cookie con los mismos atributos de ruta y seguridad. Responde `204`; la operación es idempotente.
+
+---
+
 ## `POST /api/admin/generate.json`
 
 Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. Ejecuta con `service_role`, por lo que **omite RLS**.
 
-**Autenticación:** contraseña en el cuerpo, verificada con `scrypt` contra la fila `primary_admin` de `admin_keys`. No usa cabecera `Authorization` ni cookies de sesión.
+**Autenticación:** sesión administrativa válida más `Origin` del mismo sitio. El servidor validó previamente la contraseña con `scrypt` contra la fila `primary_admin` de `admin_keys` durante el login.
 
 ### Petición
 
 ```json
-{ "topic": "string", "password": "string" }
+{ "topic": "string" }
 ```
 
 ### Respuestas
@@ -47,8 +75,9 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 | :--- | :--- | :--- |
 | `200` | `{ success: true, message, data: Tutorial }` | tutorial generado e insertado |
 | `400` | `{ error }` | falta `topic` |
-| `401` | `{ error }` | falta la contraseña o es incorrecta |
-| `500` | `{ error }` | configuración inaccesible, fallo de proveedor, validación o inserción |
+| `401` | `{ error }` | sesión ausente, inválida o expirada |
+| `403` | `{ error }` | origen no válido |
+| `500` | `{ error }` | fallo de proveedor, validación o inserción |
 
 ### Comportamiento
 
@@ -57,6 +86,31 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 - Cada modelo tiene timeout y la salida se valida por esquema, longitudes, mínimo de palabras, encabezados y código.
 - `image` se fija a `/images/tutorials/<slug>.png`, un marcador que normalmente no existe; el frontend hace fallback al icono por categoría.
 - La operación no es idempotente: dos llamadas con el mismo `topic` producen dos tutoriales distintos.
+
+---
+
+## `POST /api/admin/generate-emerging.json`
+
+Ejecuta manualmente desde el panel el mismo pipeline del cron: investigación de fuentes, `VercelAIGeneratorService` mediante Vercel AI Gateway y publicación transaccional. No invoca la ruta cron ni expone `CRON_SECRET` al navegador.
+
+**Autenticación:** sesión administrativa válida más `Origin` del mismo sitio.
+
+```json
+{}
+```
+
+Siempre solicita `count=2`, slots `1` y `2` secuenciales y namespace `tutorial-emergente`. Por eso comparte las claves diarias UTC con el cron: si esta ruta publica antes, el cron omite esos slots; si el cron ya los atendió, la ruta informa cada omisión. Nunca crea cuatro tutoriales por día.
+
+| Código | Causa |
+| :--- | :--- |
+| `200` | ambos slots fueron creados u omitidos correctamente |
+| `207` | resultado parcial |
+| `400` | cuerpo JSON inválido |
+| `401` | sesión ausente, inválida o expirada |
+| `403` | origen no válido |
+| `500` | fallo total o configuración inválida |
+
+La respuesta contiene `date`, `requested`, `created`, `skipped`, `failed` y `results`. Cada elemento indica su `slot` y estado `created`, `skipped` o `failed`; los creados incluyen `title` y `slug`, y los omitidos incluyen el `slug` ya reservado o publicado. No expone errores internos del proveedor.
 
 ---
 
@@ -134,7 +188,8 @@ No son API, pero forman parte de la superficie observable:
 | :--- | :--- |
 | `GET /blog/guias` | listado paginado; página vía query param `?page=N`, 9 por página |
 | `GET /blog/guias/<slug>` | artículo; redirige a `/404` si no existe; incrementa `views` |
-| `GET /admin/tutorial-generator` | panel que consume el endpoint admin; **sin protección propia**, la contraseña se valida en el servidor al enviar |
+| `GET /admin` | panel protegido por sesión; sin sesión muestra login y con sesión muestra generación manual y automática |
+| `GET /admin/tutorial-generator` | redirección temporal a `/admin` para conservar la URL existente |
 
 ---
 
