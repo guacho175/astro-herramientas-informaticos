@@ -67,10 +67,10 @@ La página fija `Cache-Control: s-maxage=3600, stale-while-revalidate=86400` en 
 ### Flujos de generación
 
 - **Manual:** `POST /api/admin/generate.json` → contraseña contra `admin_keys` → `AIGeneratorService` → cascada Gemini → validación → inserción con cliente de servicio.
-- **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway → validación → publicación atómica en `TutorialAdminRepository`.
-- **Promocional temporal:** `POST /api/admin/generate-promotion.json` ejecuta lotes protegidos de hasta dos tutoriales mientras la ventana esté habilitada.
+- **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway con `google/gemini-2.5-flash` → validación → publicación atómica en `TutorialAdminRepository`.
+- **Promocional temporal:** `POST /api/admin/generate-promotion.json` conserva el contrato para diagnósticos controlados, pero está deshabilitado en producción.
 
-La única invocación diaria genera hasta dos tutoriales, uno por vez; los slots `1` y `2` mantienen separados los cupos y sus resultados. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
+La única invocación diaria genera hasta dos tutoriales, uno por vez; los slots `1` y `2` mantienen separados los cupos y sus resultados. En Chile continental, las 09:00 UTC corresponden a las 05:00 durante UTC-4 y a las 06:00 durante UTC-3. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
 
 ## 4. Datos
 
@@ -93,7 +93,7 @@ Variables requeridas (**nombres únicamente; nunca escribas valores en documenta
 | `SUPABASE_SERVICE_ROLE_KEY` | **solo servidor** | omite RLS; usado por el endpoint admin y los scripts |
 | `GEMINI_API_KEY` | solo servidor | generación de contenido |
 | `AI_GATEWAY_API_KEY` | solo servidor, alternativa a OIDC | autenticación manual en Vercel AI Gateway |
-| `VERCEL_AI_MODEL` | solo servidor, opcional | modelo Gateway; producción usa `google/gemini-3.5-flash-lite` |
+| `VERCEL_AI_MODEL` | solo servidor, opcional | modelo Gateway; producción usa `google/gemini-2.5-flash` |
 | `VERCEL_AI_FALLBACK_MODELS` | solo servidor, opcional | modelos Gateway alternativos, separados por coma y probados en orden |
 | `CRON_SECRET` | solo servidor | autenticación del cron y del lote promocional |
 | `PROMOTION_BATCH_ENABLED` | solo servidor | habilita explícitamente el endpoint promocional temporal |
@@ -120,7 +120,7 @@ El despliegue habitual es automático: Vercel construye en cada push a `main`.
 1. **RLS permisiva en `tutorials`** — cualquier rol `authenticated` puede insertar y actualizar. Hoy no existe registro de usuarios, por lo que la superficie real es pequeña, pero la política no es la deseable a largo plazo.
 2. **Sin pruebas automatizadas ni verificación de tipos** — no existe `npm test`, `npm run lint` ni `astro check`.
 3. **No existe endpoint público de lectura de tutoriales** — el consumo externo previsto en el ADR 0003 todavía no tiene superficie implementada.
-4. **Modelo externo variable** — producción usa exclusivamente `google/gemini-3.5-flash-lite` mediante Vercel AI Gateway. La disponibilidad y el precio pueden cambiar; `VERCEL_AI_MODEL` debe mantenerse vigente.
+4. **Modelo externo variable** — producción usa exclusivamente `google/gemini-2.5-flash` mediante Vercel AI Gateway porque está habilitado para los créditos mensuales del nivel gratuito. La disponibilidad y el precio pueden cambiar; antes de sustituirlo debe comprobarse el filtro Free Tier del catálogo de Vercel.
 5. **Fuentes emergentes con degradación** — la investigación primaria aplica restricciones SSRF, timeout y tamaño; si los feeds o documentos oficiales no responden, usa metadatos del feed o un catálogo curado. Puede producir una actualización de un tema conocido en vez de una noticia del día.
 6. **Scripts de migración obsoletos** — `scripts/seed-tutorials.mjs` y `scripts/migrate-to-supabase.js` leen de `src/content/tutorials/`, directorio eliminado el 2026-07-28. No funcionan. Se conservan por valor histórico; candidatos a eliminación.
 7. **Dependencias con avisos de seguridad** — al 2026-08-13, `npm audit --omit=dev` reporta 18 vulnerabilidades (15 altas, 2 moderadas y 1 baja), principalmente en Astro, el adaptador de Vercel y dependencias transitivas. La corrección completa requiere evaluar actualizaciones mayores fuera del alcance de la automatización de contenido; el reporte no atribuye avisos a AI SDK.

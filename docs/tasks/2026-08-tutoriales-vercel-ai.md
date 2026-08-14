@@ -2,16 +2,16 @@
 
 ## Objetivo
 
-Implementar una vía automática y desacoplada que genere hasta dos tutoriales diarios sobre tecnología emergente mediante invocaciones separadas de Vercel AI Gateway, sin eliminar ni acoplar el panel manual existente basado en Gemini.
+Implementar una vía automática y desacoplada que genere hasta dos tutoriales diarios sobre tecnología emergente mediante Vercel AI Gateway, sin eliminar ni acoplar el panel manual existente basado en Gemini.
 
-**Estado:** implementación y validación local completadas el 2026-08-13. La primera migración y despliegue alcanzaron AI Gateway, pero devolvieron `HTTP 429`; la migración incremental de leases debe aplicarse antes del siguiente despliegue.
+**Estado:** cerrado por decisión del usuario el 2026-08-13. Producción tiene un solo cron diario a las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. La primera ejecución automática queda pendiente para el 2026-08-14 a las 05:00 de Chile continental; no se demostró todavía una publicación real.
 
 ## Alcance
 
 - Conservar y endurecer el flujo manual `POST /api/admin/generate.json` con Gemini.
 - Añadir un proveedor Vercel AI Gateway independiente y configurable.
 - Añadir selección reproducible de temas emergentes desde un catálogo controlado, con deduplicación.
-- Añadir una ruta protegida que genere un tutorial por invocación y admita dos slots diarios.
+- Añadir una ruta protegida que genere dos tutoriales secuenciales mediante slots diarios independientes.
 - Configurar Vercel Cron con secreto y comportamiento idempotente.
 - Evitar que fallos parciales dupliquen tutoriales o oculten el resultado real.
 - Actualizar contratos, estado del proyecto y proceso de contenido.
@@ -21,7 +21,8 @@ Implementar una vía automática y desacoplada que genere hasta dos tutoriales d
 
 - Rama de trabajo original: `codex/tutoriales-vercel-ai`, creada desde `chore/gobernanza-agentes` (`17b27ff`). Todo quedó integrado en `main` y las ramas locales de trabajo fueron eliminadas.
 - El panel Gemini y el generador automático conservan servicios, autenticación y selección de proveedor independientes; ambos publican el mismo contrato `Tutorial`.
-- El modelo es configurable mediante `VERCEL_AI_MODEL`; producción usa temporalmente `inclusionai/ling-3.0-flash` porque Tiny Free no está disponible actualmente. `VERCEL_AI_FALLBACK_MODELS` permite cambiar alternativas sin desplegar código.
+- El modelo es configurable mediante `VERCEL_AI_MODEL`; producción usa `google/gemini-2.5-flash`, habilitado para los créditos mensuales del nivel gratuito. No hay fallback configurado.
+- Vercel programa una sola ruta a las 09:00 UTC. Esa invocación procesa los slots `1` y `2` secuencialmente; en Chile continental se ejecuta a las 05:00 durante UTC-4 y a las 06:00 durante UTC-3.
 - La ejecución programada se autenticará con `CRON_SECRET`, no con la contraseña administrativa.
 - El cron usa clave por fecha y slot; promociones usan `batchId` y slot sin fecha para conservar idempotencia entre días UTC.
 - Los jobs usan token y lease de seis minutos; la publicación y finalización son una transacción.
@@ -43,14 +44,14 @@ Implementar una vía automática y desacoplada que genere hasta dos tutoriales d
 - `node scripts/check-docs.mjs`
 - Revisión del diff completo.
 - Comprobación del catálogo público de Vercel para el modelo configurado.
-- Migración inicial remota aplicada y verificada en `herramientastic-db`; la migración incremental de leases y publicación atómica requiere aplicación y verificación antes de desplegar el código dependiente.
+- Migraciones de jobs, leases y publicación atómica aplicadas y verificadas en `herramientastic-db`.
 - Variables de producción configuradas y despliegue `Ready` con alias del dominio final.
 - Pruebas HTTP de portada, buscador, cron sin credenciales y panel Gemini sin credenciales.
-- Pruebas reales del cron autenticado: persistencia de jobs operativa y proveedor alcanzado; Vercel respondió `HTTP 429` para Ling y también para un modelo alternativo. No se crearon tutoriales.
+- Pruebas promocionales reales: Ling devolvió contenido truncado o demasiado corto y Gemini 3.5 Flash Lite fue rechazado por el nivel gratuito con `HTTP 403`. No se crearon tutoriales. Por instrucción del usuario no se repitió la generación; el cierre deja `google/gemini-2.5-flash` para la primera ejecución automática.
 
 ## Riesgos y límites
 
-- Ling 3.0 Tiny Free no está disponible actualmente; Ling 3.0 Flash Free es la alternativa temporal y también puede cambiar sin aviso.
+- La primera publicación real del flujo automático sigue sin verificarse; debe comprobarse después de la ejecución del 2026-08-14.
 - Vercel Cron no reintenta automáticamente y en Hobby ejecuta una vez al día con precisión horaria.
 - Los feeds oficiales pueden fallar, cambiar de formato o no contener candidatos relevantes; en ese caso la ejecución degrada a un catálogo curado y rotativo.
-- La generación masiva no debe insistir ante `HTTP 429`. El cron diario conserva el reintento idempotente; la ventana promocional expira automáticamente mediante `PROMOTION_END_AT`.
+- El endpoint promocional queda deshabilitado en producción. La disponibilidad del modelo y su acceso al nivel gratuito pueden cambiar sin aviso.
