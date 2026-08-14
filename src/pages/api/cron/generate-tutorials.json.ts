@@ -13,7 +13,11 @@ function json(body: unknown, status: number): Response {
   });
 }
 
-export async function handleTutorialCron(request: Request, slot: number): Promise<Response> {
+export async function handleTutorialCron(
+  request: Request,
+  startingSlot: number,
+  count = 1,
+): Promise<Response> {
   const cronSecret = import.meta.env.CRON_SECRET || process.env.CRON_SECRET;
   if (!cronSecret) {
     console.error('[Cron Tutoriales] CRON_SECRET no está configurado.');
@@ -24,13 +28,19 @@ export async function handleTutorialCron(request: Request, slot: number): Promis
     return json({ success: false, error: 'No autorizado.' }, 401);
   }
 
-  if (!Number.isInteger(slot) || slot < 1 || slot > 2) {
-    return json({ success: false, error: 'slot debe ser 1 o 2.' }, 400);
+  if (
+    !Number.isInteger(startingSlot)
+    || !Number.isInteger(count)
+    || startingSlot < 1
+    || count < 1
+    || startingSlot + count - 1 > 2
+  ) {
+    return json({ success: false, error: 'El rango de slots debe quedar entre 1 y 2.' }, 400);
   }
 
   try {
     const service = new DailyTutorialService(vercelAIGeneratorService, tutorialAdminRepository);
-    const run = await service.run(new Date(), 1, 'tutorial-emergente', slot);
+    const run = await service.run(new Date(), count, 'tutorial-emergente', startingSlot);
 
     if (run.failed === run.requested) {
       return json({ success: false, message: 'No se pudo generar ningún tutorial.', ...run }, 500);
@@ -47,7 +57,6 @@ export async function handleTutorialCron(request: Request, slot: number): Promis
   }
 }
 
-export const GET: APIRoute = async ({ request, url }) =>
-  handleTutorialCron(request, Number(url.searchParams.get('slot') || '1'));
+export const GET: APIRoute = async ({ request }) => handleTutorialCron(request, 1, 2);
 
 export const maxDuration = 300;

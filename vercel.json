@@ -1,12 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/cron/generate-tutorial-slot-1.json",
+      "path": "/api/cron/generate-tutorials.json",
       "schedule": "0 9 * * *"
-    },
-    {
-      "path": "/api/cron/generate-tutorial-slot-2.json",
-      "schedule": "0 11 * * *"
     }
   ]
 }

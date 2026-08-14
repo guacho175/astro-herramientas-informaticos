@@ -77,18 +77,18 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 
 ## `GET /api/cron/generate-tutorials.json`
 
-Genera un tutorial por invocación mediante Vercel AI Gateway. El query param `slot` admite `1` o `2` (por defecto `1`) para separar los dos cupos diarios. Selecciona novedades desde fuentes oficiales, descarga como máximo dos fuentes primarias con límites de tamaño y redirecciones, y cae a un catálogo curado. Repetir el mismo día y slot omite posiciones ya publicadas o con una reserva vigente.
+Genera los dos tutoriales diarios mediante Vercel AI Gateway. Una sola invocación procesa secuencialmente los slots `1` y `2`; cada uno conserva su reserva, resultado e idempotencia independientes. Selecciona novedades desde fuentes oficiales, descarga como máximo dos fuentes primarias con límites de tamaño y redirecciones, y cae a un catálogo curado. Repetir la ruta el mismo día omite los slots ya publicados o con una reserva vigente.
 
-Vercel programa dos rutas delgadas: `/api/cron/generate-tutorial-slot-1.json` a las 09:00 UTC y `/api/cron/generate-tutorial-slot-2.json` a las 11:00 UTC. Ambas delegan en este mismo contrato con un slot fijo.
+Vercel programa solo esta ruta, una vez al día a las 09:00 UTC. Las rutas delgadas `/api/cron/generate-tutorial-slot-1.json` y `/api/cron/generate-tutorial-slot-2.json` se conservan sin programar para diagnósticos puntuales de un solo slot.
 
 **Autenticación:** `Authorization: Bearer <CRON_SECRET>`. Vercel añade esta cabecera al invocar el cron cuando la variable está configurada.
 
 | Código | Causa |
 | :--- | :--- |
-| `200` | la posición fue creada u omitida correctamente |
-| `400` | `slot` no es `1` o `2` |
+| `200` | los dos slots fueron creados u omitidos correctamente |
+| `207` | un slot terminó correctamente y el otro falló |
 | `401` | secreto ausente o incorrecto |
-| `500` | configuración inválida o la posición falló |
+| `500` | configuración inválida o ambos slots fallaron |
 
 La respuesta incluye `date`, `requested`, `created`, `skipped`, `failed` y un arreglo `results` sin secretos ni mensajes internos del proveedor.
 

@@ -22,7 +22,7 @@ Existen dos vías permanentes y una vía promocional temporal:
 | Vía | Cuándo usarla | Autenticación |
 | :--- | :--- | :--- |
 | `POST /api/admin/generate.json` | generación asistida por IA desde el panel `/admin/tutorial-generator` | contraseña verificada contra `admin_keys` |
-| `GET /api/cron/generate-tutorial-slot-{1,2}.json` | un tutorial por invocación; slots diarios independientes a las 09:00 y 11:00 UTC | `CRON_SECRET` enviado por Vercel Cron |
+| `GET /api/cron/generate-tutorials.json` | una invocación diaria a las 09:00 UTC; genera secuencialmente los dos slots | `CRON_SECRET` enviado por Vercel Cron |
 | `POST /api/admin/generate-promotion.json` | lotes temporales, máximo dos por llamada | `CRON_SECRET` y `PROMOTION_BATCH_ENABLED=true` |
 
 El panel manual está disponible en `/admin/tutorial-generator` y continúa usando Gemini mediante la clave de Google AI Studio y su integración independiente. Las ejecuciones automática y promocional usan Vercel AI Gateway y están desacopladas del panel. El modelo se define con `VERCEL_AI_MODEL`; producción usa exclusivamente `google/gemini-3.5-flash-lite` y no configura un modelo alternativo en `VERCEL_AI_FALLBACK_MODELS`.
@@ -31,7 +31,7 @@ La generación editorial deshabilita el razonamiento interno del modelo para res
 
 La selección automática prioriza entradas recientes de feeds oficiales de Vercel, Cloudflare, Astro, AI SDK y Supabase. Para los primeros candidatos descarga de forma acotada hasta dos documentos primarios: solo HTTPS, hosts públicos, redirecciones validadas, timeout, tamaño máximo y texto sanitizado. Si no hay candidatos utilizables, rota un catálogo curado. La salida debe citar todas las fuentes entregadas, superar 1200 palabras e incluir H2/H3 y código.
 
-Cada slot reserva primero un job con token y lease de seis minutos. Solo el propietario vigente puede publicar o fallar; un lease vencido se puede recuperar. La inserción del tutorial y el cierre del job son atómicos. El cron deduplica por fecha y slot; un `batchId` promocional conserva idempotencia entre días UTC.
+La única invocación diaria procesa los dos slots de forma secuencial para evitar ráfagas. Cada slot reserva primero un job con token y lease de seis minutos. Solo el propietario vigente puede publicar o fallar; un lease vencido se puede recuperar. La inserción del tutorial y el cierre del job son atómicos. El cron deduplica por fecha y slot; un `batchId` promocional conserva idempotencia entre días UTC.
 
 El contrato completo del endpoint está en [API.md](API.md).
 
