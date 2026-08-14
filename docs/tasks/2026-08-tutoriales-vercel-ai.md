@@ -4,7 +4,7 @@
 
 Implementar una vía automática y desacoplada que genere hasta dos tutoriales diarios sobre tecnología emergente mediante Vercel AI Gateway, sin eliminar ni acoplar el panel manual existente basado en Gemini.
 
-**Estado:** cerrado por decisión del usuario el 2026-08-13. Producción tiene un solo cron diario a las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. La primera ejecución automática queda pendiente para el 2026-08-14 a las 05:00 de Chile continental; no se demostró todavía una publicación real.
+**Estado:** cerrado por decisión del usuario el 2026-08-13. Producción tiene un solo cron diario en la hora de las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. La primera ejecución automática queda pendiente para el 2026-08-14 entre las 05:00 y las 05:59 de Chile continental; no se demostró todavía una publicación real.
 
 ## Alcance
 
@@ -22,7 +22,7 @@ Implementar una vía automática y desacoplada que genere hasta dos tutoriales d
 - Rama de trabajo original: `codex/tutoriales-vercel-ai`, creada desde `chore/gobernanza-agentes` (`17b27ff`). Todo quedó integrado en `main` y las ramas locales de trabajo fueron eliminadas.
 - El panel Gemini y el generador automático conservan servicios, autenticación y selección de proveedor independientes; ambos publican el mismo contrato `Tutorial`.
 - El modelo es configurable mediante `VERCEL_AI_MODEL`; producción usa `google/gemini-2.5-flash`, habilitado para los créditos mensuales del nivel gratuito. No hay fallback configurado.
-- Vercel programa una sola ruta a las 09:00 UTC. Esa invocación procesa los slots `1` y `2` secuencialmente; en Chile continental se ejecuta a las 05:00 durante UTC-4 y a las 06:00 durante UTC-3.
+- Vercel programa una sola ruta en la hora de las 09:00 UTC. Esa invocación procesa los slots `1` y `2` secuencialmente; por la precisión horaria de Hobby, en Chile continental puede comenzar entre las 05:00 y las 05:59 durante UTC-4, o entre las 06:00 y las 06:59 durante UTC-3.
 - La ejecución programada se autenticará con `CRON_SECRET`, no con la contraseña administrativa.
 - El cron usa clave por fecha y slot; promociones usan `batchId` y slot sin fecha para conservar idempotencia entre días UTC.
 - Los jobs usan token y lease de seis minutos; la publicación y finalización son una transacción.

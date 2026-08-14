@@ -79,7 +79,7 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 
 Genera los dos tutoriales diarios mediante Vercel AI Gateway. Una sola invocación procesa secuencialmente los slots `1` y `2`; cada uno conserva su reserva, resultado e idempotencia independientes. Selecciona novedades desde fuentes oficiales, descarga como máximo dos fuentes primarias con límites de tamaño y redirecciones, y cae a un catálogo curado. Repetir la ruta el mismo día omite los slots ya publicados o con una reserva vigente.
 
-Vercel programa solo esta ruta, una vez al día a las 09:00 UTC. En Chile continental corresponde a las 05:00 durante UTC-4 y a las 06:00 durante UTC-3. Las rutas delgadas `/api/cron/generate-tutorial-slot-1.json` y `/api/cron/generate-tutorial-slot-2.json` se conservan sin programar para diagnósticos puntuales de un solo slot.
+Vercel programa solo esta ruta, una vez al día durante la hora que comienza a las 09:00 UTC. La precisión horaria del plan Hobby permite que comience entre las 09:00 y las 09:59 UTC: en Chile continental corresponde a la ventana 05:00–05:59 durante UTC-4 y 06:00–06:59 durante UTC-3. Las rutas delgadas `/api/cron/generate-tutorial-slot-1.json` y `/api/cron/generate-tutorial-slot-2.json` se conservan sin programar para diagnósticos puntuales de un solo slot.
 
 **Autenticación:** `Authorization: Bearer <CRON_SECRET>`. Vercel añade esta cabecera al invocar el cron cuando la variable está configurada.
 

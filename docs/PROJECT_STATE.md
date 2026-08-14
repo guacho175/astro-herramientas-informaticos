@@ -70,7 +70,7 @@ La página fija `Cache-Control: s-maxage=3600, stale-while-revalidate=86400` en 
 - **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway con `google/gemini-2.5-flash` → validación → publicación atómica en `TutorialAdminRepository`.
 - **Promocional temporal:** `POST /api/admin/generate-promotion.json` conserva el contrato para diagnósticos controlados, pero está deshabilitado en producción.
 
-La única invocación diaria genera hasta dos tutoriales, uno por vez; los slots `1` y `2` mantienen separados los cupos y sus resultados. En Chile continental, las 09:00 UTC corresponden a las 05:00 durante UTC-4 y a las 06:00 durante UTC-3. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
+La única invocación diaria genera hasta dos tutoriales, uno por vez; los slots `1` y `2` mantienen separados los cupos y sus resultados. Por la precisión horaria del plan Hobby, Vercel puede iniciarla entre las 09:00 y las 09:59 UTC: en Chile continental la ventana es 05:00–05:59 durante UTC-4 y 06:00–06:59 durante UTC-3. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
 
 ## 4. Datos
 
