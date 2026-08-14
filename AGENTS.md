@@ -61,6 +61,22 @@ node scripts/check-docs.mjs   # validación documental
 - No hagas `git push`, `git commit --amend`, `git reset --hard` ni despliegues sin que se te pida.
 - **Alcance:** modifica solo lo necesario para la tarea. Refactorizaciones, renombrados y limpiezas colaterales se proponen; no se ejecutan.
 
+### Migraciones de Supabase: identidad antes de historial
+
+Un enlace local de Supabase es estado ambiental no confiable: **nunca** asumas que apunta a este proyecto ni atribuyas una discrepancia de migraciones al repositorio sin verificarlo.
+
+Antes de ejecutar `migration repair`, `db push`, `db pull` o una consulta remota:
+
+1. Ejecuta `supabase projects list` y contrasta el nombre, la organización y la referencia con el proyecto que el usuario indicó o mostró en su panel. No copies referencias a documentación ni commits.
+2. Enlaza explícitamente con `supabase link --project-ref <referencia-verificada>`; si falta permiso o la identidad no coincide, detente sin modificar historial ni esquema.
+3. Haz una única consulta de catálogo, sin leer filas de negocio, que confirme al menos `public.tutorials`, `public.admin_keys` y los objetos exactos de la migración en cuestión.
+4. Ejecuta `supabase migration list` recién después del preflight. Una diferencia por sí sola no autoriza a reparar nada.
+5. Usa `supabase migration repair --status applied` solo si el preflight demuestra que el SQL ya está presente; usa `reverted` solo si demuestra que no lo está. Registra el motivo y las versiones en el reporte.
+6. Ejecuta `supabase db push --dry-run --skip-vault --yes`; si enumera únicamente el cambio esperado, aplica una única vez `supabase db push --skip-vault --yes`.
+7. Verifica una vez el historial y los objetos nuevos. No hagas sondeos, descargas de datos ni reintentos por curiosidad.
+
+Si cualquiera de esos pasos falla, informa la evidencia y pide el acceso o la identidad correcta. No repares el historial de otro proyecto ni intentes reconstruirlo por suposiciones.
+
 ## 6. Trabajo concurrente
 
 Puede haber otro agente o chat trabajando en paralelo.

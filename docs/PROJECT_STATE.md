@@ -1,7 +1,7 @@
 # Estado actual del sistema
 
 > **Fuente de verdad:** este documento es canónico para el estado actual (stack, arquitectura, entornos y limitaciones).
-> **Última verificación:** 2026-08-13
+> **Última verificación:** 2026-08-14
 
 Describe **lo que el sistema es hoy**. No contiene planes futuros, historial ni instrucciones para agentes.
 Decisiones → [`adr/`](adr/) · Historial → `git log` · Reglas para agentes → [`../AGENTS.md`](../AGENTS.md).
@@ -67,18 +67,19 @@ La página fija `Cache-Control: s-maxage=3600, stale-while-revalidate=86400` en 
 ### Flujos de generación
 
 - **Manual:** `POST /api/admin/login.json` → contraseña contra `admin_keys` → cookie de sesión firmada; después `POST /api/admin/generate.json` → `AIGeneratorService` → cascada Gemini → validación → inserción con cliente de servicio.
-- **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway con `google/gemini-2.5-flash` → validación → publicación atómica en `TutorialAdminRepository`. El panel autenticado puede ejecutar ese mismo servicio mediante `POST /api/admin/generate-emerging.json`; comparte los slots `tutorial-emergente` y no invoca la ruta cron ni expone su secreto.
+- **Diario:** un Vercel Cron a las 09:00 UTC → `generate-tutorials.json` → dos slots secuenciales → investigación primaria segura y catálogo curado → `VercelAIGeneratorService` → Vercel AI Gateway con `google/gemini-2.5-flash` → validación → publicación atómica en `TutorialAdminRepository`. El panel autenticado puede crear lotes independientes de dos tutoriales mediante `POST /api/admin/generate-emerging.json`; no invoca la ruta cron ni expone su secreto. El panel admite un único lote en curso mediante un lock de Supabase, por lo que rechaza solicitudes simultáneas sin crear una cola.
 - **Promocional temporal:** `POST /api/admin/generate-promotion.json` conserva el contrato para diagnósticos controlados, pero está deshabilitado en producción.
 
 La única invocación diaria genera hasta dos tutoriales, uno por vez; los slots `1` y `2` mantienen separados los cupos y sus resultados. Por la precisión horaria del plan Hobby, Vercel puede iniciarla entre las 09:00 y las 09:59 UTC: en Chile continental la ventana es 05:00–05:59 durante UTC-4 y 06:00–06:59 durante UTC-3. `claim_tutorial_generation_job` entrega un token con lease de seis minutos: un lease vencido se recupera y solo su propietario vigente puede publicar o fallar. La inserción y el cierre `completed` comparten transacción.
 
 ## 4. Datos
 
-Tres tablas en Supabase:
+Cuatro tablas en Supabase:
 
 - **`tutorials`** — migración `supabase/migrations/20260724000001_create_tutorials_table.sql`. RLS activo: lectura pública; `INSERT`/`UPDATE` permitidos a cualquier rol `authenticated`; sin política de `DELETE`. Incluye el RPC `increment_tutorial_views` (`SECURITY DEFINER`).
 - **`admin_keys`** — migración `supabase/migrations/20260728000001_create_admin_keys.sql`. Guarda hashes `scrypt` en formato `salt:key`. RLS activo sin políticas: solo accesible con `service_role`.
 - **`tutorial_generation_jobs`** — migraciones `20260813000001_create_tutorial_generation_jobs.sql` y `20260813000002_harden_tutorial_generation_jobs.sql`. Coordina idempotencia, intentos, leases y propiedad; RLS activo sin políticas y RPC limitados a `service_role`.
+- **`admin_generation_locks`** — migración `20260814000001_create_admin_generation_locks.sql`. Coordina exclusión mutua durable de los lotes iniciados desde el panel; RLS activo sin políticas y RPC limitados a `service_role`.
 
 Las migraciones son la fuente autoritativa del esquema. Este documento solo las resume.
 

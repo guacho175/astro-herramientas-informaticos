@@ -1,6 +1,9 @@
 import type { APIRoute } from 'astro';
 import { adminAuthService, isSameOrigin } from '../../../lib/application/services/AdminAuthService';
-import { runDailyTutorialGeneration } from '../../../lib/application/services/runDailyTutorialGeneration';
+import {
+  panelTutorialGenerationService,
+  PanelGenerationBusyError,
+} from '../../../lib/application/services/PanelTutorialGenerationService';
 
 function json(body: Record<string, unknown>, status: number): Response {
   return new Response(JSON.stringify(body), {
@@ -32,20 +35,27 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   try {
-    const run = await runDailyTutorialGeneration();
+    const run = await panelTutorialGenerationService.run();
     const status = run.failed === run.requested ? 500 : run.failed > 0 ? 207 : 200;
     return json({
       success: run.failed === 0,
+      batchId: run.batchId,
       message: run.failed === 0
-        ? 'Ejecución diaria completada.'
+        ? 'Lote automático completado.'
         : run.failed === run.requested
           ? 'No se pudo generar ningún tutorial.'
-          : 'La ejecución terminó parcialmente.',
+          : 'El lote terminó parcialmente.',
       ...run,
     }, status);
-  } catch {
+  } catch (error) {
+    if (error instanceof PanelGenerationBusyError) {
+      return json({
+        success: false,
+        error: 'Ya hay un lote automático en curso. Espera su resultado antes de iniciar otro.',
+      }, 409);
+    }
     console.error('[Admin API] La ejecución diaria desde el panel falló.');
-    return json({ success: false, error: 'No fue posible ejecutar la generación automática.' }, 500);
+    return json({ success: false, error: 'No fue posible ejecutar el lote automático.' }, 500);
   }
 };
 

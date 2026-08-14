@@ -120,6 +120,32 @@ export class TutorialAdminRepository {
     return data;
   }
 
+  async claimGenerationLock(lockKey: string, leaseSeconds: number): Promise<string | null> {
+    const { data, error } = await this.getClient().rpc('claim_admin_generation_lock', {
+      p_lock_key: lockKey,
+      p_lease_seconds: leaseSeconds,
+    });
+
+    if (error) throw new Error('No se pudo reservar la generación automática del panel.');
+    if (data !== null && typeof data !== 'string') {
+      throw new Error('La reserva del panel devolvió una respuesta inválida.');
+    }
+    return data;
+  }
+
+  async releaseGenerationLock(lockKey: string, claimToken: string): Promise<boolean> {
+    const { data, error } = await this.getClient().rpc('release_admin_generation_lock', {
+      p_lock_key: lockKey,
+      p_claim_token: claimToken,
+    });
+
+    if (error) throw new Error('No se pudo liberar la generación automática del panel.');
+    if (typeof data !== 'boolean') {
+      throw new Error('La liberación del panel devolvió una respuesta inválida.');
+    }
+    return data;
+  }
+
   async create(tutorial: Tutorial): Promise<Tutorial> {
     const { data, error } = await this.getClient()
       .from(this.tableName)

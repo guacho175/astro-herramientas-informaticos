@@ -1,7 +1,7 @@
 # Contrato de API
 
 > **Fuente de verdad:** este documento es canónico para los endpoints HTTP y la forma del recurso `Tutorial`.
-> **Última verificación:** 2026-08-13
+> **Última verificación:** 2026-08-14
 
 Todo cambio en `src/pages/api/`, en la forma de un recurso o en los códigos de respuesta debe reflejarse aquí en el mismo commit.
 
@@ -91,7 +91,7 @@ Genera un tutorial con IA a partir de un tema y lo inserta en la base de datos. 
 
 ## `POST /api/admin/generate-emerging.json`
 
-Ejecuta manualmente desde el panel el mismo pipeline del cron: investigación de fuentes, `VercelAIGeneratorService` mediante Vercel AI Gateway y publicación transaccional. No invoca la ruta cron ni expone `CRON_SECRET` al navegador.
+Ejecuta manualmente desde el panel el pipeline de investigación, `VercelAIGeneratorService` mediante Vercel AI Gateway y publicación transaccional. No invoca la ruta cron ni expone `CRON_SECRET` al navegador.
 
 **Autenticación:** sesión administrativa válida más `Origin` del mismo sitio.
 
@@ -99,7 +99,7 @@ Ejecuta manualmente desde el panel el mismo pipeline del cron: investigación de
 {}
 ```
 
-Siempre solicita `count=2`, slots `1` y `2` secuenciales y namespace `tutorial-emergente`. Por eso comparte las claves diarias UTC con el cron: si esta ruta publica antes, el cron omite esos slots; si el cron ya los atendió, la ruta informa cada omisión. Nunca crea cuatro tutoriales por día.
+Cada solicitud aceptada crea un lote nuevo, identificado por `batchId`, con `count=2` y slots `1` y `2` secuenciales. No comparte slots con el cron: varias ejecuciones del botón pueden crear nuevos tutoriales el mismo día. El servidor permite **un solo lote del panel en curso**; una nueva solicitud mientras el lock está vigente se rechaza en vez de acumular una cola. El cron conserva su namespace diario `tutorial-emergente` y su límite de dos slots.
 
 | Código | Causa |
 | :--- | :--- |
@@ -108,9 +108,10 @@ Siempre solicita `count=2`, slots `1` y `2` secuenciales y namespace `tutorial-e
 | `400` | cuerpo JSON inválido |
 | `401` | sesión ausente, inválida o expirada |
 | `403` | origen no válido |
+| `409` | ya hay un lote del panel en curso |
 | `500` | fallo total o configuración inválida |
 
-La respuesta contiene `date`, `requested`, `created`, `skipped`, `failed` y `results`. Cada elemento indica su `slot` y estado `created`, `skipped` o `failed`; los creados incluyen `title` y `slug`, y los omitidos incluyen el `slug` ya reservado o publicado. No expone errores internos del proveedor.
+La respuesta contiene `batchId`, `date`, `requested`, `created`, `skipped`, `failed` y `results`. Cada elemento indica su `slot` y estado `created`, `skipped` o `failed`; los creados incluyen `title` y `slug`. Un slot se omite si ya está reservado o si no existe un tema distinto disponible. No expone errores internos del proveedor.
 
 ---
 

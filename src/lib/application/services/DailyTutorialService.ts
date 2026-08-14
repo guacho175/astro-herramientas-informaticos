@@ -27,7 +27,13 @@ export interface DailyTutorialStore {
 
 export type DailyTutorialResult =
   | { slot: number; status: 'created'; slug: string; title: string; topicId: string }
-  | { slot: number; status: 'skipped'; slug: string; reason: 'already-generated'; topicId: string }
+  | {
+    slot: number;
+    status: 'skipped';
+    slug: string;
+    reason: 'already-generated' | 'no-distinct-topic';
+    topicId: string;
+  }
   | { slot: number; status: 'failed'; slug: string; error: string; topicId: string };
 
 export interface DailyTutorialRun {
@@ -132,14 +138,11 @@ function selectTopics(
   const uncovered = ordered.filter((topic) => !isCovered(topic, tutorials));
   const selected = uncovered.slice(0, count);
 
-  // Cuando todo el ciclo ya fue cubierto, se vuelve a rotar para producir una
-  // edición actualizada en vez de detener indefinidamente el cron.
-  for (const topic of ordered) {
-    if (selected.length >= count) break;
-    if (!selected.some((candidate) => candidate.id === topic.id)) selected.push(topic);
-  }
-
   return selected;
+}
+
+function topicJobKey(topic: DailyTopic): string {
+  return `topic-${topic.id}`;
 }
 
 function assertGeneratedTutorial(value: GeneratedTutorial): void {
@@ -205,7 +208,18 @@ export class DailyTutorialService {
       const slot = startingSlot + index;
       const topic = topics[startingSlot + index - 1];
       const slugPrefix = idempotencyPrefix(namespace, dateKey, slot);
-      const jobKey = slugPrefix.replace(/-$/, '');
+      if (!topic) {
+        results.push({
+          slot,
+          status: 'skipped',
+          slug: slugPrefix,
+          reason: 'no-distinct-topic',
+          topicId: 'none',
+        });
+        continue;
+      }
+
+      const jobKey = topicJobKey(topic);
       let claimToken: string | null = null;
 
       try {

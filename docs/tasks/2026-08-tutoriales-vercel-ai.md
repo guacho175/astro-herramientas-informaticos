@@ -2,9 +2,9 @@
 
 ## Objetivo
 
-Implementar una vía automática y desacoplada que genere hasta dos tutoriales diarios sobre tecnología emergente mediante Vercel AI Gateway, sin eliminar ni acoplar el panel manual existente basado en Gemini.
+Implementar un cron diario y lotes manuales independientes de hasta dos tutoriales sobre tecnología emergente mediante Vercel AI Gateway, sin eliminar ni acoplar el panel manual existente basado en Gemini.
 
-**Estado:** actualizado el 2026-08-13. Producción conserva un solo cron diario en la hora de las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. El panel autenticado `/admin` puede ejecutar esos mismos slots mediante una ruta administrativa que reutiliza el servicio diario; no existe un segundo cron ni se exponen secretos. La primera generación automática real sigue pendiente de autorización y no se demostró todavía una publicación.
+**Estado:** actualizado el 2026-08-14. Producción conserva un solo cron diario en la hora de las 09:00 UTC, dos slots secuenciales y `google/gemini-2.5-flash` mediante Vercel AI Gateway. El panel autenticado `/admin` crea lotes independientes de hasta dos tutoriales; no consume los slots del cron y rechaza una nueva solicitud mientras haya otro lote del panel en curso. La migración `20260814000001_create_admin_generation_locks.sql` está aplicada y su historial se reconcilió tras comprobar el esquema real; la primera generación automática real sigue pendiente de autorización y no se demostró todavía una publicación.
 
 ## Alcance
 
@@ -26,6 +26,7 @@ Implementar una vía automática y desacoplada que genere hasta dos tutoriales d
 - La ejecución programada se autenticará con `CRON_SECRET`, no con la contraseña administrativa.
 - El cron usa clave por fecha y slot; promociones usan `batchId` y slot sin fecha para conservar idempotencia entre días UTC.
 - Los jobs usan token y lease de seis minutos; la publicación y finalización son una transacción.
+- Todo cambio de Supabase valida primero la identidad del proyecto y el catálogo de objetos; solo después compara, repara o aplica migraciones. La regla operativa completa está en `AGENTS.md`.
 - La investigación descarga hasta dos fuentes primarias con controles SSRF, redirecciones, timeout, tamaño y sanitización.
 - La publicación seguirá usando la tabla `tutorials`; la primera versión no incorporará un CMS editorial completo.
 

@@ -71,20 +71,20 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
               <div>
                 <h2 class="text-xl font-display font-black text-slate-900 dark:text-white">Generación automática con Vercel AI Gateway</h2>
                 <p class="mt-2 text-sm leading-6 text-slate-600 dark:text-gray-400">
-                  Ejecuta los dos slots diarios con investigación de fuentes y el mismo control de idempotencia que usa el cron.
+                  Crea un lote independiente de dos tutoriales con investigación de fuentes, ejecución secuencial y Vercel AI Gateway.
                 </p>
               </div>
             </div>
 
             <div class="mt-6 rounded-2xl border border-orbynex-cyan/25 bg-orbynex-cyan/5 p-4 text-sm leading-6 text-slate-700 dark:text-gray-300">
-              Si ya se ejecutó hoy, los slots se omitirán: esta acción no genera cuatro tutoriales. La operación consume créditos y publica en Supabase.
+              Cada ejecución completada puede crear hasta dos tutoriales distintos. Solo se admite un lote del panel a la vez; no se formará una cola. La operación consume créditos y publica en Supabase.
             </div>
             <button
               id="automatic-submit-button"
               type="button"
               class="mt-5 min-h-11 w-full rounded-xl border border-orbynex-cyan bg-orbynex-cyan/10 px-4 py-3 font-bold text-slate-800 transition hover:bg-orbynex-cyan hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-60 focus:outline-none focus:ring-2 focus:ring-orbynex-cyan focus:ring-offset-2 dark:text-white"
             >
-              Generar los 2 tutoriales automáticos de hoy
+              Generar 2 tutoriales automáticos
             </button>
             <div id="automatic-status" class="mt-4 hidden rounded-xl p-4 text-sm" role="status" aria-live="polite"></div>
             <ol id="automatic-results" class="mt-3 space-y-2 text-sm text-slate-700 dark:text-gray-300" aria-live="polite"></ol>
@@ -186,10 +186,11 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
         panel.setAttribute('aria-busy', String(nextBusy));
         manualButton.disabled = nextBusy;
         automaticButton.disabled = nextBusy;
+        logoutButton.disabled = nextBusy;
         manualButton.textContent = nextBusy && label === 'manual' ? 'Generando…' : 'Generar y guardar tutorial';
         automaticButton.textContent = nextBusy && label === 'automatic'
-          ? 'Generando los tutoriales…'
-          : 'Generar los 2 tutoriales automáticos de hoy';
+          ? 'Generando el lote…'
+          : 'Generar 2 tutoriales automáticos';
       }
 
       function renderAutomaticResults(results) {
@@ -202,7 +203,9 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
           if (result.status === 'created') {
             item.textContent = `${prefix}creado — ${result.title} (${result.slug})`;
           } else if (result.status === 'skipped') {
-            item.textContent = `${prefix}omitido — ${result.slug}`;
+            item.textContent = result.reason === 'no-distinct-topic'
+              ? `${prefix}omitido — no hay un tema distinto disponible.`
+              : `${prefix}omitido — ${result.slug}`;
           } else {
             item.textContent = `${prefix}falló — ${result.error || 'Error de generación'}`;
           }
@@ -236,7 +239,7 @@ Astro.response.headers.set('Cache-Control', 'private, no-store');
       automaticButton.addEventListener('click', async () => {
         if (busy) return;
         const confirmed = window.confirm(
-          'Esta operación consume créditos y puede publicar hasta dos tutoriales en Supabase. ¿Quieres continuar?',
+          'Esta operación crea un lote independiente de hasta dos tutoriales y consume créditos. ¿Quieres continuar?',
         );
         if (!confirmed) return;
 
