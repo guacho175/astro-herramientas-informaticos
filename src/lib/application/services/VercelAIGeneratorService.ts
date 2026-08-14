@@ -67,6 +67,167 @@ function normalizeEnvValue(value: unknown): string {
   return value === null || value === undefined ? '' : String(value).trim();
 }
 
+const COMMON_SECTION_HEADING = /^(introducci[oó]n|requisitos(?: previos)?|prerrequisitos|conceptos(?: clave)?|configuraci[oó]n|implementaci[oó]n(?: pr[aá]ctica)?|verificaci[oó]n|errores frecuentes|fuentes|referencias|bibliograf[ií]a|conclusi[oó]n)$/i;
+
+type MarkdownFence = {
+  marker: '`' | '~';
+  length: number;
+};
+
+function openingFence(line: string): MarkdownFence | null {
+  const match = line.match(/^[ \t]{0,3}(`{3,}|~{3,})/);
+  if (!match) return null;
+  return {
+    marker: match[1][0] as MarkdownFence['marker'],
+    length: match[1].length,
+  };
+}
+
+function closesFence(line: string, fence: MarkdownFence): boolean {
+  const match = line.match(/^[ \t]{0,3}(`{3,}|~{3,})[ \t]*$/);
+  return Boolean(
+    match &&
+    match[1][0] === fence.marker &&
+    match[1].length >= fence.length
+  );
+}
+
+function normalizeCommonSectionHeading(value: string): string | null {
+  let candidate = value.trim().replace(/:\s*$/, '').trim();
+  const strong = candidate.match(/^(?:\*\*|__)(.+?)(?:\*\*|__)$/);
+  candidate = (strong?.[1] ?? candidate).trim().replace(/:\s*$/, '').trim();
+  const section = candidate.match(COMMON_SECTION_HEADING)?.[1];
+  if (!section) return null;
+  return /^(?:fuentes|referencias|bibliograf[ií]a)$/i.test(section)
+    ? 'Fuentes'
+    : section;
+}
+
+function inspectMarkdownStructure(value: string): {
+  hasH2: boolean;
+  hasH3: boolean;
+  hasCodeBlock: boolean;
+} {
+  let activeFence: MarkdownFence | null = null;
+  let fenceHasContent = false;
+  let hasH2 = false;
+  let hasH3 = false;
+  let hasCodeBlock = false;
+
+  for (const line of value.split('\n')) {
+    if (activeFence) {
+      if (closesFence(line, activeFence)) {
+        if (fenceHasContent) hasCodeBlock = true;
+        activeFence = null;
+        fenceHasContent = false;
+      } else if (line.trim()) {
+        fenceHasContent = true;
+      }
+      continue;
+    }
+
+    const fence = openingFence(line);
+    if (fence) {
+      activeFence = fence;
+      continue;
+    }
+
+    if (/^##\s+/.test(line)) hasH2 = true;
+    if (/^###\s+/.test(line)) hasH3 = true;
+  }
+
+  return { hasH2, hasH3, hasCodeBlock };
+}
+
+function normalizeMarkdownStructure(value: string): string {
+  const trimmed = value.replace(/\r\n?/g, '\n').trim();
+  const wrapped = trimmed.match(/^[ \t]{0,3}(`{3,}|~{3,})(?:markdown|md)?[ \t]*\n([\s\S]*)\n[ \t]{0,3}\1[ \t]*$/i);
+  const source = (wrapped?.[2] ?? trimmed).trim();
+  const normalized: string[] = [];
+  const lines = source.split('\n');
+  let activeFence: MarkdownFence | null = null;
+
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index];
+
+    if (activeFence) {
+      normalized.push(line.trimEnd());
+      if (closesFence(line, activeFence)) activeFence = null;
+      continue;
+    }
+
+    const fence = openingFence(line);
+    if (fence) {
+      activeFence = fence;
+      normalized.push(line.trimEnd());
+      continue;
+    }
+
+    const setextHeading = lines[index + 1]?.match(/^[ \t]{0,3}(?:=+|-+)[ \t]*$/);
+    const isSetextCandidate = /^[ \t]{0,3}(?![#>]|(?:[-+*]|\d+[.)])[ \t]|[-*_]{3,}[ \t]*$)\S.*$/.test(line);
+    if (setextHeading && isSetextCandidate) {
+      const title = line.trim();
+      const normalizedTitle = normalizeCommonSectionHeading(title) === 'Fuentes'
+        ? 'Fuentes'
+        : title;
+      normalized.push(`## ${normalizedTitle}`);
+      index += 1;
+      continue;
+    }
+
+    const htmlHeading = line.match(/^[ \t]{0,3}<h([1-6])(?:\s[^>]*)?>([\s\S]*?)<\/h\1>[ \t]*$/i);
+    if (htmlHeading) {
+      const title = htmlHeading[2].replace(/<[^>]+>/g, '').trim();
+      const isSourcesHeading = normalizeCommonSectionHeading(title) === 'Fuentes';
+      const level = isSourcesHeading ? 2 : Math.max(2, Number(htmlHeading[1]));
+      normalized.push(title ? `${'#'.repeat(level)} ${isSourcesHeading ? 'Fuentes' : title}` : '');
+      continue;
+    }
+
+    const atxHeading = line.match(/^[ \t]{0,3}(#{1,6})(?!#)(.*)$/);
+    if (atxHeading) {
+      const title = atxHeading[2].trim().replace(/[ \t]+#+[ \t]*$/, '').trim();
+      if (title) {
+        const isSourcesHeading = normalizeCommonSectionHeading(title) === 'Fuentes';
+        const level = isSourcesHeading ? 2 : Math.max(2, atxHeading[1].length);
+        normalized.push(`${'#'.repeat(level)} ${isSourcesHeading ? 'Fuentes' : title}`);
+        continue;
+      }
+    }
+
+    const commonSectionHeading = /^[ \t]{0,3}\S/.test(line)
+      ? normalizeCommonSectionHeading(line)
+      : null;
+    if (commonSectionHeading) {
+      normalized.push(`## ${commonSectionHeading}`);
+      continue;
+    }
+
+    normalized.push(line.trimEnd());
+  }
+
+  while (normalized[0]?.trim() === '') normalized.shift();
+  while (normalized.at(-1)?.trim() === '') normalized.pop();
+
+  if (!/^##\s+/.test(normalized[0] ?? '')) {
+    normalized.unshift('## Introducción', '');
+  }
+
+  if (!inspectMarkdownStructure(normalized.join('\n')).hasH3) {
+    const firstCodeFence = normalized.findIndex((line) => openingFence(line) !== null);
+    if (firstCodeFence >= 0) {
+      const insertion = [
+        ...(firstCodeFence > 0 && normalized[firstCodeFence - 1].trim() ? [''] : []),
+        '### Implementación práctica',
+        '',
+      ];
+      normalized.splice(firstCodeFence, 0, ...insertion);
+    }
+  }
+
+  return normalized.join('\n').trim();
+}
+
 function validateTutorialContent(
   value: unknown,
   requiredSources: TutorialResearchSource[],
@@ -78,10 +239,11 @@ function validateTutorialContent(
   if (wordCount < MIN_CONTENT_WORDS) {
     return { success: false, error: namedError('TutorialTooShortError') };
   }
-  if (!/^##\s+/m.test(content) || !/^###\s+/m.test(content)) {
+  const structure = inspectMarkdownStructure(content);
+  if (!structure.hasH2 || !structure.hasH3) {
     return { success: false, error: namedError('TutorialMissingHeadingsError') };
   }
-  if (!/```[\s\S]+```/m.test(content)) {
+  if (!structure.hasCodeBlock) {
     return { success: false, error: namedError('TutorialMissingCodeError') };
   }
 
@@ -276,7 +438,8 @@ export class VercelAIGeneratorService {
       );
     }
 
-    const validation = validateTutorialContent(result.text, normalizedInput.sources);
+    const normalizedContent = normalizeMarkdownStructure(result.text);
+    const validation = validateTutorialContent(normalizedContent, normalizedInput.sources);
     if (!validation.success) throw validation.error;
 
     return {
